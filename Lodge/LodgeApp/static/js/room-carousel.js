@@ -20,14 +20,14 @@ function updateUI(selectedSuite) {
 
   // Hide all suite-info divs
   document.querySelectorAll('.suite-info').forEach(div => {
-    div.classList.remove('active');
+    div.classList.remove('activated');
   });
 
   // Show the selected suite's info div
   const suiteId = selectedSuite.value;
   const suiteDiv = document.getElementById(suiteId + '-suite');
   if (suiteDiv) {
-    suiteDiv.classList.add('active');
+    suiteDiv.classList.add('activated');
   }
 }
 
