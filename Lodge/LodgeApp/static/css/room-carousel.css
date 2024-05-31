@@ -1,0 +1,165 @@
+/* Room selector display */
+@import url("https://fonts.googleapis.com/css?family=Montserrat&display=swap");
+
+@import url("https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css");
+
+
+
+/* * {
+	font-family: "Montserrat", sans-serif !important;
+  box-sizing: border-box;
+} */
+
+.movie-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+	background-color: white;
+  color: #fff;
+  margin: 0;
+	padding-top: 30px;
+	border: 2px solid #ced4da;
+	
+}
+
+.movie-container select {
+  appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  
+  padding: 5px 15px;
+  margin-bottom: 40px;
+  font-size: 14px;
+  border-radius: 5px;
+}
+
+.container-room-select {
+  perspective: 1000px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+	margin-left: auto;
+	margin-right: auto;
+	padding-left: var(--bs-gutter-x, .75rem);
+	padding-right: var(--bs-gutter-x, .75rem);
+	width: 100%
+}
+
+.seat-des {
+	background-color: #444451;
+  height: 12px;
+  width: 15px;
+  margin: 3px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.seat {
+  background-color: #444451;
+  height: 120px;
+  width: 150px;
+  margin: 6px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+	cursor: pointer;
+}
+
+.selected {
+  background-color: #0081cb;
+}
+
+.occupied {
+  background-color: #ff9999;
+}
+
+/* .seat:nth-of-type(2) {
+  margin-right: 18px;
+}
+
+.seat:nth-last-of-type(2) {
+  margin-left: 18px;
+} */
+
+.seat:not(.occupied):hover {
+  cursor: pointer;
+  transform: scale(1.2);
+}
+
+.showcase .seat:not(.occupied):hover {
+  cursor: default;
+  transform: scale(1);
+}
+
+.showcase {
+  display: flex;
+  justify-content: space-between;
+  list-style-type: none;
+  background: rgba(0,0,0,0.1);
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: #777;
+}
+
+.showcase li {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 10px;
+}
+
+.showcase li small {
+  margin-left: 2px;
+} 
+
+.row {
+  display: flex;
+  /* align-items: center; */
+  justify-content: center;
+}
+
+
+p.text {
+  margin-top: 40px;
+	text-align: center;
+	color: #000;
+}
+
+p.text span {
+  color: #0081cb;
+  font-weight: 600;
+  box-sizing: content-box;
+}
+
+.credits a {
+  color: #fff;
+}
+
+.room-select {
+	border-radius: .2rem;
+	color: #495057;
+	display: block;
+	font-size: .875rem;
+	font-weight: 400;
+	line-height: 1.5;
+	padding: .3rem .85rem;
+	transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+	width: 50%
+}
+
+
+.suite-info {
+  display: none;
+}
+
+.active {
+  perspective: 1000px;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+	margin-left: auto;
+	margin-right: auto;
+}
