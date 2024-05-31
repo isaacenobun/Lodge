@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+
+    <title>Guest history</title>
+    <meta content="" name="description" />
+    <meta content="" name="keywords" />
+
+    <!-- Favicons -->
+    <link href="../static/img/favicon.png" rel="icon" />
+    <link href="../static/img/apple-touch-icon.png" rel="apple-touch-icon" />
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+      rel="stylesheet"
+    />
+
+    <!-- Vendor CSS Files -->
+    <link
+      href="../static/vendor/bootstrap/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="../static/vendor/bootstrap-icons/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <link
+      href="../static/vendor/boxicons/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link href="../static/vendor/quill/quill.snow.css" rel="stylesheet" />
+    <link href="../static/vendor/quill/quill.bubble.css" rel="stylesheet" />
+    <link href="../static/vendor/remixicon/remixicon.css" rel="stylesheet" />
+    <link
+      href="../static/vendor/simple-datatables/style.css"
+      rel="stylesheet"
+    />
+
+    <!-- Template Main CSS File -->
+    <link href="../static/css/style.css" rel="stylesheet" />
+
+    <!-- =======================================================
+
+  ======================================================== -->
+  </head>
+
+  <body>
+    <!-- ======= Header ======= -->
+    <header id="header" class="header fixed-top d-flex align-items-center">
+      <div class="d-flex align-items-center justify-content-between">
+        <a href="index.html" class="logo d-flex align-items-center">
+          <img src="../static/img/logo.png" alt="" />
+          <span class="d-none d-lg-block">Placeholder</span>
+        </a>
+        <i class="bi bi-list toggle-sidebar-btn"></i>
+      </div>
+      <!-- End Logo -->
+
+      <div class="search-bar">
+        <form
+          class="search-form d-flex align-items-center"
+          method="POST"
+          action="#"
+        >
+          <input
+            type="text"
+            name="query"
+            placeholder="Search"
+            title="Enter search keyword"
+          />
+          <button type="submit" title="Search">
+            <i class="bi bi-search"></i>
+          </button>
+        </form>
+      </div>
+      <!-- End Search Bar -->
+
+      <nav class="header-nav ms-auto">
+        <ul class="d-flex align-items-center">
+          <li class="nav-item d-block d-lg-none">
+            <a class="nav-link nav-icon search-bar-toggle" href="#">
+              <i class="bi bi-search"></i>
+            </a>
+          </li>
+          <!-- End Search Icon-->
+        </ul>
+      </nav>
+      <!-- End Icons Navigation -->
+    </header>
+    <!-- End Header -->
+
+    <!-- ======= Sidebar ======= -->
+    <aside id="sidebar" class="sidebar">
+      <ul class="sidebar-nav" id="sidebar-nav">
+        <li class="nav-item">
+          <a class="nav-link collapsed" href="index.html">
+            <i class="bi bi-grid"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <!-- End Dashboard Nav -->
+
+        <li class="nav-item">
+          <a class="nav-link collapsed" href="pages-room-carousel.html">
+            <i class="bi bi-building"></i>
+            <span>Room Carousel</span>
+          </a>
+        </li>
+        <!-- End Room-Carousel Nav -->
+
+        <li class="nav-item">
+          <a class="nav-link collapsed" href="pages-revenue.html">
+            <i class="bi bi-currency-dollar"></i>
+            <span>Revenue</span>
+          </a>
+        </li>
+        <!-- End Revenue Nav -->
+
+        <li class="nav-item">
+          <a class="nav-link collapsed" href="pages-check-in-out.html">
+            <i class="bi bi-clipboard-check"></i>
+            <span>Check-in</span>
+          </a>
+        </li>
+        <!-- End Check-in Nav -->
+
+        <li class="nav-item">
+          <a class="nav-link collapsed" href="pages-check-in-out.html">
+            <i class="bi bi-clipboard-x"></i>
+            <span>Check-out</span>
+          </a>
+        </li>
+        <!-- End Check-out Nav -->
+
+        <li class="nav-item">
+          <a class="nav-link collapsed" href="pages-analytics.html">
+            <i class="bi bi-bar-chart-line"></i>
+            <span>Analytics</span>
+          </a>
+        </li>
+        <!-- End Analytics Nav -->
+
+        <li class="nav-item">
+          <a class="nav-link" href="pages-guest-history.html">
+            <i class="bi bi-clock-history"></i>
+            <span>Guest History</span>
+          </a>
+        </li>
+        <!-- End Guest History Nav -->
+      </ul>
+    </aside>
+    <!-- End Sidebar-->
+
+    <main id="main" class="main">
+      <div class="pagetitle">
+        <h1>Guest History</h1>
+        <nav>
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+            <li class="breadcrumb-item">Guest-history</li>
+            <li class="breadcrumb-item active">Data</li>
+          </ol>
+        </nav>
+      </div>
+      <!-- End Page Title -->
+
+      <section class="section">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Datatables</h5>
+                <p>Table detailing info about our previous guest.</p>
+
+                <!-- Table with stripped rows -->
+                <table
+                  class="table datatable table-group-divider table-bordered"
+                >
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th><b>N</b>ame</th>
+                      <th>Email</th>
+                      <th>Phone Number</th>
+                      <th>Room</th>
+                      <th data-type="date" data-format="YYYY/DD/MM">
+                        Check-in Date
+                      </th>
+                      <th data-type="date" data-format="YYYY/DD/MM">
+                        Check-out Date
+                      </th>
+                      <th scope="col">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>134</td>
+                      <td>Unity Pugh</td>
+                      <td>johndoe@gmail.com</td>
+                      <td>08123456789</td>
+                      <td>2</td>
+                      <td>2024/02/7</td>
+                      <td>2024/02/11</td>
+                      <td><span class="badge bg-success">Vacant</span></td>
+                    </tr>
+                    <tr>
+                      <td>34</td>
+                      <td>Ade Bayo</td>
+                      <td>adebayo@gmail.com</td>
+                      <td>08123456789</td>
+                      <td>9</td>
+                      <td>2023/03/5</td>
+                      <td>2023/03/12</td>
+                      <td><span class="badge bg-danger">Occupied-G</span></td>
+                    </tr>
+                    <tr>
+                      <td>120</td>
+                      <td>Unity Pugh</td>
+                      <td>johndoe@gmail.com</td>
+                      <td>08123456789</td>
+                      <td>5</td>
+                      <td>2023/11/3</td>
+                      <td>2024/02/8</td>
+                      <td><span class="badge bg-warning">Absent</span></td>
+                    </tr>
+                    <tr>
+                      <td>158</td>
+                      <td>Victor 2pac</td>
+                      <td>adebayo@gmail.com</td>
+                      <td>08123456789</td>
+                      <td>1</td>
+                      <td>2024/04/11</td>
+                      <td>2024/04/23</td>
+                      <td>
+                        <span class="badge bg-danger-subtle">Occupied-V</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>9958</td>
+                      <td>Oramose David</td>
+                      <td>adebayo@gmail.com</td>
+                      <td>08123456789</td>
+                      <td>8</td>
+                      <td>2005/02/3</td>
+                      <td>2005/02/4</td>
+                      <td><span class="badge bg-danger">Occupied-G/V</span></td>
+                    </tr>
+                    <tr>
+                      <td>987</td>
+                      <td>Lara Smith</td>
+                      <td>larasmith@example.com</td>
+                      <td>08098765432</td>
+                      <td>3</td>
+                      <td>2024/05/15</td>
+                      <td>2024/05/20</td>
+                      <td><span class="badge bg-success">Vacant</span></td>
+                    </tr>
+                    <tr>
+                      <td>76</td>
+                      <td>James Brown</td>
+                      <td>jamesbrown@example.com</td>
+                      <td>08123456789</td>
+                      <td>7</td>
+                      <td>2023/08/10</td>
+                      <td>2023/08/17</td>
+                      <td><span class="badge bg-danger">Occupied-G</span></td>
+                    </tr>
+                    <tr>
+                      <td>245</td>
+                      <td>Grace Johnson</td>
+                      <td>gracejohnson@example.com</td>
+                      <td>08012345678</td>
+                      <td>4</td>
+                      <td>2023/12/5</td>
+                      <td>2024/01/2</td>
+                      <td><span class="badge bg-warning">Absent</span></td>
+                    </tr>
+                    <tr>
+                      <td>512</td>
+                      <td>Oliver White</td>
+                      <td>oliverwhite@example.com</td>
+                      <td>08123456789</td>
+                      <td>1</td>
+                      <td>2024/04/1</td>
+                      <td>2024/04/10</td>
+                      <td>
+                        <span class="badge bg-danger-subtle">Occupied-V</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>789</td>
+                      <td>Emily Green</td>
+                      <td>emilygreen@example.com</td>
+                      <td>08098765432</td>
+                      <td>6</td>
+                      <td>2023/11/20</td>
+                      <td>2023/11/25</td>
+                      <td><span class="badge bg-danger">Occupied-G/V</span></td>
+                    </tr>
+                    <tr>
+                      <td>333</td>
+                      <td>Michael Johnson</td>
+                      <td>michaeljohnson@example.com</td>
+                      <td>08012345678</td>
+                      <td>2</td>
+                      <td>2024/06/8</td>
+                      <td>2024/06/15</td>
+                      <td><span class="badge bg-success">Vacant</span></td>
+                    </tr>
+                    <tr>
+                      <td>456</td>
+                      <td>Sophia Lee</td>
+                      <td>sophialee@example.com</td>
+                      <td>08123456789</td>
+                      <td>5</td>
+                      <td>2023/09/18</td>
+                      <td>2023/09/25</td>
+                      <td><span class="badge bg-danger">Occupied-G</span></td>
+                    </tr>
+                    <tr>
+                      <td>789</td>
+                      <td>David Brown</td>
+                      <td>davidbrown@example.com</td>
+                      <td>08098765432</td>
+                      <td>8</td>
+                      <td>2023/12/10</td>
+                      <td>2023/12/17</td>
+                      <td><span class="badge bg-warning">Absent</span></td>
+                    </tr>
+                    <tr>
+                      <td>101</td>
+                      <td>Emma White</td>
+                      <td>emmawhite@example.com</td>
+                      <td>08123456789</td>
+                      <td>3</td>
+                      <td>2024/03/5</td>
+                      <td>2024/03/12</td>
+                      <td>
+                        <span class="badge bg-danger-subtle">Occupied-V</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>222</td>
+                      <td>Lucas Green</td>
+                      <td>lucasgreen@example.com</td>
+                      <td>08012345678</td>
+                      <td>4</td>
+                      <td>2024/05/1</td>
+                      <td>2024/05/10</td>
+                      <td>
+                        <span class="badge bg-danger-subtle">Occupied-V</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <!-- End Table with stripped rows -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <!-- End #main -->
+
+    <!-- ======= Footer ======= -->
+    <footer id="footer" class="footer"></footer>
+    <!-- End Footer -->
+
+    <a
+      href="#"
+      class="back-to-top d-flex align-items-center justify-content-center"
+      ><i class="bi bi-arrow-up-short"></i
+    ></a>
+
+    <!-- Vendor JS Files -->
+    <script src="../static/vendor/apexcharts/apexcharts.min.js"></script>
+    <script src="../static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../static/vendor/chart.js/chart.umd.js"></script>
+    <script src="../static/vendor/echarts/echarts.min.js"></script>
+    <script src="../static/vendor/quill/quill.js"></script>
+    <script src="../static/vendor/simple-datatables/simple-datatables.js"></script>
+    <script src="../static/vendor/tinymce/tinymce.min.js"></script>
+    <script src="../static/vendor/php-email-form/validate.js"></script>
+
+    <!-- Template Main JS File -->
+    <script src="../static/js/main.js"></script>
+  </body>
+</html>
