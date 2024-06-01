@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+
+    <title>Room-Carousel</title>
+    <meta content="" name="description" />
+    <meta content="" name="keywords" />
+
+    <!-- Favicons -->
+    <link href="../static/img/favicon.png" rel="icon" />
+    <link href="../static/img/apple-touch-icon.png" rel="apple-touch-icon" />
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+      rel="stylesheet"
+    />
+
+    <!-- Vendor CSS Files -->
+    <link
+      href="../static/vendor/bootstrap/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="../static/vendor/bootstrap-icons/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <link
+      href="../static/vendor/boxicons/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link href="../static/vendor/quill/quill.snow.css" rel="stylesheet" />
+    <link href="../static/vendor/quill/quill.bubble.css" rel="stylesheet" />
+    <link href="../static/vendor/remixicon/remixicon.css" rel="stylesheet" />
+    <link
+      href="../static/vendor/simple-datatables/style.css"
+      rel="stylesheet"
+    />
+
+    <!-- Template Main CSS File -->
+    <link href="../static/css/style.css" rel="stylesheet" />
+
+    <!-- ==================================================================================================== -->
+
+    <link rel="stylesheet" href="../static/css/room-carousel.css">
+
+  </head>
+  <body>
+    <!-- ======= Header ======= -->
+    <header id="header" class="header fixed-top d-flex align-items-center">
+      <div class="d-flex align-items-center justify-content-between">
+        <a href="index.html" class="logo d-flex align-items-center">
+          <img src="../static/img/logo.png" alt="" />
+          <span class="d-none d-lg-block">Placeholder</span>
+        </a>
+        <i class="bi bi-list toggle-sidebar-btn"></i>
+      </div>
+      <!-- End Logo -->
+
+      <div class="search-bar">
+        <form
+          class="search-form d-flex align-items-center"
+          method="POST"
+          action="#"
+        >
+          <input
+            type="text"
+            name="query"
+            placeholder="Search"
+            title="Enter search keyword"
+          />
+          <button type="submit" title="Search">
+            <i class="bi bi-search"></i>
+          </button>
+        </form>
+      </div>
+      <!-- End Search Bar -->
+
+      <nav class="header-nav ms-auto">
+        <ul class="d-flex align-items-center">
+          <li class="nav-item d-block d-lg-none">
+            <a class="nav-link nav-icon search-bar-toggle" href="#">
+              <i class="bi bi-search"></i>
+            </a>
+          </li>
+          <!-- End Search Icon-->
+        </ul>
+      </nav>
+      <!-- End Icons Navigation -->
+    </header>
+    <!-- End Header -->
+
+    <!-- ======= Sidebar ======= -->
+    <aside id="sidebar" class="sidebar">
+      <ul class="sidebar-nav" id="sidebar-nav">
+        <li class="nav-item">
+          <a class="nav-link collapsed" href="index.html">
+            <i class="bi bi-grid"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <!-- End Dashboard Nav -->
+
+        <li class="nav-item">
+          <a class="nav-link" href="pages-room-carousel.html">
+            <i class="bi bi-building"></i>
+            <span>Room Carousel</span>
+          </a>
+        </li>
+        <!-- End Room-Carousel Nav -->
+
+        <li class="nav-item">
+          <a class="nav-link collapsed" href="pages-revenue.html">
+            <i class="bi bi-currency-dollar"></i>
+            <span>Revenue</span>
+          </a>
+        </li>
+        <!-- End Revenue Nav -->
+
+        <li class="nav-item">
+          <a class="nav-link collapsed" href="pages-check-in-out.html">
+            <i class="bi bi-clipboard-check"></i>
+            <span>Check-in</span>
+          </a>
+        </li>
+        <!-- End Check-in Nav -->
+
+        <li class="nav-item">
+          <a class="nav-link collapsed" href="pages-check-in-out.html">
+            <i class="bi bi-clipboard-x"></i>
+            <span>Check-out</span>
+          </a>
+        </li>
+        <!-- End Check-out Nav -->
+
+        <li class="nav-item">
+          <a class="nav-link collapsed" href="pages-analytics.html">
+            <i class="bi bi-bar-chart-line"></i>
+            <span>Analytics</span>
+          </a>
+        </li>
+        <!-- End Analytics Nav -->
+
+        <li class="nav-item">
+          <a class="nav-link collapsed" href="pages-guest-history.html">
+            <i class="bi bi-clock-history"></i>
+            <span>Guest History</span>
+          </a>
+        </li>
+        <!-- End Guest History Nav -->
+      </ul>
+    </aside>
+    <!-- End Sidebar-->
+
+    <main id="main" class="main">
+      <div class="pagetitle">
+        <h1>Guest History</h1>
+        <nav>
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+            <li class="breadcrumb-item active">Room-Carousel</li>
+          </ol>
+        </nav>
+      </div>
+      <!-- End Page Title -->
+
+      <section class="section">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Carousel</h5>
+                <p>Available room options</p>
+
+                <!-- Room carousel -->
+                <div class="movie-container">
+                  <select id="suite" class="room-select form-select" onchange="updateUI(this)">
+                    <option value="" selected disabled>
+                      Select a suite
+                    </option>
+                    <option value="exec">Executive Suite</option>
+                    <option value="business">Business Suite</option>
+                    <option value="regular">Regular Suite</option>
+                    <option value="ground">Ground Floor</option>
+                  </select>
+        
+                  <ul class="showcase">
+                    <li>
+                      <div class="seat-des"></div>
+                      <small>N/A</small>
+                    </li>
+                    <li>
+                      <div class="seat-des selected"></div>
+                      <small>Selected</small>
+                    </li>
+                    <li>
+                      <div class="seat-des occupied"></div>
+                      <small>Occupied</small>
+                    </li>
+                  </ul>
+        
+                  <div class="container-room-select">
+                    <div class="row">
+                      <!-- exec-suite rooms -->
+                      <div id="exec-suite" class="suite-info">
+                        <div class="seat">1</div>
+                        <div class="seat">2</div>
+                        <div class="seat">3</div>
+                        <div class="seat occupied" onclick="showProfile('John')">4</div>
+                        <div class="seat">5</div>
+                        <div class="seat">6</div>
+                        <div class="seat">7</div>
+                      </div>
+
+                      <!-- Business suite rooms -->
+                      <div id="business-suite" class="suite-info">
+                        <div class="seat">1</div>
+                        <div class="seat">2</div>
+                        <div class="seat">3</div>
+                        <div class="seat occupied" onclick="showProfile('John')">4</div>
+                        <div class="seat">5</div>
+                        <div class="seat">6</div>
+                        <div class="seat">7</div>
+                        <div class="seat occupied" onclick="showProfile('Alice')">8</div>
+                        <div class="seat">9</div>
+                        <div class="seat">10</div>
+                      </div>
+  
+                      <!-- Regular suite rooms -->
+                      <div id="regular-suite" class="suite-info">
+                        <div class="seat">1</div>
+                        <div class="seat">2</div>
+                        <div class="seat">3</div>
+                        <div class="seat occupied" onclick="showProfile('John')">4</div>
+                        <div class="seat">5</div>
+                        <div class="seat">6</div>
+                        <div class="seat">7</div>
+                        <div class="seat occupied" onclick="showProfile('Alice')">8</div>
+                        <div class="seat">9</div>
+                        <div class="seat">10</div>
+                        <div class="seat">11</div>
+                        <div class="seat occupied" onclick="showProfile('Bob')">12</div>
+                        <div class="seat">12</div>
+                        <div class="seat">13</div>
+                        <div class="seat occupied" onclick="showProfile('John')">14</div>
+                        <div class="seat">15</div>
+                      </div>
+  
+                      <!-- Ground suite rooms -->
+                      <div id="ground-suite" class="suite-info">
+                        <div class="seat">1</div>
+                        <div class="seat">2</div>
+                        <div class="seat">3</div>
+                        <div class="seat occupied" onclick="showProfile('John')">4</div>
+                        <div class="seat">5</div>
+                        <div class="seat">6</div>
+                        <div class="seat">7</div>
+                        <div class="seat occupied" onclick="showProfile('Alice')">8</div>
+                        <div class="seat">9</div>
+                        <div class="seat">10</div>
+                        <div class="seat">11</div>
+                        <div class="seat occupied" onclick="showProfile('Bob')">12</div>
+                        <div class="seat">12</div>
+                        <div class="seat">13</div>
+                        <div class="seat occupied" onclick="showProfile('John')">14</div>
+                        <div class="seat">15</div>
+                        <div class="seat">16</div>
+                        <div class="seat">17</div>
+                        <div class="seat occupied" onclick="showProfile('Alice')">18</div>
+                        <div class="seat">19</div>
+                        <div class="seat">20</div>
+                        <div class="seat">21</div>
+                        <div class="seat occupied" onclick="showProfile('Bob')">12</div>
+                      </div>
+                    </div>
+                              
+        
+                  <!-- <p class="text">
+                    You have selected <span id="count">0</span> rooms
+                    for the total price of $.
+                    <span id="total">0</span>
+                  </p> -->
+                </div>
+                <!-- End Table with stripped rows -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <!-- End #main -->
+
+    <!-- ======= Footer ======= -->
+    <footer id="footer" class="footer"></footer>
+    <!-- End Footer -->
+
+    <a
+      href="#"
+      class="back-to-top d-flex align-items-center justify-content-center"
+      ><i class="bi bi-arrow-up-short"></i
+    ></a>
+
+    <!-- Vendor JS Files -->
+    <script src="../static/vendor/apexcharts/apexcharts.min.js"></script>
+    <script src="../static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../static/vendor/chart.js/chart.umd.js"></script>
+    <script src="../static/vendor/echarts/echarts.min.js"></script>
+    <script src="../static/vendor/quill/quill.js"></script>
+    <script src="../static/vendor/simple-datatables/simple-datatables.js"></script>
+    <script src="../static/vendor/tinymce/tinymce.min.js"></script>
+    <script src="../static/vendor/php-email-form/validate.js"></script>
+
+    <!-- Template Main JS File -->
+    <script src="../static/js/main.js"></script>
+    <script src="../static/js/room-carousel.js"></script>
+  </body>
+</html>
+
+
+
+
+
+
