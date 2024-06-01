@@ -19,14 +19,14 @@ class Room(models.Model):
     room_status = models.BooleanField(default=False)
     
     def __str__(self):
-        return self.room_number
+        return f'{self.room_number} - {self.room_status}'
 
 class Guest(models.Model):
     name = models.CharField(max_length=50)
     email = models.EmailField()
     number = models.IntegerField()
-    room  = models.OneToOneField(Room, on_delete=models.CASCADE)
-    check_in = models.DateTimeField(auto_now=True)
+    room  = models.ForeignKey(Room, on_delete=models.CASCADE)
+    check_in = models.DateTimeField(auto_now_add=True)
     check_out = models.DateTimeField(null=True,blank=True)
     
     def __str__(self):
