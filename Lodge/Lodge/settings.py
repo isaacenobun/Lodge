@@ -124,4 +124,4 @@ STATICFILESDIRS = ['static',]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'LodgeApp.User'
+AUTH_USER_MODEL = 'LodgeApp.Staff'

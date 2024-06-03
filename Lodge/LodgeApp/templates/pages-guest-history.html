@@ -89,6 +89,14 @@
             </a>
           </li>
           <!-- End Search Icon-->
+          <li class="nav-item pe-3">
+            <a href="{% url 'check-in' %}">
+              <button type="button" class="btn btn-success">
+                <i class="bi bi-check-circle me-1"></i> Check-in a Guest
+              </button>
+            </a>
+          </li>
+          <!-- End Check in guest button-->
         </ul>
       </nav>
       <!-- End Icons Navigation -->
@@ -153,6 +161,14 @@
           </a>
         </li>
         <!-- End Guest History Nav -->
+
+        <li class="nav-item">
+          <a class="nav-link collapsed" href="{% url 'logout' %}">
+            <i class="bi bi-clock-history"></i>
+            <span>Log Out</span>
+          </a>
+        </li>
+        <!-- End Log Out Nav -->
       </ul>
     </aside>
     <!-- End Sidebar-->
@@ -195,13 +211,13 @@
                       <th data-type="date" data-format="YYYY/DD/MM">
                         Check-out Date
                       </th>
-                      <th scope="col">Status</th>
+                      <th scope="col">Room Status</th>
                     </tr>
                   </thead>
                   <tbody>
                     {% for guest in guests %}
                     <tr>
-                      <td>{{guest.id}}</td>
+                      <td>{{ forloop.counter }}</td>
                       <td>{{guest.name}}</td>
                       <td>{{guest.email}}</td>
                       <td>{{guest.number}}</td>
@@ -210,11 +226,13 @@
                       
                       {% if guest.check_out %}
                         <td>{{guest.check_out}}</td>
+                        <td><span class="badge bg-success">Vacant</span></td>
                         {% else %}
                         <td style='text-align: center;'>-</td>
+                        <td><span class="badge bg-warning">Occupied</span></td>
                       {% endif %}
                            
-                      <td><span class="badge bg-success">Vacant</span></td>
+                      
                     </tr>
                     {% endfor %}
                     <!-- <tr>

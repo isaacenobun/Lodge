@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
 
-    <title>Check-in</title>
+    <title>Sign In</title>
     <meta content="" name="description" />
     <meta content="" name="keywords" />
 
@@ -76,28 +76,15 @@
                   <div class="card-body">
                     <div class="pt-4 pb-2">
                       <h5 class="card-title text-center pb-0 fs-4">
-                        Check-in a guest
+                        Welcome
                       </h5>
                       <p class="text-center small">
-                        Fill in the guest information here
+                        Fill in your login details here
                       </p>
                     </div>
 
-                    <form class="row g-3 needs-validation" novalidate method="post" action="{% url 'check-in' %}">
+                    <form class="row g-3 needs-validation" novalidate method="post" action="{% url 'sign-in' %}">
                       {% csrf_token %}
-                      <div class="col-12">
-                        <label for="yourName" class="form-label">Name</label>
-                        <input
-                          type="text"
-                          name="name"
-                          class="form-control"
-                          id="yourName"
-                          required
-                        />
-                        <div class="invalid-feedback">
-                          Please, enter your name!
-                        </div>
-                      </div>
 
                       <div class="col-12">
                         <label for="yourEmail" class="form-label">Email</label>
@@ -108,40 +95,16 @@
                       </div>
 
                       <div class="col-12">
-                        <label for="inputNumber" class="form-label">Phone number</label>
-                        <input type="number" name="phone" class="form-control" id="" required/>
+                        <label for="" class="form-label">Password</label>
+                        <input type="password" name="password" class="form-control" id="" required/>
                         <div class="invalid-feedback">
-                          Please, enter a valid mobile number!
+                          Please, enter your password!
                         </div>
                       </div>
                       
                       <div class="col-12">
-                        <label for="inputNumber" class="form-label">Room number</label>
-                        <select name="room" class="form-control" id="" required>
-                          <option value="">Choose a room</option>
-                          {% for room in rooms %}
-                          <option value="{{room.id}}">{{room.room_number}}</option>
-                          {% endfor %}
-                        </select>
-                        <div class="invalid-feedback">
-                          Please, choose a room!
-                        </div>
-                      </div>
-
-                      <!-- <div class="col-12">
-                        <div class="form-check">
-                          <input class="form-check-input" name="terms" type="checkbox" value="" id="acceptTerms" required/>
-                          <label class="form-check-label" for="acceptTerms">I agree and accept the
-                            <a href="#">terms and conditions</a></label>
-                          <div class="invalid-feedback">
-                            You must agree before submitting.
-                          </div>
-                        </div>
-                      </div> -->
-
-                      <div class="col-12">
                         <button class="btn btn-primary w-100" type="submit">
-                          Check in
+                          Sign In
                         </button>
                       </div>
                       <!-- <div class="col-12">
