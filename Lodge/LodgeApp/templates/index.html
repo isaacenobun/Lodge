@@ -89,7 +89,7 @@
           </li>
           <!-- End Search Icon-->
           <li class="nav-item pe-3">
-            <a href="{% url 'check-in' %}">
+            <a href="{% url 'dashboard' %}"></a>
               <button type="button" class="btn btn-success">
                 <i class="bi bi-check-circle me-1"></i> Check-in a Guest
               </button>
@@ -115,7 +115,7 @@
         <!-- End Dashboard Nav -->
 
         <li class="nav-item">
-          <a class="nav-link collapsed" href="{% url 'rooms' %}">
+          <a class="nav-link collapsed" href="{% url 'dashboard' %}">
             <i class="bi bi-building"></i>
             <span>Room Carousel</span>
           </a>
@@ -155,7 +155,7 @@
         <!-- End Analytics Nav -->
 
         <li class="nav-item">
-          <a class="nav-link collapsed" href="{% url 'history' %}">
+          <a class="nav-link collapsed" href="{% url 'dashboard' %}">
             <i class="bi bi-clock-history"></i>
             <span>Guest History</span>
           </a>
@@ -362,7 +362,7 @@
                               >{{guest.email}}</a
                             >
                           </td>
-                          <td>{{guest.room.room_number}}</td>
+                          <td>{{guest.room}}</td>
                           <td>{{guest.number}}</td>
                         </tr>
                         <!-- <tr>

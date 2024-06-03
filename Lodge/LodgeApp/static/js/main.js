@@ -315,6 +315,21 @@
       }).observe(mainContainer);
     }, 200);
   }
+  // Add a click event listener to the checkboxes
+  $(document).ready(function () {
+    $('#guestTable input[type="checkbox"]').on('change', function () {
+      // Get the parent row (i.e., the <tr> element)
+      const row = $(this).closest('tr');
+
+      // Toggle the 'selected' class based on checkbox state
+      if ($(this).prop('checked')) {
+        row.addClass('.table-active'); // Highlight the row
+      } else {
+        row.removeClass('.table-active'); // Remove highlight
+      }
+    });
+  });
 
 })();
+
 
