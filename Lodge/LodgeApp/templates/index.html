@@ -12,7 +12,10 @@
 
     <!-- Favicons -->
     <link href="{% static 'img/favicon.png' %}" rel="icon" />
-    <link href="{% static 'img/apple-touch-icon.png' %}" rel="apple-touch-icon" />
+    <link
+      href="{% static 'img/apple-touch-icon.png' %}"
+      rel="apple-touch-icon"
+    />
 
     <!-- Google Fonts -->
     <link href="https://fonts.gstatic.com" rel="preconnect" />
@@ -35,8 +38,14 @@
       rel="stylesheet"
     />
     <link href="{% static 'vendor/quill/quill.snow.css' %}" rel="stylesheet" />
-    <link href="{% static 'vendor/quill/quill.bubble.css' %}" rel="stylesheet" />
-    <link href="{% static 'vendor/remixicon/remixicon.css' %}" rel="stylesheet" />
+    <link
+      href="{% static 'vendor/quill/quill.bubble.css' %}"
+      rel="stylesheet"
+    />
+    <link
+      href="{% static 'vendor/remixicon/remixicon.css' %}"
+      rel="stylesheet"
+    />
     <link
       href="{% static 'vendor/simple-datatables/style.css' %}"
       rel="stylesheet"
@@ -45,8 +54,13 @@
     <!-- Template Main CSS File -->
     <link href="{% static 'css/style.css' %}" rel="stylesheet" />
 
+    <!-- Vendor JS Files -->
     <script src="https://unpkg.com/feather-icons"></script>
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+
+    <!-- Test CSS and js File -->
+    <link href="{% static 'css/test.css' %}" rel="stylesheet" />
+    <script src="{% static 'js/tables.js' %}"></script>
   </head>
 
   <body>
@@ -170,7 +184,9 @@
         <h1>Dashboard</h1>
         <nav>
           <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+            <li class="breadcrumb-item">
+              <a href="{% url 'dashboard' %}">Home</a>
+            </li>
             <li class="breadcrumb-item active">Dashboard</li>
           </ol>
         </nav>
@@ -331,9 +347,13 @@
                       Recent Check-ins <span>| Today</span>
                     </h5>
 
-                    <table class="table table-borderless datatable">
+                    <table
+                      id="guestTable"
+                      class="table table-borderless datatable table-hover"
+                    >
                       <thead>
                         <tr>
+                          <th scope="col"></th>
                           <th scope="col">#</th>
                           <th scope="col">Guest</th>
                           <th scope="col">Email</th>
@@ -342,16 +362,21 @@
                         </tr>
                       </thead>
                       <tbody>
-                        
                         {% for guest in guests %}
-                      
+
                         <tr>
+                          <td class="text-center">
+                            <input
+                              class="form-check-input me-1"
+                              type="checkbox"
+                              value=""
+                              aria-label="..."
+                            />
+                          </td>
                           <th scope="row"><a href="#">{{guest.id}}</a></th>
                           <td>{{guest.name}}</td>
                           <td>
-                            <a href="mailto:{{guest.email}}"
-                              >{{guest.email}}</a
-                            >
+                            <a href="mailto:{{guest.email}}">{{guest.email}}</a>
                           </td>
                           <td>{{guest.room.room_number}}</td>
                           <td>{{guest.number}}</td>
@@ -458,6 +483,51 @@
                         {% endfor %}
                       </tbody>
                     </table>
+                    <div class="text-center">
+                      <button
+                        id="table-checkout"
+                        type="button"
+                        class="btn btn-outline-danger"
+                        data-bs-toggle="modal"
+                        data-bs-target="#verticalycentered"
+                      >
+                        Check-out
+                      </button>
+                      <div
+                        class="modal fade"
+                        id="verticalycentered"
+                        tabindex="-1"
+                      >
+                        <div class="modal-dialog modal-dialog-centered">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title">Confirm Checkout</h5>
+                              <button
+                                type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Close"
+                              ></button>
+                            </div>
+                            <div class="modal-body">
+                              <div id="guestlist-modal"></div>
+                            </div>
+                            <div class="modal-footer">
+                              <button
+                                type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal"
+                              >
+                                Close
+                              </button>
+                              <button type="button" class="btn btn-primary">
+                                Save changes
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -588,6 +658,7 @@
     ></a>
 
     <!-- Vendor JS Files -->
+    <script src="{% static 'js/tables.js' %}"></script>
     <script src="{% static 'vendor/apexcharts/apexcharts.min.js' %}"></script>
     <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'vendor/chart.js/chart.umd.js' %}"></script>
