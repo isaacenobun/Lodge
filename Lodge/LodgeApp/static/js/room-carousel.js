@@ -31,28 +31,28 @@ function updateUI(selectedSuite) {
   }
 }
 
-// // Movie Select Event
-// movieSelect.addEventListener('change', e => {
-//   ticketPrice = +e.target.value;
-//   updateUI();
-// });
+// Movie Select Event
+movieSelect.addEventListener('change', e => {
+  ticketPrice = +e.target.value;
+  updateUI();
+});
 
-// // Seat click event
-// container.addEventListener('click', e => {
-//   if (e.target.classList.contains('seat') && !e.target.classList.contains('occupied')) {
-//     e.target.classList.toggle('selected');
-//   }
-//   updateUI();
-// });
+// Seat click event
+container.addEventListener('click', e => {
+  if (e.target.classList.contains('seat') && !e.target.classList.contains('occupied')) {
+    e.target.classList.toggle('selected');
+  }
+  updateUI();
+});
 
 
-// function showProfile(name) {
-//   // Replace this with your logic to load the profile page dynamically
-//   // For demonstration purposes, we'll just navigate to a different URL
-//   // based on the person's name.
-//   const profileUrl = `${name}.html`;
-//   window.location.href = profileUrl;
-// }
+function showProfile(name) {
+  // Replace this with your logic to load the profile page dynamically
+  // For demonstration purposes, we'll just navigate to a different URL
+  // based on the person's name.
+  const profileUrl = `${name}.html`;
+  window.location.href = profileUrl;
+}
 
 
 
