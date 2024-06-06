@@ -17,6 +17,7 @@ class Room(models.Model):
     
     room_number = models.CharField(max_length=2, choices=ROOM_NUMBERS, unique=True)
     room_status = models.BooleanField(default=False)
+    room_price = models.IntegerField(default=10000)
     
     def __str__(self):
         return f'{self.room_number} - {self.room_status}'
@@ -42,3 +43,10 @@ class Log(models.Model):
     
     def __str__(self):
         return f'{self.check_in_action} {self.check_out_action}'
+    
+class Revenue(models.Model):
+    revenue = models.DecimalField(max_digits=10, decimal_places=1)
+    guest_check_out = models.ForeignKey(Guest, on_delete=models.PROTECT)
+    
+    def __str__(self):
+        return f'{self.revenue}'
