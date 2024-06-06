@@ -1,4 +1,5 @@
 {% load static %}
+{% load custom_filters %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -47,6 +48,10 @@
 
     <script src="https://unpkg.com/feather-icons"></script>
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+
+     <!-- Test CSS and js File -->
+     <!-- <link href="{% static 'css/test.css' %}" rel="stylesheet" /> -->
+     <script src="{% static 'js/tables.js' %}"></script>
   </head>
 
   <body>
@@ -89,7 +94,7 @@
           </li>
           <!-- End Search Icon-->
           <li class="nav-item pe-3">
-            <a href="{% url 'dashboard' %}"></a>
+            <a href="{% url 'check-in' %}">
               <button type="button" class="btn btn-success">
                 <i class="bi bi-check-circle me-1"></i> Check-in a Guest
               </button>
@@ -115,7 +120,7 @@
         <!-- End Dashboard Nav -->
 
         <li class="nav-item">
-          <a class="nav-link collapsed" href="{% url 'dashboard' %}">
+          <a class="nav-link collapsed" href="{% url 'rooms' %}">
             <i class="bi bi-building"></i>
             <span>Room Carousel</span>
           </a>
@@ -155,7 +160,7 @@
         <!-- End Analytics Nav -->
 
         <li class="nav-item">
-          <a class="nav-link collapsed" href="{% url 'dashboard' %}">
+          <a class="nav-link collapsed" href="{% url 'history' %}">
             <i class="bi bi-clock-history"></i>
             <span>Guest History</span>
           </a>
@@ -212,7 +217,7 @@
                   </div>
 
                   <div class="card-body">
-                    <h5 class="card-title">Guests <span>| Today</span></h5>
+                    <h5 class="card-title">Active Guests <span>| Today</span></h5>
 
                     <div class="d-flex align-items-center">
                       <div
@@ -316,160 +321,106 @@
               <!-- End Customers Card -->
 
               <!-- Recent Check-ins -->
-              <div class="col-12">
-                <div class="card recent-sales overflow-auto">
-                  <div class="filter">
-                    <a class="icon" href="#" data-bs-toggle="dropdown"
-                      ><i class="bi bi-three-dots"></i
-                    ></a>
-                    <ul
-                      class="dropdown-menu dropdown-menu-end dropdown-menu-arrow"
-                    >
-                      <li class="dropdown-header text-start">
-                        <h6>Filter</h6>
-                      </li>
-
-                      <li><a class="dropdown-item" href="#">Today</a></li>
-                      <li><a class="dropdown-item" href="#">This Month</a></li>
-                      <li><a class="dropdown-item" href="#">This Year</a></li>
-                    </ul>
-                  </div>
-
-                  <div class="card-body">
-                    <h5 class="card-title">
-                      Recent Check-ins <span>| Today</span>
-                    </h5>
-
-                    <table class="table table-borderless datatable">
-                      <thead>
-                        <tr>
-                          <th scope="col">#</th>
-                          <th scope="col">Guest</th>
-                          <th scope="col">Email</th>
-                          <th scope="col">Room</th>
-                          <th scope="col">Mobile</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        
-                        {% for guest in guests %}
-                      
-                        <tr>
-                          <th scope="row"><a href="#">{{ forloop.counter }}</a></th>
-                          <td>{{guest.name}}</td>
-                          <td>
-                            <a href="mailto:{{guest.email}}"
-                              >{{guest.email}}</a
-                            >
-                          </td>
-                          <td>{{guest.room}}</td>
-                          <td>{{guest.number}}</td>
-                        </tr>
-                        <!-- <tr>
-                          <th scope="row"><a href="#">#2147</a></th>
-                          <td>Bridie Kessler</td>
-                          <td>
-                            <a href="mailto:example@example.com"
-                              >bKessler@gmail.com</a
-                            >
-                          </td>
-                          <td>9</td>
-                          <td>08123456789</td>
-                        </tr>
-                        <tr>
-                          <th scope="row"><a href="#">#2049</a></th>
-                          <td>Ashleigh Langosh</td>
-                          <td>
-                            <a href="mailto:example@example.com"
-                              >ALangosh@gmail.com</a
-                            >
-                          </td>
-                          <td>3</td>
-                          <td>08123456789</td>
-                        </tr>
-                        <tr>
-                          <th scope="row"><a href="#">#644</a></th>
-                          <td>Angus Grady</td>
-                          <td>
-                            <a href="mailto:example@example.com"
-                              >Agrady@gmail.com</a
-                            >
-                          </td>
-                          <td>7</td>
-                          <td>08123456789</td>
-                        </tr>
-                        <tr>
-                          <th scope="row"><a href="#">#264</a></th>
-                          <td>Raheem Lehner</td>
-                          <td>
-                            <a href="mailto:example@example.com"
-                              >Rlehner@gmail.com</a
-                            >
-                          </td>
-                          <td>6</td>
-                          <td>08123456789</td>
-                        </tr>
-                        <tr>
-                          <th scope="row"><a href="#">#2457</a></th>
-                          <td>Brandon Jacob</td>
-                          <td>
-                            <a href="mailto:example@example.com"
-                              >bJacob@gmail.com</a
-                            >
-                          </td>
-                          <td>4</td>
-                          <td>08123456789</td>
-                        </tr>
-                        <tr>
-                          <th scope="row"><a href="#">#2147</a></th>
-                          <td>Bridie Kessler</td>
-                          <td>
-                            <a href="mailto:example@example.com"
-                              >bKessler@gmail.com</a
-                            >
-                          </td>
-                          <td>9</td>
-                          <td>08123456789</td>
-                        </tr>
-                        <tr>
-                          <th scope="row"><a href="#">#2049</a></th>
-                          <td>Ashleigh Langosh</td>
-                          <td>
-                            <a href="mailto:example@example.com"
-                              >ALangosh@gmail.com</a
-                            >
-                          </td>
-                          <td>3</td>
-                          <td>08123456789</td>
-                        </tr>
-                        <tr>
-                          <th scope="row"><a href="#">#644</a></th>
-                          <td>Angus Grady</td>
-                          <td>
-                            <a href="mailto:example@example.com"
-                              >Agrady@gmail.com</a
-                            >
-                          </td>
-                          <td>7</td>
-                          <td>08123456789</td>
-                        </tr>
-                        <tr>
-                          <th scope="row"><a href="#">#264</a></th>
-                          <td>Raheem Lehner</td>
-                          <td>
-                            <a href="mailto:example@example.com"
-                              >Rlehner@gmail.com</a
-                            >
-                          </td>
-                          <td>6</td>
-                          <td>08123456789</td>
-                        </tr> -->
-                        {% endfor %}
-                      </tbody>
-                    </table>
-                  </div>
+              <form action="{% url 'check-out' %}" method="post">
+                {% csrf_token %}
+                <div class="col-12">
+                    <div class="card recent-sales overflow-auto">
+                        <div class="filter">
+                            <a class="icon" href="#" data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                                <li class="dropdown-header text-start">
+                                    <h6>Filter</h6>
+                                </li>
+                                <li><a class="dropdown-item" href="#">Today</a></li>
+                                <li><a class="dropdown-item" href="#">This Month</a></li>
+                                <li><a class="dropdown-item" href="#">This Year</a></li>
+                            </ul>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                Recent Check-ins <span>| Today</span>
+                            </h5>
+                            <table class="table table-borderless datatable">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">X</th>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Guest</th>
+                                        <th scope="col">Email</th>
+                                        <th scope="col">Room</th>
+                                        <th scope="col">Mobile</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for guest in guests %}
+                                    <tr>
+                                        <td class="text-center">
+                                            <input
+                                                class="form-check-input me-1"
+                                                type="checkbox"
+                                                name="guest_ids" 
+                                                value="{{guest.id}}"
+                                                aria-label="..."
+                                            />
+                                        </td>
+                                        <th scope="row"><a href="#">{{ forloop.counter }}</a></th>
+                                        <td>{{guest.name}}</td>
+                                        <td>
+                                            <a href="mailto:{{guest.email}}">{{guest.email}}</a>
+                                        </td>
+                                        <td>{{guest.room.room_number}}</td>
+                                        <td>{{guest.number}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            <div class="text-center">
+                                <button
+                                    id="table-checkout"
+                                    type="button"
+                                    class="btn btn-outline-danger"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#verticalycentered"
+                                >
+                                    Check-out
+                                </button>
+                                <div class="modal fade" id="verticalycentered" tabindex="-1">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Confirm Checkout</h5>
+                                                <button
+                                                    type="button"
+                                                    class="btn-close"
+                                                    data-bs-dismiss="modal"
+                                                    aria-label="Close"
+                                                ></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div id="guestlist-modal"></div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-secondary"
+                                                    data-bs-dismiss="modal"
+                                                >
+                                                    Close
+                                                </button>
+                                                <button type="submit" class="btn btn-primary">
+                                                    Save changes
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
+            </form>
               <!-- End Recent Check-ins -->
             </div>
           </div>
@@ -501,12 +452,12 @@
 
                 <div class="activity">
                   <div class="activity-item d-flex">
-                    <div class="activite-label">{{log.timestamp | time:'P'}}</div>
+                    <div class="activite-label">{{log.timestamp | add_one_hour | time:'P'}}</div>
                     <i
                       class="bi bi-circle-fill activity-badge text-success align-self-start"
                     ></i>
                     <div class="activity-content">
-                      {{log.action}}
+                      {{log.check_in_action}}
                     </div>
                   </div>
                   <!-- End activity item-->

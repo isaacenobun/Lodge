@@ -104,8 +104,9 @@
     <!-- ======= Sidebar ======= -->
     <aside id="sidebar" class="sidebar">
       <ul class="sidebar-nav" id="sidebar-nav">
+        <li class="nav-heading">Pages</li>
         <li class="nav-item">
-          <a class="nav-link collapsed" href="index.html">
+          <a class="nav-link" href="{% url 'dashboard' %}">
             <i class="bi bi-grid"></i>
             <span>Dashboard</span>
           </a>
@@ -113,7 +114,7 @@
         <!-- End Dashboard Nav -->
 
         <li class="nav-item">
-          <a class="nav-link collapsed" href="pages-room-carousel.html">
+          <a class="nav-link collapsed" href="{% url 'rooms' %}">
             <i class="bi bi-building"></i>
             <span>Room Carousel</span>
           </a>
@@ -121,7 +122,7 @@
         <!-- End Room-Carousel Nav -->
 
         <li class="nav-item">
-          <a class="nav-link collapsed" href="pages-revenue.html">
+          <a class="nav-link collapsed" href="{% url 'dashboard' %}">
             <i class="bi bi-currency-dollar"></i>
             <span>Revenue</span>
           </a>
@@ -129,7 +130,7 @@
         <!-- End Revenue Nav -->
 
         <li class="nav-item">
-          <a class="nav-link collapsed" href="pages-check-in-out.html">
+          <a class="nav-link collapsed" href="{% url 'dashboard' %}">
             <i class="bi bi-clipboard-check"></i>
             <span>Check-in</span>
           </a>
@@ -137,7 +138,7 @@
         <!-- End Check-in Nav -->
 
         <li class="nav-item">
-          <a class="nav-link collapsed" href="pages-check-in-out.html">
+          <a class="nav-link collapsed" href="{% url 'dashboard' %}">
             <i class="bi bi-clipboard-x"></i>
             <span>Check-out</span>
           </a>
@@ -145,7 +146,7 @@
         <!-- End Check-out Nav -->
 
         <li class="nav-item">
-          <a class="nav-link collapsed" href="pages-analytics.html">
+          <a class="nav-link collapsed" href="{% url 'dashboard' %}">
             <i class="bi bi-bar-chart-line"></i>
             <span>Analytics</span>
           </a>
@@ -153,7 +154,7 @@
         <!-- End Analytics Nav -->
 
         <li class="nav-item">
-          <a class="nav-link" href="pages-guest-history.html">
+          <a class="nav-link collapsed" href="{% url 'history' %}">
             <i class="bi bi-clock-history"></i>
             <span>Guest History</span>
           </a>
@@ -167,6 +168,7 @@
           </a>
         </li>
         <!-- End Log Out Nav -->
+        
       </ul>
     </aside>
     <!-- End Sidebar-->
@@ -213,6 +215,7 @@
                     </tr>
                   </thead>
                   <tbody>
+                    {% for guest in guests %}
                     <tr>
                       <td>{{ forloop.counter }}</td>
                       <td>{{guest.name}}</td>
@@ -223,14 +226,18 @@
                       
                       {% if guest.check_out %}
                         <td>{{guest.check_out}}</td>
-                        <td><span class="badge bg-success">Vacant</span></td>
                         {% else %}
                         <td style='text-align: center;'>-</td>
-                        <td><span class="badge bg-warning">Occupied</span></td>
                       {% endif %}
 
+                      {% if guest.room.room_status %}
+                        <td><span class="badge bg-warning">Room Occupied</span></td>
+                        {% else %}
+                        <td><span class="badge bg-success">Room Vacant</span></td>
+                      {% endif %}
                     </tr>
-                    <tr>
+                    {% endfor %}
+                    {% comment %} <tr>
                       <td>34</td>
                       <td>Ade Bayo</td>
                       <td>adebayo@gmail.com</td>
@@ -377,7 +384,7 @@
                       <td>
                         <span class="badge bg-danger-subtle">Occupied-V</span>
                       </td>
-                    </tr>
+                    </tr> {% endcomment %}
                   </tbody>
                 </table>
                 <!-- End Table with stripped rows -->

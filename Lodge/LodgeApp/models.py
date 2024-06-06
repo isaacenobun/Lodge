@@ -15,7 +15,7 @@ class Staff(AbstractUser):
 class Room(models.Model):
     ROOM_NUMBERS = [(str(num),str(num)) for num in range(1,21)]
     
-    room_number = models.CharField(max_length=2, choices=ROOM_NUMBERS)
+    room_number = models.CharField(max_length=2, choices=ROOM_NUMBERS, unique=True)
     room_status = models.BooleanField(default=False)
     
     def __str__(self):
@@ -35,9 +35,10 @@ class Guest(models.Model):
     
 class Log(models.Model):
     staff = models.ForeignKey(Staff, on_delete=models.CASCADE)
-    action = models.CharField(max_length=300)
+    check_in_action = models.CharField(max_length=300, blank=True)
+    check_out_action = models.CharField(max_length=300, blank=True)
     check_status = models.BooleanField(default=False)
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField()
     
     def __str__(self):
-        return self.action
+        return f'{self.check_in_action} {self.check_out_action}'
