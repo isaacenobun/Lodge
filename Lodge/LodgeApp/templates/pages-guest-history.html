@@ -163,12 +163,11 @@
 
         <li class="nav-item">
           <a class="nav-link collapsed" href="{% url 'logout' %}">
-            <i class="bi bi-clock-history"></i>
+            <i class="bi bi-box-arrow-left"></i>
             <span>Log Out</span>
           </a>
         </li>
         <!-- End Log Out Nav -->
-        
       </ul>
     </aside>
     <!-- End Sidebar-->
@@ -221,23 +220,25 @@
                       <td>{{guest.name}}</td>
                       <td>{{guest.email}}</td>
                       <td>{{guest.number}}</td>
-                      <td style='text-align: center;'>{{guest.room.room_number}}</td>
+                      <td style="text-align: center">
+                        {{guest.room.room_number}}
+                      </td>
                       <td>{{guest.check_in}}</td>
-                      
-                      {% if guest.check_out %}
-                        <td>{{guest.check_out}}</td>
-                        {% else %}
-                        <td style='text-align: center;'>-</td>
-                      {% endif %}
 
-                      {% if guest.room.room_status %}
-                        <td><span class="badge bg-warning">Room Occupied</span></td>
-                        {% else %}
-                        <td><span class="badge bg-success">Room Vacant</span></td>
+                      {% if guest.check_out %}
+                      <td>{{guest.check_out}}</td>
+                      {% else %}
+                      <td style="text-align: center">-</td>
+                      {% endif %} {% if guest.room.room_status %}
+                      <td>
+                        <span class="badge bg-warning">Room Occupied</span>
+                      </td>
+                      {% else %}
+                      <td><span class="badge bg-success">Room Vacant</span></td>
                       {% endif %}
                     </tr>
-                    {% endfor %}
-                    {% comment %} <tr>
+                    {% endfor %} {% comment %}
+                    <tr>
                       <td>34</td>
                       <td>Ade Bayo</td>
                       <td>adebayo@gmail.com</td>
@@ -384,7 +385,8 @@
                       <td>
                         <span class="badge bg-danger-subtle">Occupied-V</span>
                       </td>
-                    </tr> {% endcomment %}
+                    </tr>
+                    {% endcomment %}
                   </tbody>
                 </table>
                 <!-- End Table with stripped rows -->
