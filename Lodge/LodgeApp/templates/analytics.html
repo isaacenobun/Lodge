@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -9,8 +11,8 @@
     <meta content="" name="keywords" />
 
     <!-- Favicons -->
-    <link href="../static/img/favicon.png" rel="icon" />
-    <link href="../static/img/apple-touch-icon.png" rel="apple-touch-icon" />
+    <link href="{% static 'img/favicon.png' %}" rel="icon" />
+    <link href="{% static 'img/apple-touch-icon.png' %}" rel="apple-touch-icon" />
 
     <!-- Google Fonts -->
     <link href="https://fonts.gstatic.com" rel="preconnect" />
@@ -21,27 +23,27 @@
 
     <!-- Vendor CSS Files -->
     <link
-      href="../static/vendor/bootstrap/css/bootstrap.min.css"
+      href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}"
       rel="stylesheet"
     />
     <link
-      href="../static/vendor/bootstrap-icons/bootstrap-icons.css"
+      href="{% static 'vendor/bootstrap-icons/bootstrap-icons.css' %}"
       rel="stylesheet"
     />
     <link
-      href="../static/vendor/boxicons/css/boxicons.min.css"
+      href="{% static 'vendor/boxicons/css/boxicons.min.css' %}"
       rel="stylesheet"
     />
-    <link href="../static/vendor/quill/quill.snow.css" rel="stylesheet" />
-    <link href="../static/vendor/quill/quill.bubble.css" rel="stylesheet" />
-    <link href="../static/vendor/remixicon/remixicon.css" rel="stylesheet" />
+    <link href="{% static 'vendor/quill/quill.snow.css' %}" rel="stylesheet" />
+    <link href="{% static 'vendor/quill/quill.bubble.css' %}" rel="stylesheet" />
+    <link href="{% static 'vendor/remixicon/remixicon.css' %}" rel="stylesheet" />
     <link
-      href="../static/vendor/simple-datatables/style.css"
+      href="{% static 'vendor/simple-datatables/style.css' %}"
       rel="stylesheet"
     />
 
     <!-- Template Main CSS File -->
-    <link href="../static/css/style.css" rel="stylesheet" />
+    <link href="{% static 'css/style.css" rel="stylesheet' %}" />
 
     <script src="https://unpkg.com/feather-icons"></script>
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
@@ -51,8 +53,8 @@
     <!-- ======= Header ======= -->
     <header id="header" class="header fixed-top d-flex align-items-center">
       <div class="d-flex align-items-center justify-content-between">
-        <a href="index.html" class="logo d-flex align-items-center">
-          <img src="../static/img/logo.png" alt="" />
+        <a href="{% url 'dashboard' %}" class="logo d-flex align-items-center">
+          <img src="{% static 'img/logo.png' %}" alt="" />
           <span class="d-none d-lg-block">Placeholder</span>
         </a>
         <i class="bi bi-list toggle-sidebar-btn"></i>
@@ -87,7 +89,7 @@
           </li>
           <!-- End Search Icon-->
           <li class="nav-item pe-3">
-            <a href="pages-check-in-out.html">
+            <a href="{% url 'check-in' %}">
               <button type="button" class="btn btn-success">
                 <i class="bi bi-check-circle me-1"></i> Check-in a Guest
               </button>
@@ -104,7 +106,7 @@
     <aside id="sidebar" class="sidebar">
       <ul class="sidebar-nav" id="sidebar-nav">
         <li class="nav-item">
-          <a class="nav-link collapsed" href="index.html">
+          <a class="nav-link collapsed" href="{% url 'dashboard' %}">
             <i class="bi bi-grid"></i>
             <span>Dashboard</span>
           </a>
@@ -112,7 +114,7 @@
         <!-- End Dashboard Nav -->
 
         <li class="nav-item">
-          <a class="nav-link collapsed" href="pages-room-carousel.html">
+          <a class="nav-link collapsed" href="{% url 'rooms' %}">
             <i class="bi bi-building"></i>
             <span>Room Carousel</span>
           </a>
@@ -120,7 +122,7 @@
         <!-- End Room-Carousel Nav -->
 
         <li class="nav-item">
-          <a class="nav-link collapsed" href="pages-revenue.html">
+          <a class="nav-link collapsed" href="{% url 'analytics' %}">
             <i class="bi bi-currency-dollar"></i>
             <span>Revenue</span>
           </a>
@@ -128,7 +130,7 @@
         <!-- End Revenue Nav -->
 
         <li class="nav-item">
-          <a class="nav-link collapsed" href="pages-check-in-out.html">
+          <a class="nav-link collapsed" href="#">
             <i class="bi bi-clipboard-check"></i>
             <span>Check-in</span>
           </a>
@@ -136,7 +138,7 @@
         <!-- End Check-in Nav -->
 
         <li class="nav-item">
-          <a class="nav-link collapsed" href="pages-check-in-out.html">
+          <a class="nav-link collapsed" href="#">
             <i class="bi bi-clipboard-x"></i>
             <span>Check-out</span>
           </a>
@@ -144,7 +146,7 @@
         <!-- End Check-out Nav -->
 
         <li class="nav-item">
-          <a class="nav-link" href="pages-analytics.html">
+          <a class="nav-link" href="#">
             <i class="bi bi-bar-chart-line"></i>
             <span>Analytics</span>
           </a>
@@ -152,7 +154,7 @@
         <!-- End Analytics Nav -->
 
         <li class="nav-item">
-          <a class="nav-link collapsed" href="pages-guest-history.html">
+          <a class="nav-link collapsed" href="{% url 'history' %}">
             <i class="bi bi-clock-history"></i>
             <span>Guest History</span>
           </a>
@@ -167,7 +169,7 @@
         <h1>Analytics</h1>
         <nav>
           <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
             <li class="breadcrumb-item active">Analytics</li>
           </ol>
         </nav>
@@ -720,19 +722,19 @@
     ></a>
 
     <!-- Bar chart JS Files -->
-    <script src="../static/js/charts.js"></script>
+    <script src="{% static 'js/charts.js' %}"></script>
 
     <!-- Vendor JS Files -->
-    <script src="../static/vendor/apexcharts/apexcharts.min.js"></script>
-    <script src="../static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="../static/vendor/chart.js/chart.umd.js"></script>
-    <script src="../static/vendor/echarts/echarts.min.js"></script>
-    <script src="../static/vendor/quill/quill.js"></script>
-    <script src="../static/vendor/simple-datatables/simple-datatables.js"></script>
-    <script src="../static/vendor/tinymce/tinymce.min.js"></script>
-    <script src="../static/vendor/php-email-form/validate.js"></script>
+    <script src="{% static 'vendor/apexcharts/apexcharts.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'vendor/chart.js/chart.umd.js' %}"></script>
+    <script src="{% static 'vendor/echarts/echarts.min.js' %}"></script>
+    <script src="{% static 'vendor/quill/quill.js' %}"></script>
+    <script src="{% static 'vendor/simple-datatables/simple-datatables.js' %}"></script>
+    <script src="{% static 'vendor/tinymce/tinymce.min.js' %}"></script>
+    <script src="{% static 'vendor/php-email-form/validate.js' %}"></script>
 
     <!-- Template Main JS File -->
-    <script src="../static/js/main.js"></script>
+    <script src="{% static 'js/main.js' %}"></script>
   </body>
 </html>
