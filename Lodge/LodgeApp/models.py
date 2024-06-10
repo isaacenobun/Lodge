@@ -14,10 +14,15 @@ class Staff(AbstractUser):
     
 class Room(models.Model):
     ROOM_NUMBERS = [(str(num),str(num)) for num in range(1,21)]
+    ROOM_TYPES = [('regular', 'Regular'),
+                   ('business', 'Business'),
+                   ('executive', 'Executive')
+                  ]
     
     room_number = models.CharField(max_length=2, choices=ROOM_NUMBERS, unique=True)
     room_status = models.BooleanField(default=False)
     room_price = models.IntegerField(default=10000)
+    room_type = models.CharField(max_length=50, choices=ROOM_TYPES, default='Regular')
     
     def __str__(self):
         return f'{self.room_number} - {self.room_status}'
@@ -50,3 +55,9 @@ class Revenue(models.Model):
     
     def __str__(self):
         return f'{self.revenue}'
+    
+class CheckIns(models.Model):
+    time = models.DateField(auto_now_add=True)
+    
+    def __str__(self):
+        return self.time

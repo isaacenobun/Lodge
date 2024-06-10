@@ -199,7 +199,7 @@
               <!-- Guest Card -->
               <div class="col-xxl-4 col-md-6">
                 <div class="card info-card sales-card">
-                  <div class="filter">
+                  {% comment %} <div class="filter">
                     <a class="icon" href="#" data-bs-toggle="dropdown"
                       ><i class="bi bi-three-dots"></i
                     ></a>
@@ -214,10 +214,10 @@
                       <li><a class="dropdown-item" href="#">This Month</a></li>
                       <li><a class="dropdown-item" href="#">This Year</a></li>
                     </ul>
-                  </div>
+                  </div> {% endcomment %}
 
                   <div class="card-body">
-                    <h5 class="card-title">Active Guests <span>| Today</span></h5>
+                    <h5 class="card-title">Active Guests <!--<span>| Today</span>--></h5>
 
                     <div class="d-flex align-items-center">
                       <div
@@ -226,7 +226,7 @@
                         <i class="bi bi-person"></i>
                       </div>
                       <div class="ps-3">
-                        <h6>{{guests | length}}</h6>
+                        <h6>{{active_guests | length}}</h6>
                         <span class="text-success small pt-1 fw-bold">12%</span>
                         <span class="text-muted small pt-2 ps-1">increase</span>
                       </div>
@@ -239,7 +239,7 @@
               <!-- Visitor Card -->
               <div class="col-xxl-4 col-md-6">
                 <div class="card info-card revenue-card">
-                  <div class="filter">
+                  {% comment %} <div class="filter">
                     <a class="icon" href="#" data-bs-toggle="dropdown"
                       ><i class="bi bi-three-dots"></i
                     ></a>
@@ -254,11 +254,11 @@
                       <li><a class="dropdown-item" href="#">This Month</a></li>
                       <li><a class="dropdown-item" href="#">This Year</a></li>
                     </ul>
-                  </div>
+                  </div> {% endcomment %}
 
                   <div class="card-body">
                     <h5 class="card-title">
-                      Visitors <span>| This Month</span>
+                       Total Guests {% comment %}<span>| This Month</span> {% endcomment %}
                     </h5>
 
                     <div class="d-flex align-items-center">
@@ -268,7 +268,7 @@
                         <i class="bi bi-person-plus"></i>
                       </div>
                       <div class="ps-3">
-                        <h6>{{guests | length}}</h6>
+                        <h6>{{total_guests | length}}</h6>
                         <span class="text-success small pt-1 fw-bold">8%</span>
                         <span class="text-muted small pt-2 ps-1">increase</span>
                       </div>
@@ -281,7 +281,7 @@
               <!-- Customers Card -->
               <div class="col-xxl-4 col-xl-12">
                 <div class="card info-card customers-card">
-                  <div class="filter">
+                  {% comment %} <div class="filter">
                     <a class="icon" href="#" data-bs-toggle="dropdown"
                       ><i class="bi bi-three-dots"></i
                     ></a>
@@ -296,11 +296,11 @@
                       <li><a class="dropdown-item" href="#">This Month</a></li>
                       <li><a class="dropdown-item" href="#">This Year</a></li>
                     </ul>
-                  </div>
+                  </div> {% endcomment %}
 
                   <div class="card-body">
                     <h5 class="card-title">
-                      Customers <span>| This Year</span>
+                       Available Rooms {% comment %}<span>| This Year</span> {% endcomment %}
                     </h5>
 
                     <div class="d-flex align-items-center">
@@ -310,7 +310,7 @@
                         <i class="bi bi-people"></i>
                       </div>
                       <div class="ps-3">
-                        <h6>{{guests | length}}</h6>
+                        <h6>{{rooms | length}}</h6>
                         <span class="text-danger small pt-1 fw-bold">12%</span>
                         <span class="text-muted small pt-2 ps-1">decrease</span>
                       </div>
@@ -354,7 +354,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for guest in guests %}
+                                    {% for guest in active_guests %}
                                     <tr>
                                         <td class="text-center">
                                             <input
@@ -453,9 +453,17 @@
                 <div class="activity">
                   <div class="activity-item d-flex">
                     <div class="activite-label">{{log.timestamp | add_one_hour | time:'P'}}</div>
-                    <i
-                      class="bi bi-circle-fill activity-badge text-success align-self-start"
-                    ></i>
+                    
+                    {% if log.check_status %}
+                        <i
+                        class="bi bi-circle-fill activity-badge text-success align-self-start"
+                      ></i>
+                      {% else %}
+                        <i
+                        class="bi bi-circle-fill activity-badge text-danger align-self-start"
+                      ></i>
+                    {% endif %}
+                      
                     <div class="activity-content">
                       {{log.check_in_action}}
                     </div>

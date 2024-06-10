@@ -1,8 +1,9 @@
-
 document.addEventListener("DOMContentLoaded", () => {
+  console.log(checkInData);
   new ApexCharts(document.querySelector("#barChart"), {
     series: [{
-      data: [400, 430, 300, 470, 400, 430, 448, 470, 400, 430, 448, 470,]
+      name: "Check-ins",
+      data: checkInData
     }],
     chart: {
       type: 'bar',
