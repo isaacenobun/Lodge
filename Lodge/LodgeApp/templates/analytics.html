@@ -43,7 +43,7 @@
     />
 
     <!-- Template Main CSS File -->
-    <link href="{% static 'css/style.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/style.css" rel="stylesheet' %}" />
 
     <script src="https://unpkg.com/feather-icons"></script>
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
@@ -202,7 +202,7 @@
                   </div>
 
                   <div class="card-body">
-                    <h5 class="card-title">Total Revenue <span>| Today</span></h5>
+                    <h5 class="card-title">T.R <span>| Today</span></h5>
 
                     <div class="d-flex align-items-center">
                       <div
@@ -211,7 +211,7 @@
                         <i class="bi bi-person"></i>
                       </div>
                       <div class="ps-3">
-                        <h6>N{{total_revenue|stringformat:".1f"}}K</h6>
+                        <h6>50</h6>
                         <span class="text-success small pt-1 fw-bold">12%</span>
                         <span class="text-muted small pt-2 ps-1">increase</span>
                       </div>
@@ -243,7 +243,7 @@
 
                   <div class="card-body">
                     <h5 class="card-title">
-                      Weekly Revenue <span></span>
+                      Revenue <span>| This Month</span>
                     </h5>
 
                     <div class="d-flex align-items-center">
@@ -253,7 +253,7 @@
                         <i class="bi bi-person-plus"></i>
                       </div>
                       <div class="ps-3">
-                        <h6>N{{weekly_revenue|stringformat:".1f"}}K</h6>
+                        <h6>84</h6>
                         <span class="text-success small pt-1 fw-bold">8%</span>
                         <span class="text-muted small pt-2 ps-1">increase</span>
                       </div>
@@ -285,7 +285,7 @@
 
                   <div class="card-body">
                     <h5 class="card-title">
-                      Total Guests <span></span>
+                      Total guests <span>| This Year</span>
                     </h5>
 
                     <div class="d-flex align-items-center">
@@ -295,7 +295,7 @@
                         <i class="bi bi-people"></i>
                       </div>
                       <div class="ps-3">
-                        <h6>{{guests | length}}</h6>
+                        <h6>1244</h6>
                         <span class="text-danger small pt-1 fw-bold">12%</span>
                         <span class="text-muted small pt-2 ps-1">decrease</span>
                       </div>
@@ -327,7 +327,7 @@
 
                   <div class="card-body">
                     <h5 class="card-title">
-                      Check-in Rate <span>| Today</span>
+                      Check-in rate <span>| Today</span>
                     </h5>
 
                     <div class="d-flex align-items-center">
@@ -337,7 +337,7 @@
                         <i class="bi bi-person"></i>
                       </div>
                       <div class="ps-3">
-                        <h6>{{check_in_rate}} / week</h6>
+                        <h6>50</h6>
                         <span class="text-success small pt-1 fw-bold">12%</span>
                         <span class="text-muted small pt-2 ps-1">increase</span>
                       </div>
@@ -368,7 +368,7 @@
                   </div>
 
                   <div class="card-body">
-                    <h5 class="card-title">Customer Growth <span></span></h5>
+                    <h5 class="card-title">Growth <span>| This Month</span></h5>
 
                     <div class="d-flex align-items-center">
                       <div
@@ -377,9 +377,9 @@
                         <i class="bi bi-person-plus"></i>
                       </div>
                       <div class="ps-3">
-                        <h6>{{guest_growth}}%</h6>
-                        <span class="text-success small pt-1 fw-bold"></span>
-                        <span class="text-muted small pt-2 ps-1">Over last month</span>
+                        <h6>84</h6>
+                        <span class="text-success small pt-1 fw-bold">8%</span>
+                        <span class="text-muted small pt-2 ps-1">increase</span>
                       </div>
                     </div>
                   </div>
@@ -409,7 +409,7 @@
 
                   <div class="card-body">
                     <h5 class="card-title">
-                      Revenue Growth <span></span>
+                      Retention <span>| This Year</span>
                     </h5>
 
                     <div class="d-flex align-items-center">
@@ -419,15 +419,114 @@
                         <i class="bi bi-people"></i>
                       </div>
                       <div class="ps-3">
-                        <h6>{{revenue_growth|stringformat:".1f"}}%</h6>
-                        <span class="text-danger small pt-1 fw-bold"></span>
-                        <span class="text-muted small pt-2 ps-1">Over last month</span>
+                        <h6>1244</h6>
+                        <span class="text-danger small pt-1 fw-bold">12%</span>
+                        <span class="text-muted small pt-2 ps-1">decrease</span>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
               <!-- End Retention Card -->
+
+              <!-- Reports -->
+              <div class="col-12">
+                <div class="card">
+                  <div class="filter">
+                    <a class="icon" href="#" data-bs-toggle="dropdown"
+                      ><i class="bi bi-three-dots"></i
+                    ></a>
+                    <ul
+                      class="dropdown-menu dropdown-menu-end dropdown-menu-arrow"
+                    >
+                      <li class="dropdown-header text-start">
+                        <h6>Filter</h6>
+                      </li>
+
+                      <li><a class="dropdown-item" href="#">Today</a></li>
+                      <li><a class="dropdown-item" href="#">This Month</a></li>
+                      <li><a class="dropdown-item" href="#">This Year</a></li>
+                    </ul>
+                  </div>
+
+                  <div class="card-body">
+                    <h5 class="card-title">Reports <span>/Today</span></h5>
+
+                    <!-- Line Chart -->
+                    <div id="reportsChart"></div>
+
+                    <script>
+                      document.addEventListener("DOMContentLoaded", () => {
+                        new ApexCharts(
+                          document.querySelector("#reportsChart"),
+                          {
+                            series: [
+                              {
+                                name: "Sales",
+                                data: [31, 40, 28, 51, 42, 82, 56],
+                              },
+                              {
+                                name: "Revenue",
+                                data: [11, 32, 45, 32, 34, 52, 41],
+                              },
+                              {
+                                name: "Customers",
+                                data: [15, 11, 32, 18, 9, 24, 11],
+                              },
+                            ],
+                            chart: {
+                              height: 350,
+                              type: "area",
+                              toolbar: {
+                                show: false,
+                              },
+                            },
+                            markers: {
+                              size: 4,
+                            },
+                            colors: ["#4154f1", "#2eca6a", "#ff771d"],
+                            fill: {
+                              type: "gradient",
+                              gradient: {
+                                shadeIntensity: 1,
+                                opacityFrom: 0.3,
+                                opacityTo: 0.4,
+                                stops: [0, 90, 100],
+                              },
+                            },
+                            dataLabels: {
+                              enabled: false,
+                            },
+                            stroke: {
+                              curve: "smooth",
+                              width: 2,
+                            },
+                            xaxis: {
+                              type: "datetime",
+                              categories: [
+                                "2018-09-19T00:00:00.000Z",
+                                "2018-09-19T01:30:00.000Z",
+                                "2018-09-19T02:30:00.000Z",
+                                "2018-09-19T03:30:00.000Z",
+                                "2018-09-19T04:30:00.000Z",
+                                "2018-09-19T05:30:00.000Z",
+                                "2018-09-19T06:30:00.000Z",
+                              ],
+                            },
+                            tooltip: {
+                              x: {
+                                format: "dd/MM/yy HH:mm",
+                              },
+                            },
+                          }
+                        ).render();
+                      });
+                    </script>
+                    <!-- End Line Chart -->
+                  </div>
+                </div>
+              </div>
+              <!-- End Reports -->
             </div>
           </div>
           <!-- End Left side columns -->
@@ -458,6 +557,37 @@
                 <!-- End Bar Chart -->
               </div>
             </div>
+
+            <!-- Budget Report -->
+            <div class="card">
+              <div class="filter">
+                <a class="icon" href="#" data-bs-toggle="dropdown"
+                  ><i class="bi bi-three-dots"></i
+                ></a>
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                  <li class="dropdown-header text-start">
+                    <h6>Filter</h6>
+                  </li>
+
+                  <li><a class="dropdown-item" href="#">Today</a></li>
+                  <li><a class="dropdown-item" href="#">This Month</a></li>
+                  <li><a class="dropdown-item" href="#">This Year</a></li>
+                </ul>
+              </div>
+
+              <div class="card-body pb-0">
+                <h5 class="card-title">
+                  Budget Report <span>| This Month</span>
+                </h5>
+
+                <div
+                  id="budgetChart"
+                  style="height: 384px"
+                  class="echart"
+                ></div>
+              </div>
+            </div>
+            <!-- End Budget Report -->
           </div>
           <!-- End Right side columns -->
 
@@ -480,7 +610,7 @@
               </div>
 
               <div class="card-body pb-0">
-                <h5 class="card-title">Top Customers <span></span></h5>
+                <h5 class="card-title">Top Selling <span>| Today</span></h5>
 
                 <table class="table table-borderless text-center">
                   <thead>
@@ -493,26 +623,20 @@
                     </tr>
                   </thead>
                   <tbody>
-                    
-                    {% for guest in top_guests %}
-                        
                     <tr>
                       <th scope="row">
-                        <a href="#">{{forloop.counter}}</a>
+                        <a href="#">123</a>
                       </th>
                       <td>
                         <a href="#" class="text-primary fw-bold"
-                          >{{guest.name}}</a
+                          >Placeholder 1</a
                         >
                       </td>
                       <td>$64</td>
                       <td class="fw-bold">124</td>
                       <td>$5,828</td>
                     </tr>
-
-                    {% endfor %}
-                    
-                    {% comment %} <tr>
+                    <tr>
                       <th scope="row">
                         <a href="#">348</a>
                       </th>
@@ -563,7 +687,7 @@
                       <td>$79</td>
                       <td class="fw-bold">41</td>
                       <td>$3,239</td>
-                    </tr> {% endcomment %}
+                    </tr>
                   </tbody>
                 </table>
               </div>
@@ -609,10 +733,6 @@
     <script src="{% static 'vendor/simple-datatables/simple-datatables.js' %}"></script>
     <script src="{% static 'vendor/tinymce/tinymce.min.js' %}"></script>
     <script src="{% static 'vendor/php-email-form/validate.js' %}"></script>
-
-    <script type="text/javascript">
-        var checkInData = {{ check_in_data|safe }};
-    </script>
 
     <!-- Template Main JS File -->
     <script src="{% static 'js/main.js' %}"></script>
