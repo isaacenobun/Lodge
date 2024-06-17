@@ -66,17 +66,21 @@ function showModalWithOccupancyStatus(roomNumber, isOccupied) {
   // Set the content for the modal body based on occupancy
   const modalBodyContent = isOccupied
     ? `This room is currently occupied by: ${roomNumber}`
-    : `Room ${roomNumber} is available.`;
+    : `${roomNumber} is available.`;
 
   // Update the modal body with the new content
   modalBody.textContent = modalBodyContent;
 
   // Update the modal footer with the appropriate buttons based on occupancy
   const modalFooterContent = isOccupied
-    ? '<button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Checkout</button>'
-    : `<button type="button" class="btn btn-success">
-    <i class="bi bi-check-circle me-1"></i> Check-in a Guest
-  </button>`;
+    ? `<form action="${checkOutUrl}" method="POST">
+        
+         <input type="hidden" name="guest_ids" value="${guestId}">
+         <button type="submit" class="btn btn-outline-danger" data-bs-dismiss="modal">Checkout</button>
+       </form>`
+    : `<a href="${checkInUrl}"><button type="button" class="btn btn-success">
+         <i class="bi bi-check-circle me-1"></i> Check-in a Guest
+       </button></a>`;
   modalFooter.innerHTML = modalFooterContent;
 
   // Show the modal using Bootstrap's modal method

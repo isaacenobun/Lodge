@@ -1,0 +1,24 @@
+{% load custom_filters %}
+
+{% for room in rooms %}
+    {% if room.room_status %}
+        <div class="room occupied">
+            <div class="room-number d-flex align-items-center justify-content-center">Room {{ room.room_number }}</div>
+            <div class="rounded-circle d-flex align-items-center justify-content-center">
+                <i class="bi bi-person"></i>
+            </div>
+            <div class="room-number d-flex align-items-center justify-content-center">{{ room.id|get_guest_name:room_guest_mapping }}</div>
+        </div>
+        <script type="text/javascript">
+            var guestId = "{{ room.id|get_guest_id:room_guest_mapping }}";
+        </script>
+    {% else %}
+        <div class="room">
+            <div class="room-number d-flex align-items-center justify-content-center">Room {{ room.room_number }}</div>
+            <div class="rounded-circle d-flex align-items-center justify-content-center">
+                <i class="bi bi-person-x"></i>
+            </div>
+            <div class="room-number d-flex align-items-center justify-content-center">No Guest</div>
+        </div>
+    {% endif %}
+{% endfor %}

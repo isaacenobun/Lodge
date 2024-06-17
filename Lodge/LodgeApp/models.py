@@ -26,6 +26,12 @@ class Room(models.Model):
     
     def __str__(self):
         return f'{self.room_number} - {self.room_status}'
+    
+class Revenue(models.Model):
+    revenue = models.DecimalField(max_digits=10, decimal_places=1, default=0)
+    
+    def __str__(self):
+        return f'{self.revenue}'
 
 class Guest(models.Model):
     name = models.CharField(max_length=50)
@@ -35,6 +41,7 @@ class Guest(models.Model):
     check_in = models.DateTimeField(auto_now_add=True)
     staff = models.ForeignKey(Staff, on_delete=models.CASCADE)
     check_out = models.DateTimeField(null=True,blank=True)
+    revenue = models.ForeignKey(Revenue, on_delete=models.CASCADE, null=True, blank=True)
     
     def __str__(self):
         return self.name
@@ -48,13 +55,6 @@ class Log(models.Model):
     
     def __str__(self):
         return f'{self.check_in_action} {self.check_out_action}'
-    
-class Revenue(models.Model):
-    revenue = models.DecimalField(max_digits=10, decimal_places=1)
-    guest_check_out = models.ForeignKey(Guest, on_delete=models.PROTECT)
-    
-    def __str__(self):
-        return f'{self.revenue}'
     
 class CheckIns(models.Model):
     time = models.DateField(auto_now_add=True)

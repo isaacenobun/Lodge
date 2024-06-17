@@ -1,4 +1,6 @@
 {% load static %}
+{% load custom_filters %}
+{% load custom_tags %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -43,7 +45,11 @@
     />
 
     <!-- Template Main CSS File -->
-    <link href="{% static 'css/style.css" rel="stylesheet' %}" />
+    <link href="{% static 'css/style.css' %}" rel="stylesheet"/>
+
+    <script type="text/javascript">
+        var checkInData = {{ check_in_data|safe }};
+    </script>
 
     <script src="https://unpkg.com/feather-icons"></script>
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
@@ -184,7 +190,7 @@
               <!-- Total Revenue Card -->
               <div class="col-xxl-6 col-xl-4 col-lg-4 col-md-6">
                 <div class="card info-card sales-card">
-                  <div class="filter">
+                  {% comment %} <div class="filter">
                     <a class="icon" href="#" data-bs-toggle="dropdown"
                       ><i class="bi bi-three-dots"></i
                     ></a>
@@ -199,10 +205,10 @@
                       <li><a class="dropdown-item" href="#">This Month</a></li>
                       <li><a class="dropdown-item" href="#">This Year</a></li>
                     </ul>
-                  </div>
+                  </div> {% endcomment %}
 
                   <div class="card-body">
-                    <h5 class="card-title">T.R <span>| Today</span></h5>
+                    <h5 class="card-title">Total Revenue <span></span></h5>
 
                     <div class="d-flex align-items-center">
                       <div
@@ -211,9 +217,9 @@
                         <i class="bi bi-person"></i>
                       </div>
                       <div class="ps-3">
-                        <h6>50</h6>
-                        <span class="text-success small pt-1 fw-bold">12%</span>
-                        <span class="text-muted small pt-2 ps-1">increase</span>
+                        <h6>N{{total_revenue|stringformat:".1f"}}K</h6>
+                        <span class="text-success small pt-1 fw-bold"></span>
+                        <span class="text-muted small pt-2 ps-1"></span>
                       </div>
                     </div>
                   </div>
@@ -224,7 +230,7 @@
               <!-- Revenue Card -->
               <div class="col-xxl-6 col-xl-4 col-lg-4 col-md-6">
                 <div class="card info-card revenue-card">
-                  <div class="filter">
+                  {% comment %} <div class="filter">
                     <a class="icon" href="#" data-bs-toggle="dropdown"
                       ><i class="bi bi-three-dots"></i
                     ></a>
@@ -239,11 +245,11 @@
                       <li><a class="dropdown-item" href="#">This Month</a></li>
                       <li><a class="dropdown-item" href="#">This Year</a></li>
                     </ul>
-                  </div>
+                  </div> {% endcomment %}
 
                   <div class="card-body">
                     <h5 class="card-title">
-                      Revenue <span>| This Month</span>
+                      Monthly Revenue <span></span>
                     </h5>
 
                     <div class="d-flex align-items-center">
@@ -253,9 +259,9 @@
                         <i class="bi bi-person-plus"></i>
                       </div>
                       <div class="ps-3">
-                        <h6>84</h6>
-                        <span class="text-success small pt-1 fw-bold">8%</span>
-                        <span class="text-muted small pt-2 ps-1">increase</span>
+                        <h6>N{{monthly_revenue|stringformat:".1f"}}K</h6>
+                        <span class="text-success small pt-1 fw-bold"></span>
+                        <span class="text-muted small pt-2 ps-1"></span>
                       </div>
                     </div>
                   </div>
@@ -266,7 +272,7 @@
               <!-- Total Guest Card -->
               <div class="col-xxl-6 col-xl-4 col-lg-4 col-md-6">
                 <div class="card info-card customers-card">
-                  <div class="filter">
+                  {% comment %} <div class="filter">
                     <a class="icon" href="#" data-bs-toggle="dropdown"
                       ><i class="bi bi-three-dots"></i
                     ></a>
@@ -281,11 +287,11 @@
                       <li><a class="dropdown-item" href="#">This Month</a></li>
                       <li><a class="dropdown-item" href="#">This Year</a></li>
                     </ul>
-                  </div>
+                  </div> {% endcomment %}
 
                   <div class="card-body">
                     <h5 class="card-title">
-                      Total guests <span>| This Year</span>
+                      Total Guests <span></span>
                     </h5>
 
                     <div class="d-flex align-items-center">
@@ -295,9 +301,9 @@
                         <i class="bi bi-people"></i>
                       </div>
                       <div class="ps-3">
-                        <h6>1244</h6>
-                        <span class="text-danger small pt-1 fw-bold">12%</span>
-                        <span class="text-muted small pt-2 ps-1">decrease</span>
+                        <h6>{{guests|length}} guests</h6>
+                        <span class="text-danger small pt-1 fw-bold"></span>
+                        <span class="text-muted small pt-2 ps-1"></span>
                       </div>
                     </div>
                   </div>
@@ -308,7 +314,7 @@
               <!-- Check-in rate Card -->
               <div class="col-xxl-6 col-xl-4 col-lg-4 col-md-6">
                 <div class="card info-card sales-card">
-                  <div class="filter">
+                  {% comment %} <div class="filter">
                     <a class="icon" href="#" data-bs-toggle="dropdown"
                       ><i class="bi bi-three-dots"></i
                     ></a>
@@ -323,11 +329,11 @@
                       <li><a class="dropdown-item" href="#">This Month</a></li>
                       <li><a class="dropdown-item" href="#">This Year</a></li>
                     </ul>
-                  </div>
+                  </div> {% endcomment %}
 
                   <div class="card-body">
                     <h5 class="card-title">
-                      Check-in rate <span>| Today</span>
+                      Check-in Rate <span>per week</span>
                     </h5>
 
                     <div class="d-flex align-items-center">
@@ -337,9 +343,9 @@
                         <i class="bi bi-person"></i>
                       </div>
                       <div class="ps-3">
-                        <h6>50</h6>
-                        <span class="text-success small pt-1 fw-bold">12%</span>
-                        <span class="text-muted small pt-2 ps-1">increase</span>
+                        <h6>{{check_in_rate}} guests</h6>
+                        <span class="text-success small pt-1 fw-bold"></span>
+                        <span class="text-muted small pt-2 ps-1"></span>
                       </div>
                     </div>
                   </div>
@@ -350,7 +356,7 @@
               <!-- Growth Card -->
               <div class="col-xxl-6 col-xl-4 col-lg-4 col-md-6">
                 <div class="card info-card revenue-card">
-                  <div class="filter">
+                  {% comment %} <div class="filter">
                     <a class="icon" href="#" data-bs-toggle="dropdown"
                       ><i class="bi bi-three-dots"></i
                     ></a>
@@ -365,10 +371,10 @@
                       <li><a class="dropdown-item" href="#">This Month</a></li>
                       <li><a class="dropdown-item" href="#">This Year</a></li>
                     </ul>
-                  </div>
+                  </div> {% endcomment %}
 
                   <div class="card-body">
-                    <h5 class="card-title">Growth <span>| This Month</span></h5>
+                    <h5 class="card-title">Customer Growth <span></span></h5>
 
                     <div class="d-flex align-items-center">
                       <div
@@ -377,9 +383,9 @@
                         <i class="bi bi-person-plus"></i>
                       </div>
                       <div class="ps-3">
-                        <h6>84</h6>
-                        <span class="text-success small pt-1 fw-bold">8%</span>
-                        <span class="text-muted small pt-2 ps-1">increase</span>
+                        <h6>{{guest_growth|stringformat:".1f"}}%</h6>
+                        <span class="text-success small pt-1 fw-bold"></span>
+                        <span class="text-muted small pt-2 ps-1">Over last month</span>
                       </div>
                     </div>
                   </div>
@@ -390,7 +396,7 @@
               <!-- Retention Card -->
               <div class="col-xxl-6 col-xl-4 col-lg-4 col-md-6">
                 <div class="card info-card customers-card">
-                  <div class="filter">
+                  {% comment %} <div class="filter">
                     <a class="icon" href="#" data-bs-toggle="dropdown"
                       ><i class="bi bi-three-dots"></i
                     ></a>
@@ -405,11 +411,11 @@
                       <li><a class="dropdown-item" href="#">This Month</a></li>
                       <li><a class="dropdown-item" href="#">This Year</a></li>
                     </ul>
-                  </div>
+                  </div> {% endcomment %}
 
                   <div class="card-body">
                     <h5 class="card-title">
-                      Retention <span>| This Year</span>
+                      Revenue Growth <span></span>
                     </h5>
 
                     <div class="d-flex align-items-center">
@@ -419,114 +425,15 @@
                         <i class="bi bi-people"></i>
                       </div>
                       <div class="ps-3">
-                        <h6>1244</h6>
-                        <span class="text-danger small pt-1 fw-bold">12%</span>
-                        <span class="text-muted small pt-2 ps-1">decrease</span>
+                        <h6>{{revenue_growth|stringformat:".1f"}}%</h6>
+                        <span class="text-danger small pt-1 fw-bold"></span>
+                        <span class="text-muted small pt-2 ps-1">Over last month</span>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
               <!-- End Retention Card -->
-
-              <!-- Reports -->
-              <div class="col-12">
-                <div class="card">
-                  <div class="filter">
-                    <a class="icon" href="#" data-bs-toggle="dropdown"
-                      ><i class="bi bi-three-dots"></i
-                    ></a>
-                    <ul
-                      class="dropdown-menu dropdown-menu-end dropdown-menu-arrow"
-                    >
-                      <li class="dropdown-header text-start">
-                        <h6>Filter</h6>
-                      </li>
-
-                      <li><a class="dropdown-item" href="#">Today</a></li>
-                      <li><a class="dropdown-item" href="#">This Month</a></li>
-                      <li><a class="dropdown-item" href="#">This Year</a></li>
-                    </ul>
-                  </div>
-
-                  <div class="card-body">
-                    <h5 class="card-title">Reports <span>/Today</span></h5>
-
-                    <!-- Line Chart -->
-                    <div id="reportsChart"></div>
-
-                    <script>
-                      document.addEventListener("DOMContentLoaded", () => {
-                        new ApexCharts(
-                          document.querySelector("#reportsChart"),
-                          {
-                            series: [
-                              {
-                                name: "Sales",
-                                data: [31, 40, 28, 51, 42, 82, 56],
-                              },
-                              {
-                                name: "Revenue",
-                                data: [11, 32, 45, 32, 34, 52, 41],
-                              },
-                              {
-                                name: "Customers",
-                                data: [15, 11, 32, 18, 9, 24, 11],
-                              },
-                            ],
-                            chart: {
-                              height: 350,
-                              type: "area",
-                              toolbar: {
-                                show: false,
-                              },
-                            },
-                            markers: {
-                              size: 4,
-                            },
-                            colors: ["#4154f1", "#2eca6a", "#ff771d"],
-                            fill: {
-                              type: "gradient",
-                              gradient: {
-                                shadeIntensity: 1,
-                                opacityFrom: 0.3,
-                                opacityTo: 0.4,
-                                stops: [0, 90, 100],
-                              },
-                            },
-                            dataLabels: {
-                              enabled: false,
-                            },
-                            stroke: {
-                              curve: "smooth",
-                              width: 2,
-                            },
-                            xaxis: {
-                              type: "datetime",
-                              categories: [
-                                "2018-09-19T00:00:00.000Z",
-                                "2018-09-19T01:30:00.000Z",
-                                "2018-09-19T02:30:00.000Z",
-                                "2018-09-19T03:30:00.000Z",
-                                "2018-09-19T04:30:00.000Z",
-                                "2018-09-19T05:30:00.000Z",
-                                "2018-09-19T06:30:00.000Z",
-                              ],
-                            },
-                            tooltip: {
-                              x: {
-                                format: "dd/MM/yy HH:mm",
-                              },
-                            },
-                          }
-                        ).render();
-                      });
-                    </script>
-                    <!-- End Line Chart -->
-                  </div>
-                </div>
-              </div>
-              <!-- End Reports -->
             </div>
           </div>
           <!-- End Left side columns -->
@@ -557,37 +464,6 @@
                 <!-- End Bar Chart -->
               </div>
             </div>
-
-            <!-- Budget Report -->
-            <div class="card">
-              <div class="filter">
-                <a class="icon" href="#" data-bs-toggle="dropdown"
-                  ><i class="bi bi-three-dots"></i
-                ></a>
-                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                  <li class="dropdown-header text-start">
-                    <h6>Filter</h6>
-                  </li>
-
-                  <li><a class="dropdown-item" href="#">Today</a></li>
-                  <li><a class="dropdown-item" href="#">This Month</a></li>
-                  <li><a class="dropdown-item" href="#">This Year</a></li>
-                </ul>
-              </div>
-
-              <div class="card-body pb-0">
-                <h5 class="card-title">
-                  Budget Report <span>| This Month</span>
-                </h5>
-
-                <div
-                  id="budgetChart"
-                  style="height: 384px"
-                  class="echart"
-                ></div>
-              </div>
-            </div>
-            <!-- End Budget Report -->
           </div>
           <!-- End Right side columns -->
 
@@ -610,7 +486,7 @@
               </div>
 
               <div class="card-body pb-0">
-                <h5 class="card-title">Top Selling <span>| Today</span></h5>
+                <h5 class="card-title">Top Customers <span></span></h5>
 
                 <table class="table table-borderless text-center">
                   <thead>
@@ -618,12 +494,29 @@
                       <th scope="col">ID</th>
                       <th scope="col">Guest name</th>
                       <th scope="col">Average Spending</th>
-                      <th scope="col">Total Hours</th>
+                      <th scope="col">Total Days</th>
                       <th scope="col">Revenue</th>
                     </tr>
                   </thead>
                   <tbody>
+                    
+                    {% for guest in top_guests %}
                     <tr>
+                        <th scope="row">
+                          <a href="#">{{ forloop.counter }}</a>
+                        </th>
+                        <td>
+                          <a href="#" class="text-primary fw-bold"
+                            >{{guest.name}}</a
+                          >
+                        </td>
+                        <td>$64</td>
+                        <td class="fw-bold">{{guest.check_in|days_between:guest.check_out}}</td>
+                        <td>N{{ guest.revenue.revenue | revenue }}</td>
+                      </tr>
+                    {% endfor %}
+                        
+                    {% comment %} <tr>
                       <th scope="row">
                         <a href="#">123</a>
                       </th>
@@ -687,7 +580,7 @@
                       <td>$79</td>
                       <td class="fw-bold">41</td>
                       <td>$3,239</td>
-                    </tr>
+                    </tr> {% endcomment %}
                   </tbody>
                 </table>
               </div>
