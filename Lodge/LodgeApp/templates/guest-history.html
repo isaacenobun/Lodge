@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<body>
+  {% include 'partials/_header.html' %}
+  
+  {% include 'sidebar.html' %}
+
+  <main id="main" class="main">
+    <div class="pagetitle">
+      <h1>Guest History</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+          <li class="breadcrumb-item">Guest-history</li>
+          <li class="breadcrumb-item active">Data</li>
+        </ol>
+      </nav>
+    </div>
+    <!-- End Page Title -->
+
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Datatables</h5>
+              <p>Table detailing info about our previous guest.</p>
+
+              <!-- Table with stripped rows -->
+              <table
+                class="table datatable table-group-divider table-bordered"
+              >
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th><b>N</b>ame</th>
+                    <th>Email</th>
+                    <th>Phone Number</th>
+                    <th>Room</th>
+                    <th data-type="date" data-format="YYYY/DD/MM">
+                      Check-in Date
+                    </th>
+                    <th data-type="date" data-format="YYYY/DD/MM">
+                      Check-out Date
+                    </th>
+                    <th scope="col">Room Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for guest in guests %}
+                  <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{guest.name}}</td>
+                    <td>{{guest.email}}</td>
+                    <td>{{guest.number}}</td>
+                    <td style="text-align: center">
+                      {{guest.room.room_number}}
+                    </td>
+                    <td>{{guest.check_in}}</td>
+
+                    {% if guest.check_out %}
+                    <td>{{guest.check_out}}</td>
+                    {% else %}
+                    <td style="text-align: center">-</td>
+                    {% endif %} {% if guest.room.room_status %}
+                    <td>
+                      <span class="badge bg-warning">Room Occupied</span>
+                    </td>
+                    {% else %}
+                    <td><span class="badge bg-success">Room Vacant</span></td>
+                    {% endif %}
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              <!-- End Table with stripped rows -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer" class="footer"></footer>
+  <!-- End Footer -->
+
+  <a
+    href="#"
+    class="back-to-top d-flex align-items-center justify-content-center"
+    ><i class="bi bi-arrow-up-short"></i
+  ></a>
+</body>
+
+
+{% endblock content %}
+  
