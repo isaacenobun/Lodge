@@ -197,8 +197,8 @@
           <div class="col-lg-8">
             <div class="row">
               <!-- Guest Card -->
-              <div class="col-xxl-4 col-md-6">
-                <div class="card info-card sales-card">
+              <div class="col-xxl-4 col-xl-4 col-md-4">
+                <div class="card info-card sales-card align-items-center justify-content-center">
                   {% comment %} <div class="filter">
                     <a class="icon" href="#" data-bs-toggle="dropdown"
                       ><i class="bi bi-three-dots"></i
@@ -226,19 +226,17 @@
                         <i class="bi bi-person"></i>
                       </div>
                       <div class="ps-3">
-                        <h6>{{active_guests | length}}</h6>
-                        <span class="text-success small pt-1 fw-bold">12%</span>
-                        <span class="text-muted small pt-2 ps-1">increase</span>
+                        <h6>{{active_guests | length}}</h6>                        
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-              <!-- End Sales Card -->
+              <!-- End Guest Card -->
 
               <!-- Visitor Card -->
-              <div class="col-xxl-4 col-md-6">
-                <div class="card info-card revenue-card">
+              <div class="col-xxl-4 col-xl-4 col-md-4">
+                <div class="card info-card revenue-card align-items-center justify-content-center">
                   {% comment %} <div class="filter">
                     <a class="icon" href="#" data-bs-toggle="dropdown"
                       ><i class="bi bi-three-dots"></i
@@ -269,8 +267,6 @@
                       </div>
                       <div class="ps-3">
                         <h6>{{total_guests}}</h6>
-                        <span class="text-success small pt-1 fw-bold">8%</span>
-                        <span class="text-muted small pt-2 ps-1">increase</span>
                       </div>
                     </div>
                   </div>
@@ -279,8 +275,8 @@
               <!-- End Visitor Card -->
 
               <!-- Customers Card -->
-              <div class="col-xxl-4 col-xl-12">
-                <div class="card info-card customers-card">
+              <div class="col-xxl-4 col-xl-4 col-md-4">
+                <div class="card info-card customers-card align-items-center justify-content-center">
                   {% comment %} <div class="filter">
                     <a class="icon" href="#" data-bs-toggle="dropdown"
                       ><i class="bi bi-three-dots"></i
@@ -300,7 +296,7 @@
 
                   <div class="card-body">
                     <h5 class="card-title">
-                       Available Rooms {% comment %}<span>| This Year</span> {% endcomment %}
+                       Free Rooms {% comment %}<span>| This Year</span> {% endcomment %}
                     </h5>
 
                     <div class="d-flex align-items-center">
@@ -311,8 +307,6 @@
                       </div>
                       <div class="ps-3">
                         <h6>{{available_rooms}}</h6>
-                        <span class="text-danger small pt-1 fw-bold">12%</span>
-                        <span class="text-muted small pt-2 ps-1">decrease</span>
                       </div>
                     </div>
                   </div>
