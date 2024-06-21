@@ -57,7 +57,7 @@ function updateUI(selectedSuite) {
 
 
 // Function to show the modal with the appropriate message
-function showModalWithOccupancyStatus(roomNumber, isOccupied) {
+function showModalWithOccupancyStatus(roomNumber, isOccupied, guestId, guestName) {
   // Get the modal elements
   const modal = document.getElementById('verticalycentered');
   const modalBody = modal.querySelector('.modal-body');
@@ -65,7 +65,7 @@ function showModalWithOccupancyStatus(roomNumber, isOccupied) {
 
   // Set the content for the modal body based on occupancy
   const modalBodyContent = isOccupied
-    ? `This room is currently occupied by: ${roomNumber}`
+    ? `This room is currently occupied by: ${guestName}`
     : `${roomNumber} is available.`;
 
   // Update the modal body with the new content
@@ -90,12 +90,20 @@ function showModalWithOccupancyStatus(roomNumber, isOccupied) {
 // Add event listeners to all seats
 document.querySelectorAll('.room').forEach(room => {
   room.addEventListener('click', function () {
-    // Get the room number from the clicked seat
+    // Get the room number from the clicked room
     const roomNumber = this.querySelector('.room-number').textContent;
-    // Check if the seat is occupied
+    
+    // Check if the room is occupied
     const isOccupied = this.classList.contains('occupied');
-    // Show the modal with the occupancy status
-    showModalWithOccupancyStatus(roomNumber, isOccupied);
+    
+    // Get the guest ID from the hidden input within the clicked room
+    const guestIdInput = this.querySelector('input[name="guest_id"]');
+    const guestNameInput = this.querySelector('input[name="guest_name"]');
+    const guestId = guestIdInput ? guestIdInput.value : null;
+    const guestName = guestNameInput ? guestNameInput.value : null;
+    
+    // Show the modal with the occupancy status and guest ID
+    showModalWithOccupancyStatus(roomNumber, isOccupied, guestId, guestName);
   });
 });
 
