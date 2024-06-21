@@ -38,7 +38,8 @@ def sign_in(request):
             # messages.warning(request, "Invalid password")
             return redirect('sign-in')
     else:
-        return render(request, 'sign-in.html')
+        context = {'page_name':'Sign in'}
+        return render(request, 'pages-sign-in.html', context)
 
 def sign_out(request):
     logout(request)
@@ -58,7 +59,8 @@ def dashboard(request):
         'total_guests': total_guests,
         'staff': request.user,
         'logs': logs,
-        'available_rooms': available_rooms
+        'available_rooms': available_rooms,
+        'page_name':'Home'
     }
     return render(request, 'index.html', context)
 
@@ -79,17 +81,18 @@ def rooms(request):
         'reg_rooms': reg_rooms,
         'room_guest_mapping': room_guest_mapping,
         'check_out_url': reverse('check-out'),
-        'check_in_url': reverse('check-in')
+        'check_in_url': reverse('check-in'),
+        'page_name':'Rooms'
     }
-    return render(request, 'pages-room-carousel.html', context)
+    return render(request, 'room-carousel.html', context)
 
 def history(request):
     if not request.user.is_authenticated:
         return redirect('sign-in')
     
     guests = Guest.objects.all()
-    context = {'guests': guests}
-    return render(request, 'pages-guest-history.html', context)
+    context = {'guests': guests, 'page_name':'History'}
+    return render(request, 'guest-history.html', context)
 
 def check_in(request):
     if not request.user.is_authenticated:
@@ -122,8 +125,8 @@ def check_in(request):
         return redirect('dashboard')
     
     rooms = Room.objects.filter(room_status=False)
-    context = {'rooms': rooms}
-    return render(request, 'pages-check-in-out.html', context)
+    context = {'rooms': rooms, 'page_name':'Check In'}
+    return render(request, 'check-in.html', context)
 
 @csrf_exempt
 def check_out(request):
@@ -220,5 +223,5 @@ def analytics(request):
     except:
         revenue_growth = 0
     
-    context = {'check_in_data':check_in_data, 'guests':Guest.objects.all(), 'top_guests':top_guests, 'check_in_rate':check_in_rate, 'guest_growth':guest_growth, 'total_revenue':int(total_revenue)/1000, 'monthly_revenue':monthly_revenue, 'revenue_growth':revenue_growth}
+    context = {'check_in_data':check_in_data, 'guests':Guest.objects.all(), 'top_guests':top_guests, 'check_in_rate':check_in_rate, 'guest_growth':guest_growth, 'total_revenue':int(total_revenue)/1000, 'monthly_revenue':monthly_revenue, 'revenue_growth':revenue_growth, 'page_name':'Analytics'}
     return render(request, 'analytics.html', context)
