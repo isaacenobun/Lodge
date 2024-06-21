@@ -1,344 +1,355 @@
-{% extends 'base.html' %}
-{% load static %}
-{% load custom_filters %}
+{% extends 'base.html' %} {% load static %} {% load custom_filters %} {% block
+content %}
 
-
-{% block content %}
-  
 <body>
-    {% include 'partials/_header.html' %}
-    
-    {% include 'sidebar.html' %}
+  {% include 'partials/_header.html' %} {% include 'sidebar.html' %}
 
-    <main id="main" class="main">
-      <div class="pagetitle">
-        <h1>Dashboard</h1>
-        <nav>
-          <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
-            <li class="breadcrumb-item active">Dashboard</li>
-          </ol>
-        </nav>
-      </div>
-      <!-- End Page Title -->
+  <main id="main" class="main">
+    <div class="pagetitle">
+      <h1>Dashboard</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a href="{% url 'dashboard' %}">Home</a>
+          </li>
+          <li class="breadcrumb-item active">Dashboard</li>
+        </ol>
+      </nav>
+    </div>
+    <!-- End Page Title -->
 
-      <section class="section dashboard">
-        <div class="row">
-          <!-- Left side columns -->
-          <div class="col-lg-8">
-            <div class="row">
-              <!-- Guest Card -->
-              <div class="col-xxl-4 col-md-6">
-                <div class="card info-card sales-card">
-                  {% comment %} <div class="filter">
-                    <a class="icon" href="#" data-bs-toggle="dropdown"
-                      ><i class="bi bi-three-dots"></i
-                    ></a>
-                    <ul
-                      class="dropdown-menu dropdown-menu-end dropdown-menu-arrow"
+    <section class="section dashboard">
+      <div class="row">
+        <!-- Left side columns -->
+        <div class="col-lg-8">
+          <div class="row">
+            <!-- Guest Card -->
+            <div class="col-xxl-4 col-xl-4 col-md-4">
+              <div
+                class="card info-card sales-card align-items-center justify-content-center"
+              >
+                {% comment %}
+                <div class="filter">
+                  <a class="icon" href="#" data-bs-toggle="dropdown"
+                    ><i class="bi bi-three-dots"></i
+                  ></a>
+                  <ul
+                    class="dropdown-menu dropdown-menu-end dropdown-menu-arrow"
+                  >
+                    <li class="dropdown-header text-start">
+                      <h6>Filter</h6>
+                    </li>
+
+                    <li><a class="dropdown-item" href="#">Today</a></li>
+                    <li><a class="dropdown-item" href="#">This Month</a></li>
+                    <li><a class="dropdown-item" href="#">This Year</a></li>
+                  </ul>
+                </div>
+                {% endcomment %}
+
+                <div class="card-body">
+                  <h5 class="card-title">
+                    Active Guests
+                    <!--<span>| Today</span>-->
+                  </h5>
+
+                  <div class="d-flex align-items-center">
+                    <div
+                      class="card-icon rounded-circle d-flex align-items-center justify-content-center"
                     >
-                      <li class="dropdown-header text-start">
-                        <h6>Filter</h6>
-                      </li>
-
-                      <li><a class="dropdown-item" href="#">Today</a></li>
-                      <li><a class="dropdown-item" href="#">This Month</a></li>
-                      <li><a class="dropdown-item" href="#">This Year</a></li>
-                    </ul>
-                  </div> {% endcomment %}
-
-                  <div class="card-body">
-                    <h5 class="card-title">Active Guests <!--<span>| Today</span>--></h5>
-
-                    <div class="d-flex align-items-center">
-                      <div
-                        class="card-icon rounded-circle d-flex align-items-center justify-content-center"
-                      >
-                        <i class="bi bi-person"></i>
-                      </div>
-                      <div class="ps-3">
-                        <h6>{{active_guests | length}}</h6>
-                        <span class="text-success small pt-1 fw-bold">12%</span>
-                        <span class="text-muted small pt-2 ps-1">increase</span>
-                      </div>
+                      <i class="bi bi-person"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6>{{active_guests | length}}</h6>
                     </div>
                   </div>
                 </div>
               </div>
-              <!-- End Sales Card -->
+            </div>
+            <!-- End Guest Card -->
 
-              <!-- Visitor Card -->
-              <div class="col-xxl-4 col-md-6">
-                <div class="card info-card revenue-card">
-                  {% comment %} <div class="filter">
-                    <a class="icon" href="#" data-bs-toggle="dropdown"
-                      ><i class="bi bi-three-dots"></i
-                    ></a>
+            <!-- Visitor Card -->
+            <div class="col-xxl-4 col-xl-4 col-md-4">
+              <div
+                class="card info-card revenue-card align-items-center justify-content-center"
+              >
+                {% comment %}
+                <div class="filter">
+                  <a class="icon" href="#" data-bs-toggle="dropdown"
+                    ><i class="bi bi-three-dots"></i
+                  ></a>
+                  <ul
+                    class="dropdown-menu dropdown-menu-end dropdown-menu-arrow"
+                  >
+                    <li class="dropdown-header text-start">
+                      <h6>Filter</h6>
+                    </li>
+
+                    <li><a class="dropdown-item" href="#">Today</a></li>
+                    <li><a class="dropdown-item" href="#">This Month</a></li>
+                    <li><a class="dropdown-item" href="#">This Year</a></li>
+                  </ul>
+                </div>
+                {% endcomment %}
+
+                <div class="card-body">
+                  <h5 class="card-title">
+                    Total Guests {% comment %}<span>| This Month</span> {%
+                    endcomment %}
+                  </h5>
+
+                  <div class="d-flex align-items-center">
+                    <div
+                      class="card-icon rounded-circle d-flex align-items-center justify-content-center"
+                    >
+                      <i class="bi bi-person-plus"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6>{{total_guests}}</h6>
+                      <span class="text-success small pt-1 fw-bold">8%</span>
+                      <span class="text-muted small pt-2 ps-1">increase</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- End Visitor Card -->
+
+            <!-- Customers Card -->
+            <div class="col-xxl-4 col-xl-4 col-md-4">
+              <div
+                class="card info-card customers-card align-items-center justify-content-center"
+              >
+                {% comment %}
+                <div class="filter">
+                  <a class="icon" href="#" data-bs-toggle="dropdown"
+                    ><i class="bi bi-three-dots"></i
+                  ></a>
+                  <ul
+                    class="dropdown-menu dropdown-menu-end dropdown-menu-arrow"
+                  >
+                    <li class="dropdown-header text-start">
+                      <h6>Filter</h6>
+                    </li>
+
+                    <li><a class="dropdown-item" href="#">Today</a></li>
+                    <li><a class="dropdown-item" href="#">This Month</a></li>
+                    <li><a class="dropdown-item" href="#">This Year</a></li>
+                  </ul>
+                </div>
+                {% endcomment %}
+
+                <div class="card-body">
+                  <h5 class="card-title">Available Rooms</h5>
+
+                  <div class="d-flex align-items-center">
+                    <div
+                      class="card-icon rounded-circle d-flex align-items-center justify-content-center"
+                    >
+                      <i class="bi bi-people"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6>{{available_rooms}}</h6>
+                      <span class="text-danger small pt-1 fw-bold">12%</span>
+                      <span class="text-muted small pt-2 ps-1">decrease</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- End Customers Card -->
+
+            <!-- Recent Check-ins -->
+            <form action="{% url 'check-out' %}" method="post">
+              {% csrf_token %}
+              <div class="col-12">
+                <div class="card recent-sales overflow-auto">
+                  <div class="filter">
+                    <a class="icon" href="#" data-bs-toggle="dropdown">
+                      <i class="bi bi-three-dots"></i>
+                    </a>
                     <ul
                       class="dropdown-menu dropdown-menu-end dropdown-menu-arrow"
                     >
                       <li class="dropdown-header text-start">
                         <h6>Filter</h6>
                       </li>
-
                       <li><a class="dropdown-item" href="#">Today</a></li>
                       <li><a class="dropdown-item" href="#">This Month</a></li>
                       <li><a class="dropdown-item" href="#">This Year</a></li>
                     </ul>
-                  </div> {% endcomment %}
-
+                  </div>
                   <div class="card-body">
                     <h5 class="card-title">
-                       Total Guests {% comment %}<span>| This Month</span> {% endcomment %}
+                      Recent Check-ins <span>| Today</span>
                     </h5>
-
-                    <div class="d-flex align-items-center">
-                      <div
-                        class="card-icon rounded-circle d-flex align-items-center justify-content-center"
+                    <table class="table table-borderless datatable">
+                      <thead>
+                        <tr>
+                          <th scope="col">X</th>
+                          <th scope="col">#</th>
+                          <th scope="col">Guest</th>
+                          <th scope="col">Email</th>
+                          <th scope="col">Room</th>
+                          <th scope="col">Mobile</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for guest in active_guests %}
+                        <tr>
+                          <td class="text-center">
+                            <input
+                              class="form-check-input me-1"
+                              type="checkbox"
+                              name="guest_ids"
+                              value="{{guest.id}}"
+                              aria-label="..."
+                            />
+                          </td>
+                          <th scope="row">
+                            <a href="#">{{ forloop.counter }}</a>
+                          </th>
+                          <td>{{guest.name}}</td>
+                          <td>
+                            <a href="mailto:{{guest.email}}">{{guest.email}}</a>
+                          </td>
+                          <td>{{guest.room.room_number}}</td>
+                          <td>{{guest.number}}</td>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                    <div class="text-center">
+                      <button
+                        id="table-checkout"
+                        type="button"
+                        class="btn btn-outline-danger"
+                        data-bs-toggle="modal"
+                        data-bs-target="#verticalycentered"
                       >
-                        <i class="bi bi-person-plus"></i>
-                      </div>
-                      <div class="ps-3">
-                        <h6>{{total_guests}}</h6>
-                        <span class="text-success small pt-1 fw-bold">8%</span>
-                        <span class="text-muted small pt-2 ps-1">increase</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <!-- End Visitor Card -->
-
-              <!-- Customers Card -->
-              <div class="col-xxl-4 col-xl-12">
-                <div class="card info-card customers-card">
-                  {% comment %} <div class="filter">
-                    <a class="icon" href="#" data-bs-toggle="dropdown"
-                      ><i class="bi bi-three-dots"></i
-                    ></a>
-                    <ul
-                      class="dropdown-menu dropdown-menu-end dropdown-menu-arrow"
-                    >
-                      <li class="dropdown-header text-start">
-                        <h6>Filter</h6>
-                      </li>
-
-                      <li><a class="dropdown-item" href="#">Today</a></li>
-                      <li><a class="dropdown-item" href="#">This Month</a></li>
-                      <li><a class="dropdown-item" href="#">This Year</a></li>
-                    </ul>
-                  </div> {% endcomment %}
-
-                  <div class="card-body">
-                    <h5 class="card-title">
-                       Available Rooms
-                    </h5>
-
-                    <div class="d-flex align-items-center">
+                        Check-out
+                      </button>
                       <div
-                        class="card-icon rounded-circle d-flex align-items-center justify-content-center"
+                        class="modal fade"
+                        id="verticalycentered"
+                        tabindex="-1"
                       >
-                        <i class="bi bi-people"></i>
-                      </div>
-                      <div class="ps-3">
-                        <h6>{{available_rooms}}</h6>
-                        <span class="text-danger small pt-1 fw-bold">12%</span>
-                        <span class="text-muted small pt-2 ps-1">decrease</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <!-- End Customers Card -->
-
-              <!-- Recent Check-ins -->
-              <form action="{% url 'check-out' %}" method="post">
-                {% csrf_token %}
-                <div class="col-12">
-                    <div class="card recent-sales overflow-auto">
-                        <div class="filter">
-                            <a class="icon" href="#" data-bs-toggle="dropdown">
-                                <i class="bi bi-three-dots"></i>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                                <li class="dropdown-header text-start">
-                                    <h6>Filter</h6>
-                                </li>
-                                <li><a class="dropdown-item" href="#">Today</a></li>
-                                <li><a class="dropdown-item" href="#">This Month</a></li>
-                                <li><a class="dropdown-item" href="#">This Year</a></li>
-                            </ul>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">
-                                Recent Check-ins <span>| Today</span>
-                            </h5>
-                            <table class="table table-borderless datatable">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">X</th>
-                                        <th scope="col">#</th>
-                                        <th scope="col">Guest</th>
-                                        <th scope="col">Email</th>
-                                        <th scope="col">Room</th>
-                                        <th scope="col">Mobile</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for guest in active_guests %}
-                                    <tr>
-                                        <td class="text-center">
-                                            <input
-                                                class="form-check-input me-1"
-                                                type="checkbox"
-                                                name="guest_ids" 
-                                                value="{{guest.id}}"
-                                                aria-label="..."
-                                            />
-                                        </td>
-                                        <th scope="row"><a href="#">{{ forloop.counter }}</a></th>
-                                        <td>{{guest.name}}</td>
-                                        <td>
-                                            <a href="mailto:{{guest.email}}">{{guest.email}}</a>
-                                        </td>
-                                        <td>{{guest.room.room_number}}</td>
-                                        <td>{{guest.number}}</td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                            <div class="text-center">
-                                <button
-                                    id="table-checkout"
-                                    type="button"
-                                    class="btn btn-outline-danger"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#verticalycentered"
-                                >
-                                    Check-out
-                                </button>
-                                <div class="modal fade" id="verticalycentered" tabindex="-1">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title">Confirm Checkout</h5>
-                                                <button
-                                                    type="button"
-                                                    class="btn-close"
-                                                    data-bs-dismiss="modal"
-                                                    aria-label="Close"
-                                                ></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <div id="guestlist-modal"></div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button
-                                                    type="button"
-                                                    class="btn btn-secondary"
-                                                    data-bs-dismiss="modal"
-                                                >
-                                                    Close
-                                                </button>
-                                                <button type="submit" class="btn btn-primary">
-                                                    Save changes
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                        <div class="modal-dialog modal-dialog-centered">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title">Confirm Checkout</h5>
+                              <button
+                                type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Close"
+                              ></button>
                             </div>
+                            <div class="modal-body">
+                              <div id="guestlist-modal"></div>
+                            </div>
+                            <div class="modal-footer">
+                              <button
+                                type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal"
+                              >
+                                Close
+                              </button>
+                              <button type="submit" class="btn btn-primary">
+                                Save changes
+                              </button>
+                            </div>
+                          </div>
                         </div>
+                      </div>
                     </div>
-                </div>
-            </form>
-              <!-- End Recent Check-ins -->
-            </div>
-          </div>
-          <!-- End Left side columns -->
-
-          <!-- Right side columns -->
-          <div class="col-lg-4">
-            <!-- Recent Activity -->
-            <div class="card">
-              <div class="filter">
-                <a class="icon" href="#" data-bs-toggle="dropdown"
-                  ><i class="bi bi-three-dots"></i
-                ></a>
-                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                  <li class="dropdown-header text-start">
-                    <h6>Filter</h6>
-                  </li>
-
-                  <li><a class="dropdown-item" href="#">Today</a></li>
-                  <li><a class="dropdown-item" href="#">This Month</a></li>
-                  <li><a class="dropdown-item" href="#">This Year</a></li>
-                </ul>
-              </div>
-              
-              <div class="card-body">
-                <h5 class="card-title">Recent Activity <span>| Today</span></h5>
-                
-                {% for log in logs %}
-
-                <div class="activity">
-                  <div class="activity-item d-flex">
-                    <div class="activite-label">{{log.timestamp | add_one_hour | time:'P'}}</div>
-                    
-                    {% if log.check_status %}
-                        <i
-                        class="bi bi-circle-fill activity-badge text-success align-self-start"
-                      ></i>
-                      <div class="activity-content">
-                        {{log.check_in_action}}
-                      </div>
-                      {% else %}
-                        <i
-                        class="bi bi-circle-fill activity-badge text-danger align-self-start"
-                      ></i>
-                      <div class="activity-content">
-                        {{log.check_out_action}}
-                      </div>
-                    {% endif %}
-                      
-                    
                   </div>
-                  <!-- End activity item-->
-                
-                {% endfor %}
-
                 </div>
               </div>
-            </div>
-            <!-- End Recent Activity -->
+            </form>
+            <!-- End Recent Check-ins -->
           </div>
-          <!-- End Right side columns -->
         </div>
-      </section>
-    </main>
-    <!-- End #main -->
+        <!-- End Left side columns -->
 
-    <!-- ======= Footer ======= -->
-    <footer id="footer" class="footer">
-      <div class="copyright">
-        &copy; Copyright <strong><span>NiceAdmin</span></strong
-        >. All Rights Reserved
+        <!-- Right side columns -->
+        <div class="col-lg-4">
+          <!-- Recent Activity -->
+          <div class="card">
+            <div class="filter">
+              <a class="icon" href="#" data-bs-toggle="dropdown"
+                ><i class="bi bi-three-dots"></i
+              ></a>
+              <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                <li class="dropdown-header text-start">
+                  <h6>Filter</h6>
+                </li>
+
+                <li><a class="dropdown-item" href="#">Today</a></li>
+                <li><a class="dropdown-item" href="#">This Month</a></li>
+                <li><a class="dropdown-item" href="#">This Year</a></li>
+              </ul>
+            </div>
+
+            <div class="card-body">
+              <h5 class="card-title">Recent Activity <span>| Today</span></h5>
+
+              {% for log in logs %}
+
+              <div class="activity">
+                <div class="activity-item d-flex">
+                  <div class="activite-label">
+                    {{log.timestamp | add_one_hour | time:'P'}}
+                  </div>
+
+                  {% if log.check_status %}
+                  <i
+                    class="bi bi-circle-fill activity-badge text-success align-self-start"
+                  ></i>
+                  <div class="activity-content">{{log.check_in_action}}</div>
+                  {% else %}
+                  <i
+                    class="bi bi-circle-fill activity-badge text-danger align-self-start"
+                  ></i>
+                  <div class="activity-content">{{log.check_out_action}}</div>
+                  {% endif %}
+                </div>
+                <!-- End activity item-->
+
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+          <!-- End Recent Activity -->
+        </div>
+        <!-- End Right side columns -->
       </div>
-      <div class="credits">
-        <!-- All the links in the footer should remain intact. -->
-        <!-- You can delete the links only if you purchased the pro version. -->
-        <!-- Licensing information: https://bootstrapmade.com/license/ -->
-        <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
-        Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
-      </div>
-    </footer>
-    <!-- End Footer -->
+    </section>
+  </main>
+  <!-- End #main -->
 
-    <a
-      href="#"
-      class="back-to-top d-flex align-items-center justify-content-center"
-      ><i class="bi bi-arrow-up-short"></i
-    ></a>
-  </body>
+  <!-- ======= Footer ======= -->
+  <footer id="footer" class="footer">
+    <div class="copyright">
+      &copy; Copyright <strong><span>NiceAdmin</span></strong
+      >. All Rights Reserved
+    </div>
+    <div class="credits">
+      <!-- All the links in the footer should remain intact. -->
+      <!-- You can delete the links only if you purchased the pro version. -->
+      <!-- Licensing information: https://bootstrapmade.com/license/ -->
+      <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
+      Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+    </div>
+  </footer>
+  <!-- End Footer -->
 
-  {% endblock content %}
+  <a
+    href="#"
+    class="back-to-top d-flex align-items-center justify-content-center"
+    ><i class="bi bi-arrow-up-short"></i
+  ></a>
+</body>
+
+{% endblock content %}
