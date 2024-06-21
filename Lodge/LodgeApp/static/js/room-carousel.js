@@ -76,14 +76,7 @@ function showModalWithOccupancyStatus(roomNumber, isOccupied) {
     ? `<form action="${checkOutUrl}" method="POST">
         
          <input type="hidden" name="guest_ids" value="${guestId}">
-         <button  
-            id="table-checkout"
-            type="button"
-            class="btn btn-outline-danger"                   
-            data-bs-target="#verticalycentered" 
-            data-bs-dismiss="modal">
-                Checkout
-          </button>
+         <button type="submit" class="btn btn-outline-danger" data-bs-dismiss="modal">Checkout</button>
        </form>`
     : `<a href="${checkInUrl}"><button type="button" class="btn btn-success">
          <i class="bi bi-check-circle me-1"></i> Check-in a Guest
