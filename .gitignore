@@ -38,4 +38,4 @@ Lodge/LodgeApp/migrations/__pycache__/__init__.cpython-310.pyc
 Lodge/LodgeApp/templatetags/__pycache__/__init__.cpython-310.pyc
 Lodge/LodgeApp/templatetags/__pycache__/custom_filters.cpython-310.pyc
 
-!db.sqlite3
+!Lodge/db.sqlite3
