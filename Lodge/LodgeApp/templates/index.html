@@ -124,12 +124,12 @@
                             <table class="table table-borderless datatable">
                                 <thead>
                                     <tr>
-                                        <th scope="col">X</th>
-                                        <th scope="col">#</th>
-                                        <th scope="col">Guest</th>
-                                        <th scope="col">Email</th>
-                                        <th scope="col">Room</th>
-                                        <th scope="col">Mobile</th>
+                                        <th scope="col" class="text-center">X</th>
+                                        <th scope="col" class="text-center">#</th>
+                                        <th scope="col" class="text-center">Guest</th>
+                                        <th scope="col" class="text-center d-none d-lg-table-cell">Email</th>
+                                        <th scope="col" class="text-center">Room</th>
+                                        <th scope="col" class="text-center">Mobile</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -144,13 +144,13 @@
                                                 aria-label="..."
                                             />
                                         </td>
-                                        <th scope="row"><a href="#">{{ forloop.counter }}</a></th>
-                                        <td>{{guest.name}}</td>
-                                        <td>
+                                        <th scope="row" class="text-center"><a href="#">{{ forloop.counter }}</a></th>
+                                        <td class="text-center">{{guest.name}}</td>
+                                        <td class="text-center d-none d-lg-table-cell">
                                             <a href="mailto:{{guest.email}}">{{guest.email}}</a>
                                         </td>
-                                        <td>{{guest.room.room_number}}</td>
-                                        <td>{{guest.number}}</td>
+                                        <td class="text-center">{{guest.room.room_number}}</td>
+                                        <td class="text-center">{{guest.number}}</td>
                                     </tr>
                                     {% endfor %}
                                 </tbody>
