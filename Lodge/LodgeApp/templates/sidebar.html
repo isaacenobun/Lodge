@@ -4,7 +4,7 @@
 <aside id="sidebar" class="sidebar">
     <ul class="sidebar-nav" id="sidebar-nav">
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'dashboard' %}">
+        <a class="nav-link collapsed" id = "nav-dashboard" href="{% url 'dashboard' %}">
           <i class="bi bi-grid"></i>
           <span>Home</span>
         </a>
@@ -12,7 +12,7 @@
       <!-- End Dashboard Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="{% url 'rooms' %}">
+        <a class="nav-link collapsed" id = "nav-rooms" href="{% url 'rooms' %}">
           <i class="bi bi-building"></i>
           <span>Rooms</span>
         </a>
@@ -20,7 +20,7 @@
       <!-- End Room-Carousel Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="{% url 'check-in' %}">
+        <a class="nav-link collapsed" id = "nav-check-in" href="{% url 'check-in' %}">
           <i class="bi bi-clipboard-check"></i>
           <span>Check-in</span>
         </a>
@@ -28,7 +28,7 @@
       <!-- End Check-in Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="{% url 'analytics' %}">
+        <a class="nav-link collapsed" id = "nav-analytics" href="{% url 'analytics' %}">
           <i class="bi bi-bar-chart-line"></i>
           <span>Analytics</span>
         </a>
@@ -36,7 +36,7 @@
       <!-- End Analytics Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="{% url 'history' %}">
+        <a class="nav-link collapsed" id = "nav-history" href="{% url 'history' %}">
           <i class="bi bi-clock-history"></i>
           <span>Guest History</span>
         </a>
