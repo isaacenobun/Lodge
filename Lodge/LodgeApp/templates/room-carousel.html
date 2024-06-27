@@ -36,14 +36,9 @@
                   <option value="" selected disabled>
                     Select a suite
                   </option>
-                  
-                  {% for suite_type in suite_types %}
-                    
-                      <option value="{{suite_type}}">{{suite_type}} Suite</option>
-                      
-                  {% endfor %}
-                    
-                  
+                  <option value="exec">Executive Suite</option>
+                  <option value="business">Business Suite</option>
+                  <option value="regular">Regular Suite</option>
                 </select>
       
                 <ul class="showcase">
@@ -80,14 +75,21 @@
       
                 <div class="container-room-select">
                   <div class="row">
-                    {% for suite_type, rooms in suite_types.items %}
+                    <!-- exec-suite rooms -->
+                    <div id="exec-suite" class="suite-info">
+                      {% include "room_list.html" with rooms=exec_rooms room_guest_mapping=room_guest_mapping %}
+                    </div>
 
-                        <div id="{{suite_type}}-suite" class="suite-info">
-                          {% include "room_list.html" with rooms=rooms room_guest_mapping=room_guest_mapping %}
-                        </div>
+                    <!-- Business suite rooms -->
+                    <div id="business-suite" class="suite-info">
+                      {% include "room_list.html" with rooms=bus_rooms room_guest_mapping=room_guest_mapping %}
+                    </div>
 
-                    {% endfor %}
-                  </div>
+                    <!-- Regular suite rooms -->
+                    <div id="regular-suite" class="suite-info">
+                      {% include "room_list.html" with rooms=reg_rooms room_guest_mapping=room_guest_mapping %}
+                    </div>
+              </div>
               <!-- End Table with stripped rows -->
             </div>
           </div>
