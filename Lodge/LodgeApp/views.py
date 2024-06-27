@@ -60,7 +60,7 @@ def dashboard(request):
                                          company=request.user.company)
     total_guests = Guest.objects.filter(company=request.user.company).count()
     available_rooms = Room.objects.filter(room_status=False,
-                                          company=request.user.company).count()
+                                          company=request.user.company)
     
     context = {
         'active_guests': active_guests,
@@ -82,11 +82,17 @@ def rooms(request):
     for suite_type in suite_types:
         suite_rooms = Room.objects.filter(suite__type=suite_type, company=request.user.company)
         suite_types_dict[suite_type] = suite_rooms
-        
+    
+    suite_types_dict['All'] = Room.objects.filter(company=request.user.company)
+    
     guests = Guest.objects.filter(check_out__isnull=True, company=request.user.company)
     room_guest_mapping = {guest.room.id: guest for guest in guests}
     
+    available_rooms = Room.objects.filter(room_status=False,
+                                          company=request.user.company)
+    
     context = {
+        'available_rooms':available_rooms,
         'suite_types': suite_types_dict,
         'room_guest_mapping': room_guest_mapping,
         'check_out_url': reverse('check-out'),
@@ -101,13 +107,16 @@ def history(request):
         return redirect('sign-in')
     
     guests = Guest.objects.filter(company=request.user.company)
-    context = {'guests': guests, 'page_name':'History'}
+    available_rooms = Room.objects.filter(room_status=False,
+                                          company=request.user.company)
+    context = {
+        'available_rooms':available_rooms,
+        'guests': guests, 
+        'page_name':'History'
+    }
     return render(request, 'guest-history.html', context)
 
 def check_in(request):
-    if not request.user.is_authenticated:
-        return redirect('sign-in')
-    
     if request.method == 'POST':
         room_id = request.POST.get('room')
         room = get_object_or_404(Room, id=room_id)
@@ -137,10 +146,6 @@ def check_in(request):
         )
 
         return redirect('dashboard')
-    
-    rooms = Room.objects.filter(room_status=False)
-    context = {'rooms': rooms, 'page_name':'Check In'}
-    return render(request, 'check-in.html', context)
 
 @csrf_exempt
 def check_out(request):
@@ -177,6 +182,9 @@ def check_out(request):
 
 @csrf_exempt
 def onboarding(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+    
     if request.method == 'POST':
         company_name = request.POST.get('company_name')
         
@@ -189,7 +197,7 @@ def onboarding(request):
         suite_prices = [value for key, value in request.POST.items() if suite_price_pattern.match(key)]
         
         suite_rooms_pattern = re.compile(r'suite_rooms_\d+')
-        suite_rooms = [value for key, value in request.POST.items() if suite_rooms_pattern.match(key)]
+        # suite_rooms = [value for key, value in request.POST.items() if suite_rooms_pattern.match(key)]
         
         room_tag_pattern = re.compile(r'room_tag_(\d+)_\d+')
         room_tags_grouped = defaultdict(list)
@@ -282,6 +290,20 @@ def analytics(request):
         revenue_growth = ((month_revenue-prev_month_revenue)/prev_month_revenue)*100
     except:
         revenue_growth = 0
+        
+    available_rooms = Room.objects.filter(room_status=False,
+                                          company=request.user.company)
     
-    context = {'check_in_data':check_in_data, 'guests':Guest.objects.all(), 'top_guests':top_guests, 'check_in_rate':check_in_rate, 'guest_growth':guest_growth, 'total_revenue':int(total_revenue)/1000, 'monthly_revenue':monthly_revenue, 'revenue_growth':revenue_growth, 'page_name':'Analytics'}
+    context = {
+        'available_rooms':available_rooms,
+        'check_in_data':check_in_data, 
+        'guests':Guest.objects.all(), 
+        'top_guests':top_guests, 
+        'check_in_rate':check_in_rate, 
+        'guest_growth':guest_growth, 
+        'total_revenue':int(total_revenue)/1000, 
+        'monthly_revenue':monthly_revenue, 
+        'revenue_growth':revenue_growth, 
+        'page_name':'Analytics'
+    }
     return render(request, 'analytics.html', context)

@@ -63,7 +63,7 @@
                 <p class="text-center small">
                     Fill in the guest information here
                 </p>
-                <form
+                  <form
                       class="row g-3 needs-validation"
                       novalidate
                       method="post"
@@ -120,24 +120,25 @@
                         >
                         <select name="room" class="form-control" id="" required>
                           <option value="">Choose a room</option>
-                          {% for room in rooms %}
-                            <option value="{{room.id}}">
-                                {{room.room_number}}
-                            </option>
+                          {% for room in available_rooms %}
+                          <option value="{{room.id}}">
+                            Room {{room.room_number}} - {{room.suite.type}} Suite
+                          </option>
                           {% endfor %}
                         </select>
                         <div class="invalid-feedback">
                           Please, choose a room!
                         </div>
                       </div>
-                    </form>
-            </div>
-            <div class="modal-footer">
-                <div class="col-12">
-                    <button class="btn btn-primary w-100" type="submit">
-                      Check in
-                    </button>
-                </div>
+
+                      <div class="modal-footer">
+                        <div class="col-12">
+                            <button class="btn btn-primary w-100" type="submit">
+                              Check in
+                            </button>
+                        </div>
+                    </div>
+                  </form>
             </div>
         </div>
     </div>

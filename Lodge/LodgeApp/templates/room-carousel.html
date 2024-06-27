@@ -36,7 +36,7 @@
                   <option value="" selected disabled>
                     Select a suite
                   </option>
-                  
+                  {% comment %} <option value="All">All Suites</option> {% endcomment %}
                   {% for suite_type in suite_types %}
                     
                       <option value="{{suite_type}}">{{suite_type}} Suite</option>
