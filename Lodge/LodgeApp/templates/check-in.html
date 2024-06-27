@@ -79,6 +79,7 @@
                         <input
                           type="number"
                           name="phone"
+                          min="0"
                           class="form-control"
                           id=""
                           required
@@ -96,12 +97,28 @@
                           <option value="">Choose a room</option>
                           {% for room in rooms %}
                           <option value="{{room.id}}">
-                            {{room.room_number}}
+                            Room {{room.room_number}} - {{room.suite.type}} Suite
                           </option>
                           {% endfor %}
                         </select>
                         <div class="invalid-feedback">
                           Please, choose a room!
+                        </div>
+                      </div>
+
+                      <div class="col-12">
+                        <label for="inputNumber" class="form-label"
+                          >Length of Stay</label
+                        >
+                        <input
+                          type="number"
+                          name="duration"
+                          min="0"
+                          class="form-control"
+                          id=""
+                        />
+                        <div class="invalid-feedback">
+                          Please, enter the length of the guest's stay!
                         </div>
                       </div>
 

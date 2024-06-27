@@ -188,22 +188,7 @@
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Check-in activity</h5>
-              <div class="filter">
-                <a class="icon" href="#" data-bs-toggle="dropdown"
-                  ><i class="bi bi-three-dots"></i
-                ></a>
-                <ul
-                  class="dropdown-menu dropdown-menu-end dropdown-menu-arrow"
-                >
-                  <li class="dropdown-header text-start">
-                    <h6>Filter</h6>
-                  </li>
-
-                  <li><a class="dropdown-item" href="#">Today</a></li>
-                  <li><a class="dropdown-item" href="#">This Month</a></li>
-                  <li><a class="dropdown-item" href="#">This Year</a></li>
-                </ul>
-              </div>
+              
               <!-- Bar Chart -->
               <div id="barChart"></div>
               <!-- End Bar Chart -->
@@ -215,20 +200,6 @@
         <!-- Top Customers -->
         <div class="col-12">
           <div class="card top-selling overflow-auto">
-            <div class="filter">
-              <a class="icon" href="#" data-bs-toggle="dropdown"
-                ><i class="bi bi-three-dots"></i
-              ></a>
-              <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                <li class="dropdown-header text-start">
-                  <h6>Filter</h6>
-                </li>
-
-                <li><a class="dropdown-item" href="#">Today</a></li>
-                <li><a class="dropdown-item" href="#">This Month</a></li>
-                <li><a class="dropdown-item" href="#">This Year</a></li>
-              </ul>
-            </div>
 
             <div class="card-body pb-0">
               <h5 class="card-title">Top Customers <span></span></h5>
@@ -238,9 +209,9 @@
                   <tr>
                     <th scope="col">ID</th>
                     <th scope="col">Guest name</th>
-                    <th scope="col">Average Spending</th>
+                    <th scope="col">Email</th>
                     <th scope="col">Total Days</th>
-                    <th scope="col">Revenue</th>
+                    <th scope="col">Revenue (N)</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -250,14 +221,10 @@
                       <th scope="row">
                         <a href="#">{{ forloop.counter }}</a>
                       </th>
-                      <td>
-                        <a href="#" class="text-primary fw-bold"
-                          >{{guest.name}}</a
-                        >
-                      </td>
-                      <td>$64</td>
+                      <td><a href="#" class="text-primary fw-bold">{{guest.name}}</a></td>
+                      <td><a href="mailto:{{guest.email}}">{{guest.email}}</a></td>
                       <td class="fw-bold">{{guest.check_in|days_between:guest.check_out}}</td>
-                      <td>N{{ guest.revenue.revenue | revenue }}</td>
+                      <td>{{ guest.revenue.revenue | revenue }}</td>
                     </tr>
                   {% endfor %}
                       
