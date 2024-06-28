@@ -154,13 +154,13 @@ def check_out(request):
     
     if request.method == 'POST':
         guest_ids = request.POST.getlist('guest_ids')
-        guests_to_check_out = Guest.objects.filter(id__in=guest_ids)
+        guests_to_check_out = Guest.objects.filter(id__in=guest_ids, company=request.user.company)
 
         for guest in guests_to_check_out:
             guest.check_out = timezone.now()
             guest.save()
             
-            revenue_amount = guest.room.room_price * (guest.check_out - guest.check_in).days
+            revenue_amount = guest.room.suite.price * (guest.check_out - guest.check_in).days
             revenue = Revenue.objects.create(revenue=revenue_amount, company=request.user.company)
             
             guest.revenue = revenue
