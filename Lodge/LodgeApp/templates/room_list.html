@@ -14,7 +14,9 @@
         </div>
     {% else %}
         <div class="room">
-            <div class="room-number d-flex align-items-center justify-content-center">Room {{ room.room_number }}</div>
+            <div class="room-number d-flex align-items-center justify-content-center" >Room {{ room.room_number }}
+                <input type="hidden" name="room_queryset" value="{{ room }}">
+            </div>
             <div class="rounded-circle d-flex align-items-center justify-content-center">
                 <i class="bi bi-person-x"></i>
             </div>

@@ -116,6 +116,21 @@ def history(request):
     }
     return render(request, 'guest-history.html', context)
 
+def logs(request):
+    if not request.user.is_authenticated:
+        return redirect('sign-in')
+    
+    available_rooms = Room.objects.filter(room_status=False,
+                                          company=request.user.company)
+    logs = Log.objects.filter(company=request.user.company)
+    
+    context={
+        'available_rooms':available_rooms,
+        'logs':logs,
+    }
+    
+    return render(request, 'logs.html', context)
+
 def check_in(request):
     if request.method == 'POST':
         room_id = request.POST.get('room')
@@ -307,3 +322,31 @@ def analytics(request):
         'page_name':'Analytics'
     }
     return render(request, 'analytics.html', context)
+
+# For Demos
+def sign_in_test(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+    
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+
+        try:
+            staff = Staff.objects.get(email=email)
+        except Staff.DoesNotExist:
+            # messages.warning(request, f"Staff with {email} does not exist")
+            return redirect('sign-in')
+
+        staff = authenticate(request, email=email, password=password)
+
+        if staff is not None:
+            login(request, staff)
+            # messages.success(request, f"Welcome {request.POST.get('email')}")
+            return redirect('dashboard')
+        else:
+            # messages.warning(request, "Invalid password")
+            return redirect('sign-in')
+    else:
+        context = {'page_name':'Sign in'}
+        return render(request, 'pages-sign-in-test.html', context)

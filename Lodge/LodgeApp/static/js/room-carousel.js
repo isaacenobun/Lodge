@@ -57,7 +57,7 @@ function updateUI(selectedSuite) {
 
 
 // Function to show the modal with the appropriate message
-function showModalWithOccupancyStatus(roomNumber, isOccupied, guestId, guestName) {
+function showModalWithOccupancyStatus(roomNumber, isOccupied, guestId, guestName, roomQueryset) {
   // Get the modal elements
   const modal = document.getElementById('verticalycentered');
   const modalBody = modal.querySelector('.modal-body');
@@ -78,9 +78,10 @@ function showModalWithOccupancyStatus(roomNumber, isOccupied, guestId, guestName
          <input type="hidden" name="guest_ids" value="${guestId}">
          <button type="submit" class="btn btn-outline-danger" data-bs-dismiss="modal">Checkout</button>
        </form>`
-    : `<a href="${checkInUrl}"><button type="button" class="btn btn-success">
+    : `<button type="button" class="btn btn-success" data-bs-toggle="modal"
+            data-bs-target="#basicModal">
          <i class="bi bi-check-circle me-1"></i> Check-in a Guest
-       </button></a>`;
+       </button>`;
   modalFooter.innerHTML = modalFooterContent;
 
   // Show the modal using Bootstrap's modal method
@@ -99,11 +100,13 @@ document.querySelectorAll('.room').forEach(room => {
     // Get the guest ID from the hidden input within the clicked room
     const guestIdInput = this.querySelector('input[name="guest_id"]');
     const guestNameInput = this.querySelector('input[name="guest_name"]');
+    const roomQuerysetInput = this.querySelector('input[name="room_queryset"]');
     const guestId = guestIdInput ? guestIdInput.value : null;
     const guestName = guestNameInput ? guestNameInput.value : null;
+    const roomQueryset = roomQuerysetInput ? roomQuerysetInput.value : null;
     
     // Show the modal with the occupancy status and guest ID
-    showModalWithOccupancyStatus(roomNumber, isOccupied, guestId, guestName);
+    showModalWithOccupancyStatus(roomNumber, isOccupied, guestId, guestName, roomQueryset);
   });
 });
 
