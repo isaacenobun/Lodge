@@ -2,6 +2,7 @@
 {% load static %}
 {% load custom_filters %}
 {% load custom_tags %}
+{% load humanize %}
 
 
 {% block content %}
@@ -42,7 +43,7 @@
                       <i class="bi bi-person"></i>
                     </div>
                     <div class="ps-3">
-                      <h6>N{{total_revenue|stringformat:".1f"}}K</h6>
+                      <h6>N{{total_revenue|floatformat:1|intcomma}}</h6>
                       <span class="text-success small pt-1 fw-bold"></span>
                       <span class="text-muted small pt-2 ps-1"></span>
                     </div>
@@ -68,7 +69,7 @@
                       <i class="bi bi-person-plus"></i>
                     </div>
                     <div class="ps-3">
-                      <h6>N{{monthly_revenue|stringformat:".1f"}}K</h6>
+                      <h6>N{{monthly_revenue|floatformat:1|intcomma}}</h6>
                       <span class="text-success small pt-1 fw-bold"></span>
                       <span class="text-muted small pt-2 ps-1"></span>
                     </div>
@@ -211,7 +212,7 @@
                     <th scope="col">Guest name</th>
                     <th scope="col">Email</th>
                     <th scope="col">Total Days</th>
-                    <th scope="col">Revenue (N)</th>
+                    <th scope="col">Revenue</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -223,8 +224,8 @@
                       </th>
                       <td><a href="#" class="text-primary fw-bold">{{guest.name}}</a></td>
                       <td><a href="mailto:{{guest.email}}">{{guest.email}}</a></td>
-                      <td class="fw-bold">{{guest.check_in|days_between:guest.check_out}}</td>
-                      <td>{{ guest.revenue.revenue | revenue }}</td>
+                      <td class="fw-bold">{{guest.duration}}</td>
+                      <td>N{{ guest.revenue.revenue|floatformat:1|intcomma }}</td>
                     </tr>
                   {% endfor %}
                       

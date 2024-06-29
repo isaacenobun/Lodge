@@ -53,14 +53,14 @@ class Guest(models.Model):
     check_out = models.DateTimeField(null=True,blank=True)
     revenue = models.ForeignKey(Revenue, on_delete=models.CASCADE, null=True, blank=True)
     company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True)
+    duration = models.IntegerField(null=True)
     
     def __str__(self):
         return self.name
     
 class Log(models.Model):
     staff = models.ForeignKey(Staff, on_delete=models.CASCADE)
-    check_in_action = models.CharField(max_length=300, blank=True)
-    check_out_action = models.CharField(max_length=300, blank=True)
+    action = models.CharField(max_length=300, blank=True)
     check_status = models.BooleanField(default=False)
     timestamp = models.DateTimeField()
     company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True)

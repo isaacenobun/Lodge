@@ -52,17 +52,20 @@ def dashboard(request):
     if not request.user.is_authenticated:
         return redirect('sign-in')
     
+    now=timezone.now()
+    
     logs = Log.objects.filter(
         timestamp__date=timezone.now().date(),
         company=request.user.company
         ).order_by('-id')[:5]
-    active_guests = Guest.objects.filter(check_out__isnull=True,
+    active_guests = Guest.objects.filter(check_out__gt=now,
                                          company=request.user.company)
     total_guests = Guest.objects.filter(company=request.user.company).count()
     available_rooms = Room.objects.filter(room_status=False,
                                           company=request.user.company)
     
     context = {
+        'now':now,
         'active_guests': active_guests,
         'total_guests': total_guests,
         'staff': request.user,
@@ -76,6 +79,8 @@ def rooms(request):
     if not request.user.is_authenticated:
         return redirect('sign-in')
     
+    now = timezone.now()
+    
     suite_types = Suite.objects.values_list('type', flat=True).distinct()
     
     suite_types_dict = {}
@@ -85,7 +90,9 @@ def rooms(request):
     
     suite_types_dict['All'] = Room.objects.filter(company=request.user.company)
     
-    guests = Guest.objects.filter(check_out__isnull=True, company=request.user.company)
+    guests = Guest.objects.filter(check_out__gt=now,
+                                  company=request.user.company
+                                  )
     room_guest_mapping = {guest.room.id: guest for guest in guests}
     
     available_rooms = Room.objects.filter(room_status=False,
@@ -122,7 +129,7 @@ def logs(request):
     
     available_rooms = Room.objects.filter(room_status=False,
                                           company=request.user.company)
-    logs = Log.objects.filter(company=request.user.company)
+    logs = Log.objects.filter(company=request.user.company).order_by('-id')
     
     context={
         'available_rooms':available_rooms,
@@ -135,6 +142,14 @@ def check_in(request):
     if request.method == 'POST':
         room_id = request.POST.get('room')
         room = get_object_or_404(Room, id=room_id)
+        
+        duration = request.POST.get('duration')
+        revenue = float(duration) * float(room.suite.price)
+        revenue = Revenue.objects.create(
+            revenue = revenue,
+            company = request.user.company
+        )
+        check_out = datetime.now() + timedelta(days=int(duration))
 
         guest = Guest.objects.create(
             name=request.POST.get('name'),
@@ -142,7 +157,10 @@ def check_in(request):
             number=request.POST.get('phone'),
             room=room,
             staff=request.user,
-            company=request.user.company
+            check_out=check_out,
+            revenue=revenue,
+            company=request.user.company,
+            duration=request.POST.get('duration')
         )
 
         room.room_status = True
@@ -150,7 +168,15 @@ def check_in(request):
         
         Log.objects.create(
             staff=request.user,
-            check_in_action=f'{request.user} checked in {guest.name} into Room {guest.room.room_number}',
+            action=f'{request.user} checked in {guest.name} into Room {guest.room.room_number}',
+            check_status=True, 
+            timestamp=guest.check_in,
+            company=guest.company
+        )
+        
+        Log.objects.create(
+            staff=request.user,
+            action=f'{guest.name} paid N{revenue.revenue}',
             check_status=True, 
             timestamp=guest.check_in,
             company=guest.company
@@ -173,20 +199,18 @@ def check_out(request):
 
         for guest in guests_to_check_out:
             guest.check_out = timezone.now()
+            new_duration = (guest.check_out - guest.check_in).days
+            guest.duration = new_duration
             guest.save()
-            
-            revenue_amount = guest.room.suite.price * (guest.check_out - guest.check_in).days
-            revenue = Revenue.objects.create(revenue=revenue_amount, company=request.user.company)
-            
-            guest.revenue = revenue
-            guest.save()
+            guest.revenue.revenue = new_duration * guest.room.suite.price
+            guest.revenue.save()
             
             guest.room.room_status = False
             guest.room.save()
             
             Log.objects.create(
                 staff=request.user,
-                check_out_action=f'{request.user} checked out {guest.name} from Room {guest.room.room_number}',
+                action=f'{request.user} checked out {guest.name} from Room {guest.room.room_number}',
                 check_status=False, 
                 timestamp=guest.check_out,
                 company=request.user.company
@@ -248,16 +272,16 @@ def analytics(request):
     if not request.user.is_authenticated:
         return redirect('sign-in')
     
-    top_guests = Guest.objects.all().order_by('-id')[:5]
-    guests = Guest.objects.all()
+    top_guests = Guest.objects.filter(company=request.user.company).order_by('-revenue__revenue')[:5]
+    guests = Guest.objects.filter(company=request.user.company)
     
     check_ins = CheckIns.objects.filter(time__year=timezone.now().year, company=request.user.company)
     year_dict = {i:0 for i in range(1,13)}
     for check_in in check_ins:
         month = check_in.time.month
         year_dict[month] += 1
-    # check_in_data = list(year_dict.values())
-    check_in_data = [8,8,8,8,8,15]
+    check_in_data = list(year_dict.values())
+    # check_in_data = [8,8,8,8,8,15]
     check_in_rate = int(np.sum(check_in_data)/(timezone.now().month * 4))
     
     if timezone.now().month == 1:
@@ -276,7 +300,7 @@ def analytics(request):
         except:
             total_revenue += 0
         
-    monthly_revenue = (total_revenue/(timezone.now().month))/1000
+    monthly_revenue = (total_revenue/(timezone.now().month))
     
     month_revenue_guests = Guest.objects.filter(check_out__month=timezone.now().month, company=request.user.company)
     
@@ -312,11 +336,11 @@ def analytics(request):
     context = {
         'available_rooms':available_rooms,
         'check_in_data':check_in_data, 
-        'guests':Guest.objects.all(), 
+        'guests':Guest.objects.filter(company=request.user.company), 
         'top_guests':top_guests, 
         'check_in_rate':check_in_rate, 
         'guest_growth':guest_growth, 
-        'total_revenue':int(total_revenue)/1000, 
+        'total_revenue':float(total_revenue), 
         'monthly_revenue':monthly_revenue, 
         'revenue_growth':revenue_growth, 
         'page_name':'Analytics'
