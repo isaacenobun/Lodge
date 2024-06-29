@@ -9,32 +9,48 @@
         <div class="container">
           <div class="row justify-content-center">
             <div
-              class="col-xl-5 col-lg-6 col-md-8 d-flex flex-column align-items-center justify-content-center"
+              class="col-xl-8 col-lg-8 col-md-8 d-flex flex-column align-items-center justify-content-center"
             >
-              <div class="d-flex justify-content-center py-4">
-                <a
-                  href="{% url 'dashboard' %}"
-                  class="logo d-flex align-items-center w-auto"
-                >
-                  <img src="{% static 'img/logo.png' %}" alt="" />
-                  <span class="d-none d-lg-block">Lodge</span>
-                </a>
-              </div>
-              <!-- End Logo -->
-
               <div class="card mb-3">
                 <div class="card-body">
                   <div class="pt-4 pb-2">
-                    <h5 class="card-title text-center pb-0 fs-4">
-                      Check-in a guest
-                    </h5>
+                    <div class="d-flex justify-content-center">
+                      <a
+                        href="{% url 'dashboard' %}"
+                        class="logo d-flex align-items-center w-auto"
+                      >
+                        <img src="{% static 'img/logo.png' %}" alt="" />
+                        <span class="d-none d-lg-block">Lodge</span>
+                      </a>
+                    </div>
+                    <!-- End Logo -->
+
+                    <h5 class="card-title text-center pb-0 fs-4">Onboarding</h5>
                     <p class="text-center small">
-                      Fill in the guest information here
+                      Fill your company information here
                     </p>
-                    <form class="row g-3" action="" method="post">
+                    <form class="row g-2" action="" method="post">
                       {% csrf_token %}
 
                       <!-- Company Name -->
+                      <div class="col-md-12">
+                        <div class="form-floating">
+                          <input
+                            name="company_name"
+                            type="text"
+                            class="form-control"
+                            id="company_name"
+                            placeholder="Your Name"
+                            required
+                          />
+                          <label for="company_name">Company Name</label>
+                          <div class="invalid-feedback">
+                            Please, enter your company name!
+                          </div>
+                        </div>
+                      </div>
+
+                      {% comment %}
                       <div class="col-12">
                         <label for="company_name">Company Name</label>
                         <input
@@ -48,69 +64,104 @@
                           Please, enter your company name!
                         </div>
                       </div>
+                      {% endcomment %} {% comment %}
+                      <div
+                        class="col-12 text-center"
+                        id="suites-container"
+                      ></div>
+                      {% endcomment %}
 
-                      <!-- Suites Section -->
-                      <div class="col-12" id="suites-container">
-                        <label for="">Suites</label>
+                      <div class="col-lg-12 col-md-12 text-center small">
+                        <table
+                          class="table table-bordered table-sm"
+                          style="display: none"
+                        >
+                          <thead>
+                            <tr>
+                              <th scope="col">#</th>
+                              <th scope="col">Type</th>
+                              <th scope="col">Rooms</th>
+                              <th scope="col">Price</th>
+                            </tr>
+                          </thead>
+                          <tbody></tbody>
+                        </table>
+                      </div>
 
-                        <!-- Initial suite input fields -->
-                        <div class="suite">
-                          <div class="col-4">
-                            <label for="suite_type_1" class="form-label"
-                              >Suite Type</label
-                            >
-                            <input
-                              class="form-control"
-                              type="text"
-                              name="suite_type_1"
-                              required
-                            />
-                            <div class="invalid-feedback">
-                              Please, enter a value!
-                            </div>
+                      <!-- Initial suite input fields -->
+                      <div class="col-lg-12 col-md-12">
+                        <div class="form-floating">
+                          <input
+                            type="text"
+                            class="form-control"
+                            name="suite_type_1"
+                            id="suite_type_1"
+                            placeholder="Suite type"
+                            required
+                          />
+                          <label for="suite_type_1" class="form-label small"
+                            >Suite type</label
+                          >
+                          <div class="invalid-feedback">
+                            Please, enter a value!
                           </div>
-
-                          <div class="col-4">
-                            <label for="suite_price_1" class="form-label"
-                              >Suite Price</label
-                            >
-                            <input
-                              class="form-control"
-                              type="number"
-                              name="suite_price_1"
-                              min="0"
-                              required
-                            />
-                            <div class="invalid-feedback">
-                              Please, enter a value!
-                            </div>
-                          </div>
-
-                          <div class="col-4">
-                            <label for="suite_rooms_1" class="form-label"
-                              >Number of Rooms for this Suite</label
-                            >
-                            <input
-                              type="number"
-                              name="suite_rooms_1"
-                              min="0"
-                              class="room-count form-control"
-                              data-suite-index="1"
-                              required
-                            />
-                            <div class="invalid-feedback">
-                              Please, enter a value!
-                            </div>
-                          </div>
-
-                          <div class="room-tags" id="room_tags_1"></div>
                         </div>
                       </div>
 
-                      <!-- Button to add more suites -->
+                      <div class="col-lg-12 col-md-12">
+                        <div class="form-floating">
+                          <input
+                            type="number"
+                            name="suite_rooms_1"
+                            id="suite_rooms_1"
+                            min="0"
+                            class="room-count form-control"
+                            data-suite-index="1"
+                            placeholder="Rooms in suite"
+                            required
+                          />
+                          <label for="suite_rooms_1" class="form-label small"
+                            >Rooms in Suite</label
+                          >
+                          <div class="invalid-feedback">
+                            Please, enter a value!
+                          </div>
+                        </div>
+                      </div>
+
                       <div class="col-12">
+                        <div class="form-floating input-group">
+                          <span class="input-group-text">$</span>
+                          <input
+                            type="number"
+                            class="form-control"
+                            id="suite_price_1"
+                            name="suite_price_1"
+                            min="0"
+                            placeholder="Price"
+                            required
+                          />
+                          <span class="input-group-text">.00</span>
+                          <div class="invalid-feedback">
+                            Please, enter a value!
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="col-6 small">
                         <button
-                          class="btn btn-primary w-100"
+                          class="btn btn-outline-secondary w-100"
+                          type="button"
+                          id="customRoomTags"
+                        >
+                          Custom Room Tags
+                        </button>
+                      </div>
+
+                      <!-- Button to add more suites -->
+                      <div class="col-6">
+                        <button
+                          class="btn btn-outline-secondary w-100"
                           type="button"
                           id="add-suite"
                         >
@@ -118,9 +169,20 @@
                         </button>
                       </div>
 
+                      <div class="col-12 text-center" id="suites-container">
+                        <!-- Initial suite input fields -->
+                        <div class="suite row form-floating">
+                          <div class="col-4"></div>
+                          <div class="room-tags" id="room_tags_1"></div>
+                        </div>
+                      </div>
+
                       <!-- Submit Button -->
                       <div class="col-12">
-                        <button class="btn btn-primary w-100" type="submit">
+                        <button
+                          class="btn btn-primary btn- w-100"
+                          type="submit"
+                        >
                           Submit
                         </button>
                       </div>
