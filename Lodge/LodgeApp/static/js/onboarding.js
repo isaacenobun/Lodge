@@ -28,24 +28,51 @@
 document.getElementById('customRoomTags').addEventListener('click', function () {
     const roomCountInputs = document.querySelectorAll('.room-count');
     roomCountInputs.forEach(function (input) {
-        const suiteIndex = input.dataset.suiteIndex;
-        const roomCount = parseInt(input.value);
-        const roomTagsDiv = document.getElementById(`room_tags_${suiteIndex}`);
+        // Add event listener for 'input' event
+        input.addEventListener('input', updateRoomTags);
 
-        // Clear existing room tags
-        roomTagsDiv.innerHTML = '';
-
-        // Add new room tag fields
-        for (let i = 1; i <= roomCount; i++) {
-            const roomTagInput = document.createElement('div');
-            roomTagInput.innerHTML = `
-                <label for="room_tag_${suiteIndex}_${i}">Room Tag ${i}</label>
-                <input type="text" name="room_tag_${suiteIndex}_${i}" required>
-            `;
-            roomTagsDiv.appendChild(roomTagInput);
-        }
+        // Initial call to set up the room tags
+        updateRoomTags.call(input);
     });
 });
+
+function updateRoomTags() {
+    const suiteIndex = this.dataset.suiteIndex;
+    const roomCount = parseInt(this.value);
+    const roomTagsDiv = document.getElementById(`suites-container`);
+    roomTagsDiv.style.display = 'flex';
+    roomTagsDiv.style.flexWrap = 'wrap';
+    roomTagsDiv.style.justifyContent = 'center';
+
+    // Clear existing room tags
+    roomTagsDiv.innerHTML = '';
+
+    // Add new room tag fields
+    for (let i = 1; i <= roomCount; i++) {
+        const roomTagInput = document.createElement('div');
+        roomTagInput.classList.add('form-floating');
+        roomTagInput.classList.add('small');
+        roomTagInput.style.maxWidth = '15%';
+        roomTagInput.style.minWidth = '15%';
+        roomTagInput.style.margin = '2px 2px';
+        roomTagInput.innerHTML = `
+            <input class="form-control" type="text" id="room_tag_${suiteIndex}_${i}" placeholder="Tag ${i}" name="room_tag_${suiteIndex}_${i}" required>
+            <label class="form-label" samll for="room_tag_${suiteIndex}_${i}">Tag ${i}</label>
+        `;
+        roomTagsDiv.appendChild(roomTagInput);
+    }
+}
+
+
+// Event listener for the 'Add another suite' button
+document.getElementById('add-suite').addEventListener('click', function () {
+    // Assuming you want to clear all room tags divs
+    const roomTagsDivs = document.querySelectorAll('[id^="suites-container"]');
+    roomTagsDivs.forEach(function (div) {
+        div.innerHTML = ''; // Clear the content of each room tags div
+    });
+});
+
 
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -68,11 +95,50 @@ document.addEventListener('DOMContentLoaded', function () {
                     <td>${suite.type}</td>
                     <td>${suite.rooms}</td>
                     <td>${suite.price}</td>
+                    <button
+                        type="button"
+                        class="btn-close btn-lg text-center"
+                        data-bs-dismiss="row"
+                        aria-label="Close"
+                    ></button>
                   </tr>
         `;
+
+        // Find the close button in the row and add a click event listener
+        const closeButton = row.querySelector('.btn-close');
+        closeButton.addEventListener('click', function () {
+            // This will remove the row containing the button
+            row.remove();
+
+
+            // Decrement the suiteCount since a row has been deleted
+            suiteCount--;
+
+            // Update the suite numbers for all remaining rows
+            const allRows = table.querySelectorAll('tbody tr');
+            allRows.forEach((row, index) => {
+                row.querySelector('th').textContent = index + 1;
+            });
+            // Call checkTableEmpty to determine if the header should be shown or hidden
+            checkTableEmpty();
+        });
     }
 
-    // Function to reset the form fields
+
+    // Function to check if the table body is empty and hide the header if it is
+    function checkTableEmpty() {
+        const tableBody = document.querySelector('.table tbody');
+        if (tableBody.rows.length === 0) { // Check if there are no rows in the tbody
+            document.querySelector('.table thead').style.display = 'none';
+        } else {
+            document.querySelector('.table thead').style.display = '';
+        }
+    }
+
+    // Call checkTableEmpty when the document is loaded or when the table is initially populated
+    document.addEventListener('DOMContentLoaded', checkTableEmpty);
+
+
     // Function to reset specific form fields
     function resetFormFields() {
         document.getElementById('suite_type_1').value = '';
@@ -92,7 +158,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 type: suiteType,
                 rooms: suiteRooms,
                 price: suitePrice
-            };
+            }
 
             // Insert the suite details into the table
             insertSuiteDetailsIntoTable(suite);
@@ -104,17 +170,10 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+
+
     // Event listener for the form submission
     form.addEventListener('submit', function (event) {
-        event.preventDefault();
-        // Here you would typically gather all the form data
-        // and send it to the server using AJAX or a similar method.
-        // For demonstration purposes, we'll just log the data to the console.
-        const formData = new FormData(form);
-        for (const [key, value] of formData.entries()) {
-            console.log(`${key}: ${value}`);
-        }
-        // Send the form data to the backend
-        // Example: axios.post('/your-endpoint', formData);
+
     });
 });
