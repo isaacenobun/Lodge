@@ -25,7 +25,15 @@
 // });
 
 
+// Flag to control the update behavior
+let allowUpdate = true;
+
+
 document.getElementById('customRoomTags').addEventListener('click', function () {
+
+    // Re-enable updates
+    allowUpdate = true;
+
     const roomCountInputs = document.querySelectorAll('.room-count');
     roomCountInputs.forEach(function (input) {
         // Add event listener for 'input' event
@@ -37,6 +45,9 @@ document.getElementById('customRoomTags').addEventListener('click', function () 
 });
 
 function updateRoomTags() {
+    // Exit the function if updates are not allowed
+    if (!allowUpdate) return;
+
     const suiteIndex = this.dataset.suiteIndex;
     const roomCount = parseInt(this.value);
     const roomTagsDiv = document.getElementById(`suites-container`);
@@ -47,26 +58,33 @@ function updateRoomTags() {
     // Clear existing room tags
     roomTagsDiv.innerHTML = '';
 
-    // Add new room tag fields
-    for (let i = 1; i <= roomCount; i++) {
-        const roomTagInput = document.createElement('div');
-        roomTagInput.classList.add('form-floating');
-        roomTagInput.classList.add('small');
-        roomTagInput.style.maxWidth = '15%';
-        roomTagInput.style.minWidth = '15%';
-        roomTagInput.style.margin = '2px 2px';
-        roomTagInput.innerHTML = `
-            <input class="form-control" type="text" id="room_tag_${suiteIndex}_${i}" placeholder="Tag ${i}" name="room_tag_${suiteIndex}_${i}" required>
-            <label class="form-label" for="room_tag_${suiteIndex}_${i}">Tag ${i}</label>
-        `;
-        roomTagsDiv.appendChild(roomTagInput);
+
+    // Add new room tag fields only if updates are allowed
+    if (allowUpdate) {
+        // Add new room tag fields
+        for (let i = 1; i <= roomCount; i++) {
+            const roomTagInput = document.createElement('div');
+            roomTagInput.classList.add('form-floating');
+            roomTagInput.classList.add('small');
+            roomTagInput.style.maxWidth = '15%';
+            roomTagInput.style.minWidth = '15%';
+            roomTagInput.style.margin = '2px 2px';
+            roomTagInput.innerHTML = `
+                <input class="form-control" type="text" id="room_tag_${suiteIndex}_${i}" placeholder="Tag ${i}" name="room_tag_${suiteIndex}_${i}" required>
+                <label class="form-label" for="room_tag_${suiteIndex}_${i}">Tag ${i}</label>
+            `;
+            roomTagsDiv.appendChild(roomTagInput);
+        }
     }
 }
 
 
 // Event listener for the 'Add another suite' button
 document.getElementById('add-suite').addEventListener('click', function () {
-    // Assuming you want to clear all room tags divs
+    // Disable updates
+    allowUpdate = false;
+
+    // clear all room tags divs
     const roomTagsDivs = document.querySelectorAll('[id^="suites-container"]');
     roomTagsDivs.forEach(function (div) {
         div.innerHTML = ''; // Clear the content of each room tags div
