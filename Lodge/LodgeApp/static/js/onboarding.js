@@ -57,7 +57,7 @@ function updateRoomTags() {
         roomTagInput.style.margin = '2px 2px';
         roomTagInput.innerHTML = `
             <input class="form-control" type="text" id="room_tag_${suiteIndex}_${i}" placeholder="Tag ${i}" name="room_tag_${suiteIndex}_${i}" required>
-            <label class="form-label" samll for="room_tag_${suiteIndex}_${i}">Tag ${i}</label>
+            <label class="form-label" for="room_tag_${suiteIndex}_${i}">Tag ${i}</label>
         `;
         roomTagsDiv.appendChild(roomTagInput);
     }
