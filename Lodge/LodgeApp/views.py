@@ -17,9 +17,102 @@ import re
 from collections import defaultdict
 
 # Create your views here.
+def sign_up(request):
+    if request.user.is_authenticated:
+        if request.user.company is not None:
+            return redirect('dashboard')
+        else:
+            return redirect('onboarding')
+
+    if request.method == 'POST':
+            username = request.POST.get('username')
+            email = request.POST.get('email')
+            password = request.POST.get('password')
+            
+            new_user = Staff.objects.create(
+                username = username,
+                email = email,
+                password = password
+            )
+            
+            new_user.set_password(password)
+            new_user.is_superuser = True
+            new_user.is_staff = True
+            new_user.save()
+            
+            new_user = authenticate(
+                request, 
+                email=email, 
+                password=password
+            )
+            login(request, new_user)
+            return redirect('onboarding')
+
+    context = {'page_name': 'Sign Up'}
+    return render(request, 'pages-sign-up.html', context)
+
+@csrf_exempt
+def onboarding(request):
+    if not request.user.is_authenticated:
+        return redirect('sign-in')
+    
+    if request.user.is_authenticated and request.user.company is not None:
+        return redirect('dashboard')
+    
+    if request.method == 'POST':
+        company_name = request.POST.get('company_name')
+        
+        company = Company.objects.create(name=company_name)
+        
+        suite_type_pattern = re.compile(r'suite_type_\d+')
+        suite_types = [value for key, value in request.POST.items() if suite_type_pattern.match(key)]
+        
+        suite_price_pattern = re.compile(r'suite_price_\d+')
+        suite_prices = [value for key, value in request.POST.items() if suite_price_pattern.match(key)]
+        
+        suite_rooms_pattern = re.compile(r'suite_rooms_\d+')
+        # suite_rooms = [value for key, value in request.POST.items() if suite_rooms_pattern.match(key)]
+        
+        room_tag_pattern = re.compile(r'room_tag_(\d+)_\d+')
+        room_tags_grouped = defaultdict(list)
+        for key, value in request.POST.items():
+            match = room_tag_pattern.match(key)
+            if match:
+                suite_number = int(match.group(1))
+                room_tags_grouped[suite_number].append((key, value))
+        
+        for iter in range(len(suite_types)):
+            suite_type = suite_types[iter]
+            suite_price = suite_prices[iter]
+            
+            new_suite = Suite.objects.create(
+                company=company,
+                type=suite_type,
+                price=suite_price
+            )
+            
+            for room in room_tags_grouped[iter + 1]:
+                room_tag = room[1]
+                new_room = Room.objects.create(
+                    suite=new_suite,
+                    company=company,
+                    room_number=room_tag
+                )
+        owner = request.user
+        owner.company = company
+        owner.owner = True
+        owner.save()
+            
+        return redirect('dashboard')
+    
+    return render(request, 'onboarding.html')
+
 def sign_in(request):
     if request.user.is_authenticated:
-        return redirect('dashboard')
+        if request.user.company is not None:
+            return redirect('dashboard')
+        else:
+            return redirect('onboarding')
     
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -52,6 +145,9 @@ def dashboard(request):
     if not request.user.is_authenticated:
         return redirect('sign-in')
     
+    elif request.user.is_authenticated and request.user.company is None:
+        return redirect('onboarding')
+        
     now=timezone.now()
     
     logs = Log.objects.filter(
@@ -79,9 +175,12 @@ def rooms(request):
     if not request.user.is_authenticated:
         return redirect('sign-in')
     
+    if request.user.is_authenticated and request.user.company is None:
+        return redirect('onboarding')
+    
     now = timezone.now()
     
-    suite_types = Suite.objects.values_list('type', flat=True).distinct()
+    suite_types = Suite.objects.filter(company=request.user.company).values_list('type', flat=True).distinct()
     
     suite_types_dict = {}
     for suite_type in suite_types:
@@ -113,6 +212,9 @@ def history(request):
     if not request.user.is_authenticated:
         return redirect('sign-in')
     
+    if request.user.is_authenticated and request.user.company is None:
+        return redirect('onboarding')
+    
     guests = Guest.objects.filter(company=request.user.company)
     available_rooms = Room.objects.filter(room_status=False,
                                           company=request.user.company)
@@ -126,6 +228,9 @@ def history(request):
 def logs(request):
     if not request.user.is_authenticated:
         return redirect('sign-in')
+    
+    if request.user.is_authenticated and request.user.company is None:
+        return redirect('onboarding')
     
     available_rooms = Room.objects.filter(room_status=False,
                                           company=request.user.company)
@@ -219,54 +324,10 @@ def check_out(request):
     
     return redirect('sign-in')
 
-@csrf_exempt
-def onboarding(request):
-    if request.user.is_authenticated:
-        return redirect('dashboard')
-    
-    if request.method == 'POST':
-        company_name = request.POST.get('company_name')
-        
-        company = Company.objects.create(name=company_name)
-        
-        suite_type_pattern = re.compile(r'suite_type_\d+')
-        suite_types = [value for key, value in request.POST.items() if suite_type_pattern.match(key)]
-        
-        suite_price_pattern = re.compile(r'suite_price_\d+')
-        suite_prices = [value for key, value in request.POST.items() if suite_price_pattern.match(key)]
-        
-        suite_rooms_pattern = re.compile(r'suite_rooms_\d+')
-        # suite_rooms = [value for key, value in request.POST.items() if suite_rooms_pattern.match(key)]
-        
-        room_tag_pattern = re.compile(r'room_tag_(\d+)_\d+')
-        room_tags_grouped = defaultdict(list)
-        for key, value in request.POST.items():
-            match = room_tag_pattern.match(key)
-            if match:
-                suite_number = int(match.group(1))
-                room_tags_grouped[suite_number].append((key, value))
-        
-        for iter in range(len(suite_types)):
-            suite_type = suite_types[iter]
-            suite_price = suite_prices[iter]
-            
-            new_suite = Suite.objects.create(
-                company=company,
-                type=suite_type,
-                price=suite_price
-            )
-            
-            for room in room_tags_grouped[iter + 1]:
-                room_tag = room[1]
-                new_room = Room.objects.create(
-                    suite=new_suite,
-                    company=company,
-                    room_number=room_tag
-                )
-            
-        return redirect('sign-in')
-    
-    return render(request, 'onboarding.html')
+def extend(request):
+    # This function will take in a new date that is save as the new check out date for a user.
+    # The changes will reflect in the guest duration and revenue.
+    pass
 
 def analytics(request):
     if not request.user.is_authenticated:

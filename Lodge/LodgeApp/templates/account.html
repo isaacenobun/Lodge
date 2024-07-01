@@ -1,0 +1,50 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block alert %}
+    <div id="messages">
+            {% if messages %}
+                {% for message in messages %}
+                    {{message}}
+                {% endfor %}
+            {% endif %}
+    </div>    
+{% endblock alert %}
+
+{% block content11 %}
+<!-- Account -->
+<div class="account-page">
+    <div class="container">
+        <div class="row">
+            <div class="col-2">
+                <img src="{% static 'images/image1.png' %}" width="100%">
+            </div>
+            <div class="col-2">
+                <div class="form-container">
+                    <div class="form-btn">
+                        <span id="login">Login</span>
+                        <span id="register">Register</span>
+                        <hr id="Indicator">
+                    </div>
+                    <form method="POST" id="LoginForm">
+                        {% csrf_token %}
+                        <input type="email" name="email" placeholder="Email">
+                        <input type="password" name="password" placeholder="Password">
+                        <button type="submit" class="btn" name="login">Login</button>
+                        <a href="">Forgot password</a>
+                    </form>
+                    
+                    <form method="POST" id="RegForm">
+                        {% csrf_token %}
+                        {{form.username}}
+                        {{form.email}}
+                        {{form.password1}}
+                        <button type="submit" class="btn" name="register">Register</button>
+                        {% comment %} <a href="">Forgot password</a> {% endcomment %}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content11 %}

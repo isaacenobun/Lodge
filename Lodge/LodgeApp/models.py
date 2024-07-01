@@ -28,7 +28,8 @@ class Room(models.Model):
 class Staff(AbstractUser):
     email = models.EmailField(unique=True)
     username = models.CharField(max_length=50)
-    company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True, blank=True)
+    owner = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
@@ -66,11 +67,8 @@ class Log(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True)
     
     def __str__(self):
-        return f'{self.check_in_action} {self.check_out_action}'
+        return f'{self.action}'
     
 class CheckIns(models.Model):
     time = models.DateField(auto_now_add=True)
     company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True)
-    
-    def __str__(self):
-        return self.time
