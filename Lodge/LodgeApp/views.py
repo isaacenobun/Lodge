@@ -325,8 +325,17 @@ def check_out(request):
     return redirect('sign-in')
 
 def extend(request):
-    # This function will take in a new date that is save as the new check out date for a user.
+    # This function will take in a new date that is then saved as the new check out date for a user.
     # The changes will reflect in the guest duration and revenue.
+    
+    new_time = request.POST.get('new_date')
+    guest_id = request.POST.get('guest_id')
+    guest = get_object_or_404(Guest, id=guest_id)
+    
+    guest.check_out=new_time
+    guest.duration=0
+    guest.revenue
+    
     pass
 
 def analytics(request):
