@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
-    'LodgeApp'
+    'django_crontab',
+    'LodgeApp',
 ]
 
 MIDDLEWARE = [
@@ -135,3 +136,7 @@ MEDIA_URL = 'media/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'LodgeApp.Staff'
+
+CRONJOBS = [
+    ('*/5 * * * *', 'LodgeApp.cron.check_room_status'),
+]

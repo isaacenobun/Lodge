@@ -154,7 +154,7 @@ def dashboard(request):
         timestamp__date=timezone.now().date(),
         company=request.user.company
         ).order_by('-id')[:5]
-    active_guests = Guest.objects.filter(check_out__gt=now,
+    active_guests = Guest.objects.filter(check_out__gte=now,
                                          company=request.user.company)
     total_guests = Guest.objects.filter(company=request.user.company).count()
     available_rooms = Room.objects.filter(room_status=False,
