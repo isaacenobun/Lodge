@@ -167,10 +167,64 @@
                         <button
                           class="btn btn-primary btn-lg w-100"
                           type="submit"
+                          data-bs-toggle="modal"
+                          data-bs-target="#verticalycentered"
                         >
                           Submit
                         </button>
                       </div>
+                      <!-- Vertically centered Modal -->
+                      <div
+                        class="modal fade"
+                        id="verticalycentered"
+                        tabindex="-1"
+                      >
+                        <div class="modal-dialog modal-dialog-centered">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title"></h5>
+                              <button
+                                type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Close"
+                              ></button>
+                            </div>
+                            <div class="modal-body">
+                              <span class="card-subtitle mb-2 text-muted small"
+                                >Please confirm the following details:
+                              </span>
+                              <table
+                                class="table table-bordered table-sm mt-2 mb-0 small text-center"
+                                style="display: none"
+                              >
+                                <thead>
+                                  <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Type</th>
+                                    <th scope="col">Rooms</th>
+                                    <th scope="col">Price</th>
+                                  </tr>
+                                </thead>
+                                <tbody></tbody>
+                              </table>
+                            </div>
+                            <div class="modal-footer">
+                              <button
+                                type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal"
+                              >
+                                Cancel
+                              </button>
+                              <button type="button" class="btn btn-primary">
+                                Confirm
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- End Vertically centered Modal-->
                     </form>
                   </div>
                 </div>

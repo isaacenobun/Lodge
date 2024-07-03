@@ -1,30 +1,3 @@
-
-
-// document.getElementById('add-suite').addEventListener('click', function () {
-//     const suitesContainer = document.getElementById('suites-container');
-//     const suiteCount = suitesContainer.getElementsByClassName('suite').length;
-//     const newSuiteIndex = suiteCount + 1;
-
-//     const newSuiteDiv = document.createElement('div');
-//     newSuiteDiv.classList.add('suite');
-
-//     newSuiteDiv.innerHTML = `
-//         <label for="suite_type_${newSuiteIndex}">Suite Type</label>
-//         <input type="text" name="suite_type_${newSuiteIndex}" required>
-
-//         <label for="suite_price_${newSuiteIndex}">Suite Price</label>
-//         <input type="number" name="suite_price_${newSuiteIndex}" min="0" required>
-
-//         <label for="suite_rooms_${newSuiteIndex}">Number of Rooms for this Suite</label>
-//         <input type="number" name="suite_rooms_${newSuiteIndex}" min="0" class="room-count" data-suite-index="${newSuiteIndex}" required>
-
-//         <div class="room-tags" id="room_tags_${newSuiteIndex}"></div>
-//     `;
-
-//     suitesContainer.appendChild(newSuiteDiv);
-// });
-
-
 // Flag to control the update behavior
 let allowUpdate = true;
 
@@ -125,8 +98,19 @@ document.addEventListener('DOMContentLoaded', function () {
         // Find the close button in the row and add a click event listener
         const closeButton = row.querySelector('.btn-close');
         closeButton.addEventListener('click', function () {
+            // Find the index of the row
+            const rowIndex = Array.from(row.parentNode.children).indexOf(row);
+
             // This will remove the row containing the button
             row.remove();
+
+            // Remove the suite details from the array using the index
+            suitesArray.splice(rowIndex, 1);
+            console.log('Suite removed at index:', rowIndex);
+            console.log('Updated suitesArray:', suitesArray);
+
+
+
 
 
             // Decrement the suiteCount since a row has been deleted
@@ -164,6 +148,10 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('suite_price_1').value = '';
     }
 
+
+    let suitesArray = [];
+
+
     // Event listener for the Add another suite button
     addSuiteBtn.addEventListener('click', function () {
         const suiteType = document.getElementById('suite_type_1').value;
@@ -178,6 +166,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 price: suitePrice
             }
 
+            // Push the suite details into the array
+            suitesArray.push(suite);
+            console.log('Suite added:', suite);
+            console.log('Current suitesArray:', suitesArray);
+
+
             // Insert the suite details into the table
             insertSuiteDetailsIntoTable(suite);
 
@@ -190,8 +184,46 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-    // Event listener for the form submission
-    form.addEventListener('submit', function (event) {
 
+    // Function to display suitesArray in the table body of the modal
+    function displaySuitesInModal() {
+        // Get the value of the input field with id="company_name"
+        var companyName = document.getElementById('company_name').value;
+
+        var modalTitle = document.querySelector('.modal-title');
+
+        // Set the text content of the element
+        modalTitle.textContent = companyName;
+
+
+
+        // Get the table body within the modal
+        const tableBody = document.querySelector('#verticalycentered .modal-body tbody');
+
+        // Clear any existing rows in the table body
+        tableBody.innerHTML = '';
+
+        // Iterate over the suitesArray and create table rows
+        suitesArray.forEach((suite, index) => {
+            const row = tableBody.insertRow();
+            row.innerHTML = `
+                <tr>
+                    <th scope="row">${index + 1}</th>
+                    <td>${suite.type}</td>
+                    <td>${suite.rooms}</td>
+                    <td>${suite.price}</td>
+                </tr>
+            `;
+        });
+
+        // Show the table if it was previously hidden
+        const table = document.querySelector('#verticalycentered .modal-body table');
+        table.style.display = 'table';
+    }
+
+    // Attach the displaySuitesInModal function to the submit button's click event
+    document.querySelector('.btn.btn-primary.btn-lg.w-100[type="submit"]').addEventListener('click', function (event) {
+        event.preventDefault(); // Prevent the default form submission
+        displaySuitesInModal();
     });
 });
