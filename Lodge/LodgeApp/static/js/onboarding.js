@@ -1,56 +1,7 @@
 // Flag to control the update behavior
 let allowUpdate = true;
 
-
-document.getElementById('customRoomTags').addEventListener('click', function () {
-
-    // Re-enable updates
-    allowUpdate = true;
-
-    const roomCountInputs = document.querySelectorAll('.room-count');
-    roomCountInputs.forEach(function (input) {
-        // Add event listener for 'input' event
-        input.addEventListener('input', updateRoomTags);
-
-        // Initial call to set up the room tags
-        updateRoomTags.call(input);
-    });
-});
-
-function updateRoomTags() {
-    // Exit the function if updates are not allowed
-    if (!allowUpdate) return;
-
-    const suiteIndex = this.dataset.suiteIndex;
-    const roomCount = parseInt(this.value);
-    const roomTagsDiv = document.getElementById(`suites-container`);
-    roomTagsDiv.style.display = 'flex';
-    roomTagsDiv.style.flexWrap = 'wrap';
-    roomTagsDiv.style.justifyContent = 'center';
-
-    // Clear existing room tags
-    roomTagsDiv.innerHTML = '';
-
-
-    // Add new room tag fields only if updates are allowed
-    if (allowUpdate) {
-        // Add new room tag fields
-        for (let i = 1; i <= roomCount; i++) {
-            const roomTagInput = document.createElement('div');
-            roomTagInput.classList.add('form-floating');
-            roomTagInput.classList.add('small');
-            roomTagInput.style.maxWidth = '15%';
-            roomTagInput.style.minWidth = '15%';
-            roomTagInput.style.margin = '2px 2px';
-            roomTagInput.innerHTML = `
-                <input class="form-control" type="text" id="room_tag_${suiteIndex}_${i}" placeholder="Tag ${i}" name="room_tag_${suiteIndex}_${i}" required>
-                <label class="form-label" for="room_tag_${suiteIndex}_${i}">Tag ${i}</label>
-            `;
-            roomTagsDiv.appendChild(roomTagInput);
-        }
-    }
-}
-
+let suitesArray = [];
 
 // Event listener for the 'Add another suite' button
 document.getElementById('add-suite').addEventListener('click', function () {
@@ -67,9 +18,7 @@ document.getElementById('add-suite').addEventListener('click', function () {
 
 
 document.addEventListener('DOMContentLoaded', function () {
-    const suitesContainer = document.getElementById('suites-container');
     const addSuiteBtn = document.getElementById('add-suite');
-    const form = document.querySelector('form');
     const table = document.querySelector('.table-bordered tbody');
     const tablestyle = document.querySelector('.table-bordered');
 
@@ -78,6 +27,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Function to display suite details
     function insertSuiteDetailsIntoTable(suite) {
         tablestyle.style.display = '';
+
         suiteCount++;
         const row = table.insertRow();
         row.innerHTML = `
@@ -110,9 +60,6 @@ document.addEventListener('DOMContentLoaded', function () {
             console.log('Updated suitesArray:', suitesArray);
 
 
-
-
-
             // Decrement the suiteCount since a row has been deleted
             suiteCount--;
 
@@ -124,13 +71,13 @@ document.addEventListener('DOMContentLoaded', function () {
             // Call checkTableEmpty to determine if the header should be shown or hidden
             checkTableEmpty();
         });
+        checkTableEmpty();
     }
 
 
     // Function to check if the table body is empty and hide the header if it is
     function checkTableEmpty() {
-        const tableBody = document.querySelector('.table tbody');
-        if (tableBody.rows.length === 0) { // Check if there are no rows in the tbody
+        if (suitesArray.length === 0) { // Check if the suitesArray is empty
             document.querySelector('.table thead').style.display = 'none';
         } else {
             document.querySelector('.table thead').style.display = '';
@@ -149,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
 
-    let suitesArray = [];
+
 
 
     // Event listener for the Add another suite button
@@ -157,9 +104,11 @@ document.addEventListener('DOMContentLoaded', function () {
         const suiteType = document.getElementById('suite_type_1').value;
         const suiteRooms = document.getElementById('suite_rooms_1').value;
         const suitePrice = document.getElementById('suite_price_1').value;
+        const companyName = document.getElementById('company_name').value;
+
 
         // Validate the form fields
-        if (suiteType && suiteRooms && suitePrice) {
+        if (suiteType && suiteRooms && suitePrice && companyName) {
             const suite = {
                 type: suiteType,
                 rooms: suiteRooms,
@@ -178,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // Reset the form fields for new entry
             resetFormFields();
         } else {
-            alert('Please fill out all the fields before adding another suite.');
+            alert('Please fill out all the fields before adding a suite.');
         }
     });
 
@@ -192,6 +141,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
         var modalTitle = document.querySelector('.modal-title');
 
+        var modalBody = document.querySelector('.modal-body .card-subtitle');
+
+        modalBody.textContent = "Please confirm the following details";
+
         // Set the text content of the element
         modalTitle.textContent = companyName;
 
@@ -202,6 +155,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Clear any existing rows in the table body
         tableBody.innerHTML = '';
+
+        // Get the table body within the modal
+        const tableHead = document.querySelector('#verticalycentered .modal-body table thead');
+        // Clear any existing rows in the table body
+        tableHead.innerHTML = `<tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Type</th>
+                                    <th scope="col">Rooms</th>
+                                    <th scope="col">Price</th>
+                                  </tr>`;
 
         // Iterate over the suitesArray and create table rows
         suitesArray.forEach((suite, index) => {
@@ -219,11 +182,47 @@ document.addEventListener('DOMContentLoaded', function () {
         // Show the table if it was previously hidden
         const table = document.querySelector('#verticalycentered .modal-body table');
         table.style.display = 'table';
+
     }
 
     // Attach the displaySuitesInModal function to the submit button's click event
     document.querySelector('.btn.btn-primary.btn-lg.w-100[type="submit"]').addEventListener('click', function (event) {
         event.preventDefault(); // Prevent the default form submission
-        displaySuitesInModal();
+
+        // Check if suitesArray is empty before displaying the modal
+        if (suitesArray.length === 0) {
+            // Access the element
+            var element = document.getElementById('verticalycentered');
+
+            // Change the value of the 'class' attribute
+            element.style.display = '';
+
+            updateModalContent();
+        } else {
+            // If suitesArray is not empty, display the modal with the suite details
+            displaySuitesInModal();
+            console.log(suitesArray.length)
+        }
     });
+
 });
+
+
+// Function to update modal content
+function updateModalContent() {
+    // Update the text inside the <span> element
+    var modalBody = document.querySelector('.modal-body .card-subtitle');
+
+    modalBody.textContent = 'You have not added any suites, Please click on the add suite button to add a';
+
+
+    // Get the table body within the modal
+    const tableHead = document.querySelector('#verticalycentered .modal-body table thead');
+    // Clear any existing rows in the table body
+    tableHead.innerHTML = '';
+
+    // Get the table body within the modal
+    const tableBody = document.querySelector('#verticalycentered .modal-body table tbody');
+    // Clear any existing rows in the table body
+    tableBody.innerHTML = '';
+}
