@@ -18,8 +18,12 @@
                       href="{% url 'dashboard' %}"
                       class="logo d-flex align-items-center w-auto"
                     >
-                      <img src="{% static 'img/logo.png' %}" alt="" />
-                      <span class="d-none d-lg-block">Lodge</span>
+                      <img
+                        src="{% static 'img/logoTEST.png' %}"
+                        alt=""
+                        class="d-lg-none"
+                      />
+                      <span class="d-none d-lg-block full-logo">LodgeIt</span>
                     </a>
                   </div>
                   <!-- End Logo -->
@@ -180,7 +184,7 @@
                       <!-- Submit Button -->
                       <div class="col-6">
                         <button
-                          class="btn btn-primary btn-lg w-100"
+                          class="btn btn-dark btn-lg w-100 btn-js"
                           type="submit"
                           data-bs-toggle="modal"
                           data-bs-target="#verticalycentered"

@@ -186,7 +186,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Attach the displaySuitesInModal function to the submit button's click event
-    document.querySelector('.btn.btn-primary.btn-lg.w-100[type="submit"]').addEventListener('click', function (event) {
+    document.querySelector('.btn.btn-js.btn-lg.w-100[type="submit"]').addEventListener('click', function (event) {
         event.preventDefault(); // Prevent the default form submission
 
         // Check if suitesArray is empty before displaying the modal

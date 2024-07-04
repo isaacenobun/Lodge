@@ -2,144 +2,129 @@
 
 <!-- ======= Header ======= -->
 <header id="header" class="header fixed-top d-flex align-items-center">
-    <div class="d-flex align-items-center justify-content-between">
-        <a href="{% url 'dashboard' %}" class="logo d-flex align-items-center">
-        <img src="{% static 'img/logo.png' %}" alt="" />
-        <span class="d-none d-lg-block">LodgeIt</span>
-        </a>
-        <i class="bi bi-list toggle-sidebar-btn"></i>
-    </div>
-    <!-- End Logo -->
+  <div class="d-flex align-items-center justify-content-between">
+    <a href="{% url 'dashboard' %}" class="logo d-flex align-items-center">
+      <img src="{% static 'img/logoTEST.png' %}" alt="" class="d-lg-none" />
+      <span class="d-none d-lg-block">LodgeIt</span>
+    </a>
+    <i class="bi bi-list toggle-sidebar-btn"></i>
+  </div>
+  <!-- End Logo -->
 
-    <nav class="header-nav ms-auto">
-        <ul class="d-flex align-items-center">
-        <li class="nav-item pe-3">
-            <!-- Basic Modal -->
-            <button
-            type="button"
-            class="btn btn-success"
-            data-bs-toggle="modal"
-            data-bs-target="#basicModal"
-            >
-                <i class="bi bi-check-circle me-1"></i> Check-in a Guest
-            </button>
-            <!-- End Basic Modal-->
-        </li>
-        <!-- End Check in guest button-->
-        </ul>
-    </nav>
-    <!-- End Icons Navigation -->
-</header>    
+  <nav class="header-nav ms-auto">
+    <ul class="d-flex align-items-center">
+      <li class="nav-item pe-3">
+        <!-- Basic Modal -->
+        <button
+          type="button"
+          class="btn btn-outline-dark"
+          data-bs-toggle="modal"
+          data-bs-target="#basicModal"
+        >
+          <i class="bi bi-check-circle me-1"></i> Check-in a Guest
+        </button>
+        <!-- End Basic Modal-->
+      </li>
+      <!-- End Check in guest button-->
+    </ul>
+  </nav>
+  <!-- End Icons Navigation -->
+</header>
 <!-- End Header -->
 
-
-
 <div class="modal fade" id="basicModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="text-center">
-                </div>
-                <div class="d-flex justify-content-center text-center">
-                    <a
-                      href="{% url 'dashboard' %}"
-                      class="logo d-flex align-items-center w-auto"
-                    >
-                        <img src="{% static 'img/logo.png' %}" alt="" />                        
-                    </a>
-                    <h5 class="card-title text-center pb-0 fs-4">
-                        Check-in a guest
-                    </h5>
-                </div>
-                <!-- End Logo -->
-                <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="modal"
-                    aria-label="Close"
-                ></button>
-            </div>
-            <div class="modal-body">
-                <p class="text-center small">
-                    Fill in the guest information here
-                </p>
-                  <form
-                      class="row g-3 needs-validation"
-                      novalidate
-                      method="post"
-                      action="{% url 'check-in' %}"
-                    >
-                      {% csrf_token %}
-                      <div class="col-12">
-                        <label for="yourName" class="form-label">Name</label>
-                        <input
-                          type="text"
-                          name="name"
-                          class="form-control"
-                          id="yourName"
-                          required
-                        />
-                        <div class="invalid-feedback">
-                          Please, enter your name!
-                        </div>
-                      </div>
-
-                      <div class="col-12">
-                        <label for="yourEmail" class="form-label">Email</label>
-                        <input
-                          type="email"
-                          name="email"
-                          class="form-control"
-                          id="yourEmail"
-                          required
-                        />
-                        <div class="invalid-feedback">
-                          Please enter a valid Email adddress!
-                        </div>
-                      </div>
-
-                      <div class="col-12">
-                        <label for="inputNumber" class="form-label"
-                          >Phone number</label
-                        >
-                        <input
-                          type="number"
-                          name="phone"
-                          class="form-control"
-                          id=""
-                          required
-                        />
-                        <div class="invalid-feedback">
-                          Please, enter a valid mobile number!
-                        </div>
-                      </div>
-
-                      <div class="col-12">
-                        <label for="inputNumber" class="form-label"
-                          >Room number</label
-                        >
-                        <select name="room" class="form-control" id="" required>
-                          <option value="">Choose a room</option>
-                          {% for room in available_rooms %}
-                          <option value="{{room.id}}">
-                            Room {{room.room_number}} - {{room.suite.type}} Suite
-                          </option>
-                          {% endfor %}
-                        </select>
-                        <div class="invalid-feedback">
-                          Please, choose a room!
-                        </div>
-                      </div>
-
-                      <div class="modal-footer">
-                        <div class="col-12">
-                            <button class="btn btn-primary w-100" type="submit">
-                              Check in
-                            </button>
-                        </div>
-                    </div>
-                  </form>
-            </div>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="text-center"></div>
+        <div class="d-flex justify-content-center text-center">
+          <a
+            href="{% url 'dashboard' %}"
+            class="logo d-flex align-items-center w-auto"
+          >
+            <img src="{% static 'img/logo.png' %}" alt="" />
+          </a>
+          <h5 class="card-title text-center pb-0 fs-4">Check-in a guest</h5>
         </div>
+        <!-- End Logo -->
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <p class="text-center small">Fill in the guest information here</p>
+        <form
+          class="row g-3 needs-validation"
+          novalidate
+          method="post"
+          action="{% url 'check-in' %}"
+        >
+          {% csrf_token %}
+          <div class="col-12">
+            <label for="yourName" class="form-label">Name</label>
+            <input
+              type="text"
+              name="name"
+              class="form-control"
+              id="yourName"
+              required
+            />
+            <div class="invalid-feedback">Please, enter your name!</div>
+          </div>
+
+          <div class="col-12">
+            <label for="yourEmail" class="form-label">Email</label>
+            <input
+              type="email"
+              name="email"
+              class="form-control"
+              id="yourEmail"
+              required
+            />
+            <div class="invalid-feedback">
+              Please enter a valid Email adddress!
+            </div>
+          </div>
+
+          <div class="col-12">
+            <label for="inputNumber" class="form-label">Phone number</label>
+            <input
+              type="number"
+              name="phone"
+              class="form-control"
+              id=""
+              required
+            />
+            <div class="invalid-feedback">
+              Please, enter a valid mobile number!
+            </div>
+          </div>
+
+          <div class="col-12">
+            <label for="inputNumber" class="form-label">Room number</label>
+            <select name="room" class="form-control" id="" required>
+              <option value="">Choose a room</option>
+              {% for room in available_rooms %}
+              <option value="{{room.id}}">
+                Room {{room.room_number}} - {{room.suite.type}} Suite
+              </option>
+              {% endfor %}
+            </select>
+            <div class="invalid-feedback">Please, choose a room!</div>
+          </div>
+
+          <div class="modal-footer">
+            <div class="col-12">
+              <button class="btn btn-primary w-100" type="submit">
+                Check in
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
+  </div>
 </div>

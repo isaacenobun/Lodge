@@ -1,15 +1,8 @@
-{% extends 'base.html' %}
-{% load static %}
-{% load custom_filters %}
-{% load custom_tags %}
+{% extends 'base.html' %} {% load static %} {% load custom_filters %} {% load
+custom_tags %} {% block content %}
 
-
-{% block content %}
-  
 <body>
-  {% include 'partials/_header.html' %}
-  
-  {% include 'sidebar.html' %}
+  {% include 'partials/_header.html' %} {% include 'sidebar.html' %}
 
   <main id="main" class="main">
     <div class="pagetitle">
@@ -31,7 +24,6 @@
             <!-- Total Revenue Card -->
             <div class="col-xxl-6 col-xl-4 col-lg-4 col-md-6">
               <div class="card info-card sales-card">
-
                 <div class="card-body">
                   <h5 class="card-title">Total Revenue <span></span></h5>
 
@@ -39,7 +31,7 @@
                     <div
                       class="card-icon rounded-circle d-flex align-items-center justify-content-center"
                     >
-                      <i class="bi bi-person"></i>
+                      <i class="bi bi-cash-stack"></i>
                     </div>
                     <div class="ps-3">
                       <h6>N{{total_revenue|stringformat:".1f"}}K</h6>
@@ -55,17 +47,14 @@
             <!-- Revenue Card -->
             <div class="col-xxl-6 col-xl-4 col-lg-4 col-md-6">
               <div class="card info-card revenue-card">
-
                 <div class="card-body">
-                  <h5 class="card-title">
-                    Monthly Revenue <span></span>
-                  </h5>
+                  <h5 class="card-title">Monthly Revenue <span></span></h5>
 
                   <div class="d-flex align-items-center">
                     <div
                       class="card-icon rounded-circle d-flex align-items-center justify-content-center"
                     >
-                      <i class="bi bi-person-plus"></i>
+                      <i class="bi bi-cash-coin"></i>
                     </div>
                     <div class="ps-3">
                       <h6>N{{monthly_revenue|stringformat:".1f"}}K</h6>
@@ -78,36 +67,34 @@
             </div>
             <!-- End Revenue Card -->
 
-            <!-- Total Guest Card -->
+            <!-- Retention Card -->
             <div class="col-xxl-6 col-xl-4 col-lg-4 col-md-6">
               <div class="card info-card customers-card">
-                
                 <div class="card-body">
-                  <h5 class="card-title">
-                    Total Guests <span></span>
-                  </h5>
+                  <h5 class="card-title">Revenue Growth <span></span></h5>
 
                   <div class="d-flex align-items-center">
                     <div
                       class="card-icon rounded-circle d-flex align-items-center justify-content-center"
                     >
-                      <i class="bi bi-people"></i>
+                      <i class="bi bi-graph-up"></i>
                     </div>
                     <div class="ps-3">
-                      <h6>{{guests|length}} guests</h6>
+                      <h6>{{revenue_growth|stringformat:".1f"}}%</h6>
                       <span class="text-danger small pt-1 fw-bold"></span>
-                      <span class="text-muted small pt-2 ps-1"></span>
+                      <span class="text-muted small pt-2 ps-1"
+                        >Over last month</span
+                      >
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <!-- End Total Guest Card -->
+            <!-- End Retention Card -->
 
             <!-- Check-in rate Card -->
             <div class="col-xxl-6 col-xl-4 col-lg-4 col-md-6">
               <div class="card info-card sales-card">
-
                 <div class="card-body">
                   <h5 class="card-title">
                     Check-in Rate <span>per week</span>
@@ -133,7 +120,6 @@
             <!-- Growth Card -->
             <div class="col-xxl-6 col-xl-4 col-lg-4 col-md-6">
               <div class="card info-card revenue-card">
-
                 <div class="card-body">
                   <h5 class="card-title">Customer Growth <span></span></h5>
 
@@ -141,12 +127,14 @@
                     <div
                       class="card-icon rounded-circle d-flex align-items-center justify-content-center"
                     >
-                      <i class="bi bi-person-plus"></i>
+                      <i class="bi bi-reception-4"></i>
                     </div>
                     <div class="ps-3">
                       <h6>{{guest_growth|stringformat:".1f"}}%</h6>
                       <span class="text-success small pt-1 fw-bold"></span>
-                      <span class="text-muted small pt-2 ps-1">Over last month</span>
+                      <span class="text-muted small pt-2 ps-1"
+                        >Over last month</span
+                      >
                     </div>
                   </div>
                 </div>
@@ -154,14 +142,11 @@
             </div>
             <!-- End Growth Card -->
 
-            <!-- Retention Card -->
+            <!-- Total Guest Card -->
             <div class="col-xxl-6 col-xl-4 col-lg-4 col-md-6">
               <div class="card info-card customers-card">
-
                 <div class="card-body">
-                  <h5 class="card-title">
-                    Revenue Growth <span></span>
-                  </h5>
+                  <h5 class="card-title">Total Guests <span></span></h5>
 
                   <div class="d-flex align-items-center">
                     <div
@@ -170,15 +155,15 @@
                       <i class="bi bi-people"></i>
                     </div>
                     <div class="ps-3">
-                      <h6>{{revenue_growth|stringformat:".1f"}}%</h6>
+                      <h6>{{guests|length}} guests</h6>
                       <span class="text-danger small pt-1 fw-bold"></span>
-                      <span class="text-muted small pt-2 ps-1">Over last month</span>
+                      <span class="text-muted small pt-2 ps-1"></span>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <!-- End Retention Card -->
+            <!-- End Total Guest Card -->
           </div>
         </div>
         <!-- End Left side columns -->
@@ -188,7 +173,7 @@
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Check-in activity</h5>
-              
+
               <!-- Bar Chart -->
               <div id="barChart"></div>
               <!-- End Bar Chart -->
@@ -200,7 +185,6 @@
         <!-- Top Customers -->
         <div class="col-12">
           <div class="card top-selling overflow-auto">
-
             <div class="card-body pb-0">
               <h5 class="card-title">Top Customers <span></span></h5>
 
@@ -215,20 +199,25 @@
                   </tr>
                 </thead>
                 <tbody>
-                  
                   {% for guest in top_guests %}
                   <tr>
-                      <th scope="row">
-                        <a href="#">{{ forloop.counter }}</a>
-                      </th>
-                      <td><a href="#" class="text-primary fw-bold">{{guest.name}}</a></td>
-                      <td><a href="mailto:{{guest.email}}">{{guest.email}}</a></td>
-                      <td class="fw-bold">{{guest.check_in|days_between:guest.check_out}}</td>
-                      <td>{{ guest.revenue.revenue | revenue }}</td>
-                    </tr>
+                    <th scope="row">
+                      <a href="#">{{ forloop.counter }}</a>
+                    </th>
+                    <td>
+                      <a href="#" class="text-primary fw-bold"
+                        >{{guest.name}}</a
+                      >
+                    </td>
+                    <td>
+                      <a href="mailto:{{guest.email}}">{{guest.email}}</a>
+                    </td>
+                    <td class="fw-bold">
+                      {{guest.check_in|days_between:guest.check_out}}
+                    </td>
+                    <td>{{ guest.revenue.revenue | revenue }}</td>
+                  </tr>
                   {% endfor %}
-                      
-                  
                 </tbody>
               </table>
             </div>
@@ -261,7 +250,5 @@
     class="back-to-top d-flex align-items-center justify-content-center"
     ><i class="bi bi-arrow-up-short"></i
   ></a>
-
 </body>
 {% endblock content %}
-
