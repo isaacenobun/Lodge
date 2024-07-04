@@ -333,10 +333,23 @@ def extend(request):
     guest = get_object_or_404(Guest, id=guest_id)
     
     guest.check_out=new_time
-    guest.duration=0
-    guest.revenue
+    new_duration = new_time - guest.check_in
+    guest.duration= new_duration
+    guest.save()
+    guest.revenue.revenue = float(guest.duration) * float(guest.room.suite.price)
+    guest.revenue.save()
     
-    pass
+    Log.objects.create(
+        staff = request.user,
+        action = f'{guest.name} extended checkout to {guest.check_out}',
+        check_status = True,
+        timestamp = timezone.now(),
+        company = request.user.company
+    )
+    context = {
+        
+    }
+    return render(request, '', context)
 
 def analytics(request):
     if not request.user.is_authenticated:
