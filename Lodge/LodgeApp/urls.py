@@ -11,4 +11,5 @@ urlpatterns = [
     path('check-out/', views.check_out, name='check-out'),
     path('sign-in/', views.sign_in, name='sign-in'),
     path('log-out/', views.sign_out, name='logout'),
+    path('landing', views.landing, name='landing'),
 ]

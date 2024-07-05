@@ -307,3 +307,14 @@ def analytics(request):
         'page_name':'Analytics'
     }
     return render(request, 'analytics.html', context)
+
+
+@csrf_exempt
+def landing(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+    
+    if request.method == 'POST':
+        return redirect('sign-in')
+    
+    return render(request, 'landing.html')

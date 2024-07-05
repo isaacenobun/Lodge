@@ -4,7 +4,7 @@
 <header id="header" class="header fixed-top d-flex align-items-center">
   <div class="d-flex align-items-center justify-content-between">
     <a href="{% url 'dashboard' %}" class="logo d-flex align-items-center">
-      <img src="{% static 'img/logoTEST.png' %}" alt="" class="d-lg-none" />
+      <img src="{% static 'img/icon bg.png' %}" alt="" class="d-lg-none d-lg-block" />
       <span class="d-none d-lg-block">LodgeIt</span>
     </a>
     <i class="bi bi-list toggle-sidebar-btn"></i>
@@ -35,14 +35,14 @@
 <div class="modal fade" id="basicModal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-header card-header">
         <div class="text-center"></div>
         <div class="d-flex justify-content-center text-center">
           <a
             href="{% url 'dashboard' %}"
             class="logo d-flex align-items-center w-auto"
           >
-            <img src="{% static 'img/logo.png' %}" alt="" />
+            <img src="{% static 'img/icon bg.png' %}" alt="" />
           </a>
           <h5 class="card-title text-center pb-0 fs-4">Check-in a guest</h5>
         </div>
@@ -118,7 +118,7 @@
 
           <div class="modal-footer">
             <div class="col-12">
-              <button class="btn btn-primary w-100" type="submit">
+              <button class="btn btn-dark w-100" type="submit">
                 Check in
               </button>
             </div>
