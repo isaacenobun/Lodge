@@ -1,8 +1,9 @@
 from django.utils import timezone
+from datetime import timedelta
 from .models import Room, Guest
 
 def check_room_status():
-    now = timezone.now()
+    now = timezone.now() - timedelta(hours=1)
     
     active_rooms = Room.objects.filter(room_status=True)
     
