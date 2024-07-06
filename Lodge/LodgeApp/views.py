@@ -457,3 +457,6 @@ def sign_in_test(request):
     else:
         context = {'page_name':'Sign in'}
         return render(request, 'pages-sign-in-test.html', context)
+    
+def landing(request):
+    return render(request, 'landing.html')
