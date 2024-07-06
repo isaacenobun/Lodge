@@ -12,10 +12,11 @@
 
     <main id="main" class="main">
       <div class="pagetitle">
-        <h1>Home</h1>
+        <h1 class= "mb-2">Home</h1>
         <nav>
-          <ol class="breadcrumb">
-            <li class="breadcrumb-item active">Welcome {{staff.username|title}}</li>
+          <ol class="breadcrumb justify-content-between">
+            <li class="breadcrumb-item active">Welcome, <span style = "color: #00796b; font-weight: bold">{{staff.username|title}}</span>.</li>
+            <div id="MyClockDisplay" class="clock" onload="showTime()"></div>
           </ol>
         </nav>
       </div>
@@ -229,7 +230,12 @@
                 {% endfor %}
 
                 </div>
-                <a href="{% url 'logs' %}"><h5 class="card-title"><span>View all Logs</span></h5></a>
+                <div class = "breadcrumb-item">
+                 
+                </div>
+                <ol class="breadcrumb mb-0">
+                  <li class="breadcrumb-item active"> <a href="{% url 'logs' %}"><span class="breadcrumb-item">View all Logs</span></a></li>
+                </ol>
               </div>
             </div>
             <!-- End Recent Activity -->

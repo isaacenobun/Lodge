@@ -25,7 +25,7 @@ a {
 }
 
 a:hover {
-  color: #717ff5;
+  color: #00796b;
   text-decoration: none;
 }
 
@@ -91,7 +91,7 @@ h6 {
 }
 
 .back-to-top:hover {
-  background: #6776f4;
+  background: #00796bbe;
   color: #fff;
 }
 
