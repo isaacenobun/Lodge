@@ -8,7 +8,7 @@
 <meta content="" name="keywords" />
 
 <!-- Favicons -->
-<link href="{% static 'img/favicon.png' %}" rel="icon" />
+<link href="{% static 'img/icon bg.png' %}" rel="icon" />
 <link href="{% static 'img/apple-touch-icon.png' %}" rel="apple-touch-icon" />
 
 <!-- Google Fonts -->
@@ -47,10 +47,17 @@
   href="{% static 'vendor/simple-datatables/style.css' %}"
   rel="stylesheet"
 />
+{% comment %} <link href="{% static 'vendor/aos/aos.css' %}" rel="stylesheet" /> {% endcomment %}
+<link href="{% static 'vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet" />
+<link href="{% static 'vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet" /> 
+
 
 <!-- Template Main CSS File -->
 <link href="{% static 'css/style.css' %}" rel="stylesheet" />
 <link href="{% static 'css/brand-style.css' %}" rel="stylesheet" />
+
+<!-- Landing CSS Files -->
+<link rel="stylesheet" href="{% static 'css/landing.css' %}" />
 
 <script src="https://unpkg.com/feather-icons"></script>
 <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
@@ -60,3 +67,7 @@
 
 <!-- Room Carousel js File -->
 <link rel="stylesheet" href="{% static 'css/room-carousel.css' %}" />
+
+<!-- Landing js File -->
+<script src="{% static 'js/landing.js' %}"></script>
+
