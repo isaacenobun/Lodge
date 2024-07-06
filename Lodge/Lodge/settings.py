@@ -145,6 +145,10 @@ CRONJOBS = [
 
 # AWS configuration
 
+AWS_ACCESS_KEY_ID = 'AKIAQ3EGVGDBNN2Y5JPY'
+
+AWS_SECRET_ACCESS_KEY = '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'
+
 # Basic Storage configuration for Amazon S3 (Irrespective of Django version
 
 AWS_STORAGE_BUCKET_NAME = 'quant-bkt-1'
