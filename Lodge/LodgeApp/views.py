@@ -16,6 +16,8 @@ import re
 
 from collections import defaultdict
 
+from .tasks import check_room_status
+
 # Create your views here.
 def sign_up(request):
     if request.user.is_authenticated:
@@ -151,7 +153,6 @@ def dashboard(request):
     now=timezone.now()
     
     logs = Log.objects.filter(
-        timestamp__date=timezone.now().date(),
         company=request.user.company
         ).order_by('-id')[:5]
     active_guests = Guest.objects.filter(check_out__gte=now,
@@ -290,6 +291,8 @@ def check_in(request):
         CheckIns.objects.create(
             company=guest.staff.company
         )
+        
+        check_room_status.apply_async(eta=check_out)
 
         return redirect('dashboard')
 

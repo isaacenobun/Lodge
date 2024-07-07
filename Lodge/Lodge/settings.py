@@ -139,9 +139,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'LodgeApp.Staff'
 
-CRONJOBS = [
-    ('*/5 * * * *', 'LodgeApp.cron.check_room_status'),
-]
+# CRONJOBS = [
+#     ('*/5 * * * *', 'LodgeApp.cron.check_room_status'),
+# ]
 
 # AWS configuration
 
@@ -168,3 +168,11 @@ STORAGES = {
         "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
     },
 }
+
+# Celery Configuration Options
+CELERY_BROKER_URL = 'redis://localhost:6379/0'  # or the Redis URL you are using
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
