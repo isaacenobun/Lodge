@@ -40,10 +40,10 @@
                     <div
                       class="card-icon rounded-circle d-flex align-items-center justify-content-center"
                     >
-                      <i class="bi bi-person"></i>
+                      <i class="bi bi-cash-stack"></i>
                     </div>
                     <div class="ps-3">
-                      <h6>N{{total_revenue|floatformat:1|intcomma}}</h6>
+                      <h6>&#8358;{{total_revenue|floatformat:1|intcomma}}</h6>
                       <span class="text-success small pt-1 fw-bold"></span>
                       <span class="text-muted small pt-2 ps-1"></span>
                     </div>
@@ -66,10 +66,10 @@
                     <div
                       class="card-icon rounded-circle d-flex align-items-center justify-content-center"
                     >
-                      <i class="bi bi-person-plus"></i>
+                      <i class="bi bi-cash-coin"></i>
                     </div>
                     <div class="ps-3">
-                      <h6>N{{monthly_revenue|floatformat:1|intcomma}}</h6>
+                      <h6>&#8358;{{monthly_revenue|floatformat:1|intcomma}}</h6>
                       <span class="text-success small pt-1 fw-bold"></span>
                       <span class="text-muted small pt-2 ps-1"></span>
                     </div>
@@ -79,32 +79,32 @@
             </div>
             <!-- End Revenue Card -->
 
-            <!-- Total Guest Card -->
+            <!-- Retention Card -->
             <div class="col-xxl-6 col-xl-4 col-lg-4 col-md-6">
               <div class="card info-card customers-card">
-                
+
                 <div class="card-body">
                   <h5 class="card-title">
-                    Total Guests <span></span>
+                    Revenue Growth <span></span>
                   </h5>
 
                   <div class="d-flex align-items-center">
                     <div
                       class="card-icon rounded-circle d-flex align-items-center justify-content-center"
                     >
-                      <i class="bi bi-people"></i>
+                      <i class="bi bi-reception-4"></i>
                     </div>
                     <div class="ps-3">
-                      <h6>{{guests|length}} guests</h6>
+                      <h6>{{revenue_growth|stringformat:".1f"}}%</h6>
                       <span class="text-danger small pt-1 fw-bold"></span>
-                      <span class="text-muted small pt-2 ps-1"></span>
+                      <span class="text-muted small pt-2 ps-1">Over last month</span>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <!-- End Total Guest Card -->
-
+            <!-- End Retention Card -->
+             
             <!-- Check-in rate Card -->
             <div class="col-xxl-6 col-xl-4 col-lg-4 col-md-6">
               <div class="card info-card sales-card">
@@ -121,7 +121,7 @@
                       <i class="bi bi-person"></i>
                     </div>
                     <div class="ps-3">
-                      <h6>{{check_in_rate}} guests</h6>
+                      <h6>{{check_in_rate}} Guests</h6>
                       <span class="text-success small pt-1 fw-bold"></span>
                       <span class="text-muted small pt-2 ps-1"></span>
                     </div>
@@ -136,13 +136,41 @@
               <div class="card info-card revenue-card">
 
                 <div class="card-body">
+                  <h5 class="card-title">
+                    Total Guests <span></span>
+                  </h5>
+
+                  <div class="d-flex align-items-center">
+                    <div
+                      class="card-icon rounded-circle d-flex align-items-center justify-content-center"
+                    >
+                      <i class="bi bi-people"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6>{{guests|length}} Guests</h6>
+                      <span class="text-danger small pt-1 fw-bold"></span>
+                      <span class="text-muted small pt-2 ps-1"></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- End Growth Card -->
+
+            
+            <!-- Total Guest Card -->
+            <div class="col-xxl-6 col-xl-4 col-lg-4 col-md-6">
+              <div class="card info-card customers-card">
+                
+                <div class="card-body">
+                  
                   <h5 class="card-title">Customer Growth <span></span></h5>
 
                   <div class="d-flex align-items-center">
                     <div
                       class="card-icon rounded-circle d-flex align-items-center justify-content-center"
                     >
-                      <i class="bi bi-person-plus"></i>
+                      <i class="bi bi-graph-up"></i>
                     </div>
                     <div class="ps-3">
                       <h6>{{guest_growth|stringformat:".1f"}}%</h6>
@@ -153,33 +181,8 @@
                 </div>
               </div>
             </div>
-            <!-- End Growth Card -->
+            <!-- End Total Guest Card -->
 
-            <!-- Retention Card -->
-            <div class="col-xxl-6 col-xl-4 col-lg-4 col-md-6">
-              <div class="card info-card customers-card">
-
-                <div class="card-body">
-                  <h5 class="card-title">
-                    Revenue Growth <span></span>
-                  </h5>
-
-                  <div class="d-flex align-items-center">
-                    <div
-                      class="card-icon rounded-circle d-flex align-items-center justify-content-center"
-                    >
-                      <i class="bi bi-people"></i>
-                    </div>
-                    <div class="ps-3">
-                      <h6>{{revenue_growth|stringformat:".1f"}}%</h6>
-                      <span class="text-danger small pt-1 fw-bold"></span>
-                      <span class="text-muted small pt-2 ps-1">Over last month</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- End Retention Card -->
           </div>
         </div>
         <!-- End Left side columns -->
@@ -225,7 +228,7 @@
                       <td><a href="#" class="text-primary fw-bold">{{guest.name}}</a></td>
                       <td><a href="mailto:{{guest.email}}">{{guest.email}}</a></td>
                       <td class="fw-bold">{{guest.duration}}</td>
-                      <td>N{{ guest.revenue.revenue|floatformat:1|intcomma }}</td>
+                      <td>&#8358;{{ guest.revenue.revenue|floatformat:1|intcomma }}</td>
                     </tr>
                   {% endfor %}
                       
