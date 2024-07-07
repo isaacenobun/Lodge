@@ -139,9 +139,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'LodgeApp.Staff'
 
-# CRONJOBS = [
-#     ('*/5 * * * *', 'LodgeApp.cron.check_room_status'),
-# ]
+CRONJOBS = [
+    ('*/5 * * * *', 'LodgeApp.cron.check_room_status'),
+]
 
 # # AWS configuration
 
