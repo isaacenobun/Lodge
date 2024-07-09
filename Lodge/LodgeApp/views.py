@@ -16,8 +16,6 @@ import re
 
 from collections import defaultdict
 
-from .tasks import check_room_status
-
 # Create your views here.
 def sign_up(request):
     if request.user.is_authenticated:
@@ -291,8 +289,6 @@ def check_in(request):
         CheckIns.objects.create(
             company=guest.staff.company
         )
-        
-        check_room_status.apply_async(eta=check_out)
 
         return redirect('dashboard')
 

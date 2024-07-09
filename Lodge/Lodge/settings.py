@@ -142,37 +142,3 @@ AUTH_USER_MODEL = 'LodgeApp.Staff'
 CRONJOBS = [
     ('*/5 * * * *', 'LodgeApp.cron.check_room_status'),
 ]
-
-# # AWS configuration
-
-# AWS_ACCESS_KEY_ID = 'AKIAQ3EGVGDBNN2Y5JPY'
-
-# AWS_SECRET_ACCESS_KEY = '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'
-
-# # Basic Storage configuration for Amazon S3 (Irrespective of Django version
-
-# AWS_STORAGE_BUCKET_NAME = 'quant-bkt-1'
-
-# AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
-
-# AWS_S3_FILE_OVERWRITE = False
-
-# STORAGES = {
-#     # Media file (image) management
-#     "default": {
-#         "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
-#     },
-
-#     # CSS and IS file management)
-#     "staticfiles": {
-#         "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
-#     },
-# }
-
-# Celery Configuration Options
-CELERY_BROKER_URL = 'redis://localhost:6379/0'  # or the Redis URL you are using
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'UTC'
