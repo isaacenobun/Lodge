@@ -13,11 +13,12 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 
 import os
-
 import environ
+import dj_database_url
 
+base = environ.Path(__file__) - 2
 env = environ.Env()
-environ.Env.read_env()
+environ.Env.read_env(env_file=base('.env'))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -92,10 +93,8 @@ WSGI_APPLICATION = 'Lodge.wsgi.application'
 #     }
 # }
 
-import dj_database_url
-
 DATABASES = {
-    'default' : dj_database_url.parse(env('DATABASE_URL'))
+    'default' : dj_database_url.parse('postgresql://productiondatabase_r3ba_user:n4hdpHP9ANGKNd3s8p1Leq9Fn2pnnirv@dpg-cq789jlds78s738shagg-a.oregon-postgres.render.com/productiondatabase_r3ba')
 }
 
 # Password validation
