@@ -154,13 +154,14 @@
           <div class="tab-pane fade" id="check-in-justified" role="tabpanel" aria-labelledby="check-in-tab">
             <div class="form-group">
               <label for="nameInput">Guest Name:</label>
-              <input type="text" id="nameInput" name="name" list="names" class="form-control">
-              <datalist id="names">
+              <input type="text" id="search-input" placeholder="Type a name..." class="form-control">
+              <p id="results"></p>
+              {% comment %} <datalist id="names">
                   <option value="Boston">
                   <option value="Cambridge">
                   <option value="New York">
                   <option value="San Francisco">
-              </datalist>
+              </datalist> {% endcomment %}
             </div>
             
             <form id="nameForm">

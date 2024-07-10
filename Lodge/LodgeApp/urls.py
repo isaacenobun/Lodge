@@ -15,4 +15,5 @@ urlpatterns = [
     path('demo/', views.sign_in_test, name='sign-in-test'),
     path('log-out/', views.sign_out, name='logout'),
     path('landing', views.landing, name='landing'),
+    path('search/', views.search, name='search'),
 ]

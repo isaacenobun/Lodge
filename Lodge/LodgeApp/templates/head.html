@@ -76,3 +76,25 @@
 <!-- Landing js File -->
 <script src="{% static 'js/landing.js' %}"></script>
 
+<!-- Dynamic search -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+  $(document).ready(function() {
+      $('#search-input').on('input', function() {
+          var query = $(this).val();
+          $.ajax({
+              url: '{% url "search" %}',
+              data: {
+                  'query': query
+              },
+              success: function(data) {
+                  $('#results').empty();
+                  data.forEach(function(person) {
+                      $('#results').append('<li>' + person.name + '</li>');
+                  });
+              }
+          });
+      });
+  });
+</script>

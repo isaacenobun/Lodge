@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
 
 from .models import Staff, Room, Guest, Log, Revenue, CheckIns, Company, Suite
 
@@ -136,13 +137,19 @@ def sign_out(request):
     logout(request)
     return redirect('sign-in')
 
+def search(request):
+    query = request.GET.get('query', '')
+    results = Guest.objects.filter(name__icontains=query)
+    results_list = list(results.values('name'))
+    return JsonResponse(results_list, safe=False)
+
 def dashboard(request):
     if not request.user.is_authenticated:
         return redirect('sign-in')
     
     elif request.user.is_authenticated and request.user.company is None:
         return redirect('onboarding')
-        
+    
     now=timezone.now()
     
     logs = Log.objects.filter(
