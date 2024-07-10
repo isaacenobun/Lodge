@@ -60,7 +60,7 @@ class Guest(models.Model):
         return self.name
     
 class GuestHistory(models.Model):
-    guest = models.ForeignKey(Guest, on_delete=models.CASCADE)
+    guest = models.ForeignKey(Guest, unique=True, on_delete=models.CASCADE)
     returning = models.BooleanField()
     total_days = models.IntegerField(null=True,blank=True)
     total_revenue = models.DecimalField(max_digits=10, decimal_places=1)

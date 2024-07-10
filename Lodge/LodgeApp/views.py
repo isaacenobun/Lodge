@@ -66,37 +66,32 @@ def onboarding(request):
         
         suite_type_pattern = re.compile(r'suite_type_\d+')
         suite_types = [value for key, value in request.POST.items() if suite_type_pattern.match(key)]
+        print (suite_types)
         
         suite_price_pattern = re.compile(r'suite_price_\d+')
         suite_prices = [value for key, value in request.POST.items() if suite_price_pattern.match(key)]
+        print (suite_prices)
         
         suite_rooms_pattern = re.compile(r'suite_rooms_\d+')
-        # suite_rooms = [value for key, value in request.POST.items() if suite_rooms_pattern.match(key)]
-        
-        room_tag_pattern = re.compile(r'room_tag_(\d+)_\d+')
-        room_tags_grouped = defaultdict(list)
-        for key, value in request.POST.items():
-            match = room_tag_pattern.match(key)
-            if match:
-                suite_number = int(match.group(1))
-                room_tags_grouped[suite_number].append((key, value))
+        suite_rooms = [value for key, value in request.POST.items() if suite_rooms_pattern.match(key)]
+        print (suite_rooms)
         
         for iter in range(len(suite_types)):
             suite_type = suite_types[iter]
             suite_price = suite_prices[iter]
+            suite_room = suite_rooms[iter]
             
             new_suite = Suite.objects.create(
                 company=company,
                 type=suite_type,
-                price=suite_price
+                price=float(suite_price)
             )
             
-            for room in room_tags_grouped[iter + 1]:
-                room_tag = room[1]
+            for room_number in range(1,int(suite_room)+1):
                 new_room = Room.objects.create(
                     suite=new_suite,
                     company=company,
-                    room_number=room_tag
+                    room_number=room_number
                 )
         owner = request.user
         owner.company = company

@@ -30,7 +30,7 @@
                     Fill your company information here
                   </p>
                   <div class="pt-2 pb-2">
-                    <form class="row g-2" action="" method="post">
+                    <form class="row g-2" action="" method="POST">
                       {% csrf_token %}
 
                       <!-- Company Name -->
@@ -80,7 +80,6 @@
                             name="suite_type_1"
                             id="suite_type_1"
                             placeholder="Suite type"
-                            required
                           />
                           <label for="suite_type_1" class="form-label small"
                             >Suite type</label
@@ -97,11 +96,10 @@
                             type="number"
                             name="suite_rooms_1"
                             id="suite_rooms_1"
-                            min="0"
+                            min="1"
                             class="room-count form-control"
                             data-suite-index="1"
                             placeholder="Rooms in suite"
-                            required
                           />
                           <label for="suite_rooms_1" class="form-label small"
                             >Rooms in Suite</label
@@ -121,13 +119,17 @@
                             name="suite_price_1"
                             min="0"
                             placeholder="Price"
-                            required
                           />
                           <label for="suite_price_1" class="form-label small"
                             >Price</label
                           >
                           <div class="invalid-feedback">
                             Please, enter a value!
+                          </div>
+                          <div class="col-12 m-0">
+                            <a href="{% url 'logout' %}" class="small">
+                                Log Out
+                            </a>
                           </div>
                         </div>
                       </div>
@@ -232,7 +234,7 @@
                               >
                                 Cancel
                               </button>
-                              <button type="button" class="btn btn-primary">
+                              <button type="submit" class="btn btn-primary">
                                 Confirm
                               </button>
                             </div>

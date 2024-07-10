@@ -175,6 +175,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     <td>${suite.type}</td>
                     <td>${suite.rooms}</td>
                     <td>${suite.price}</td>
+                    <input type="hidden" name="suite_type_${index + 1}" value="${suite.type}"/>
+                    <input type="hidden" name="suite_rooms_${index + 1}" value="${suite.rooms}"/>
+                    <input type="hidden" name="suite_price_${index + 1}" value="${suite.price}"/>
                 </tr>
             `;
         });
@@ -213,7 +216,7 @@ function updateModalContent() {
     // Update the text inside the <span> element
     var modalBody = document.querySelector('.modal-body .card-subtitle');
 
-    modalBody.textContent = 'You have not added any suites, Please click on the add suite button to add a';
+    modalBody.textContent = 'You have not added any suites, Please click on the add suite button to add a suite';
 
 
     // Get the table body within the modal
