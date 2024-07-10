@@ -59,18 +59,6 @@ class Guest(models.Model):
     def __str__(self):
         return self.name
     
-class GuestHistory(models.Model):
-    guest = models.ForeignKey(Guest, unique=True, on_delete=models.CASCADE)
-    returning = models.BooleanField()
-    total_days = models.IntegerField(null=True,blank=True)
-    total_revenue = models.DecimalField(max_digits=10, decimal_places=1)
-    check_ins = models.IntegerField(null=True,blank=True)
-    check_outs = models.IntegerField(null=True,blank=True)
-    meta = models.CharField(max_length=500)
-    
-    def __str__(self):
-        return f'{self.guest}'
-    
 class Log(models.Model):
     staff = models.ForeignKey(Staff, on_delete=models.CASCADE)
     action = models.CharField(max_length=300, blank=True)
