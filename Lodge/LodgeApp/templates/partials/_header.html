@@ -152,18 +152,32 @@
             </form> 
           </div>
           <div class="tab-pane fade" id="check-in-justified" role="tabpanel" aria-labelledby="check-in-tab">
-            <div class="form-group">
-              <label for="nameInput">Guest Name:</label>
-              <input type="text" id="search-input" placeholder="Type a name..." class="form-control">
-              <p id="results"></p>
-              {% comment %} <datalist id="names">
-                  <option value="Boston">
-                  <option value="Cambridge">
-                  <option value="New York">
-                  <option value="San Francisco">
-              </datalist> {% endcomment %}
+            <div class="container-search">
+              <div class="select-box">
+                <div class="options-container">
+                  
+                  {% for guest in guests %}
+                  <div class="option">
+                    <input type="radio" class="radio breadcrumb-item" id="{{guest.id}}" name="category" />
+                    <label for="{{guest.id}}">{{guest.name}}</label>
+                  </div>
+                  {% endfor %}
+                </div>
+
+                <div class="selected-guest breadcrumb active" style="">
+                  <i class="bi bi-search me-1"></i> Search Name 
+                </div>
+    
+                <div class="search-box">
+                  <input type="text" placeholder="Search..." />
+                </div>
+              </div>
             </div>
+          </div>
             
+
+
+      
             <form id="nameForm">
               
             </form>
@@ -173,3 +187,5 @@
     </div>
   </div>
 </div>
+
+<script src="{% static 'js/check-in.js' %}"></script>
