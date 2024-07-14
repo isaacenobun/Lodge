@@ -132,8 +132,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 
-
-
     // Function to display suitesArray in the table body of the modal
     function displaySuitesInModal() {
         // Get the value of the input field with id="company_name"
