@@ -34,7 +34,7 @@
 
                 <div class="activity fs-5">
                   <div class="activity-item d-flex">
-                    <div class="activite-label">{{log.timestamp | add_one_hour | date:'P'}}</div>
+                    <div class="activite-label">{{log.timestamp | add_one_hour | date:'d/m/Y P'}}</div>
                     
                     {% if log.check_status %}
                         <i
