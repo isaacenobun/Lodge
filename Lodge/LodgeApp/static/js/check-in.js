@@ -19,19 +19,21 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   optionsList.forEach(o => {
-    o.addEventListener("click", async (event) => {
-      const clickedElement = event.target;
-      const clickedId = clickedElement.id;
+    o.addEventListener("click", (event) => {
+      const inputElements = o.querySelectorAll("input");
 
-      // Fetch guest details based on the clickedId (you'll need to implement this)
-      const guestData = await fetchGuestData(clickedId);
+
+      // Assuming you have three input elements (you can adjust this based on your actual HTML)
+      const [value1, guestName, guestEmail, guestNumber] = Array.from(inputElements).map(input => input.value);
+
+      selected.innerHTML = o.querySelector("label").innerHTML;
+      optionsContainer.classList.remove("active");
 
       // Populate the form fields
-      document.getElementById("yourName").value = guestData.name;
-      document.getElementById("yourEmail").value = guestData.email;
-      document.getElementById("inputNumber").value = guestData.number;
+      document.getElementById("registeredName").value = guestName;
+      document.getElementById("registeredEmail").value = guestEmail;
+      document.getElementById("inputNumber").value = guestNumber;
 
-      // Show the form
       returningForm.classList.add("active");
     });
   });

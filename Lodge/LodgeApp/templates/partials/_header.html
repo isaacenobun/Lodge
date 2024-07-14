@@ -158,8 +158,12 @@
                   
                   {% for guest in guests %}
                   <div class="option">
-                    <input type="radio" class="radio breadcrumb-item" id="{{guest.id}}" name="category" />
-                    <label for="{{guest.id}}">{{guest.name}}</label>
+                    <input type="radio" class="radio breadcrumb-item" id="{{guest.name}}" name="category" />
+                    <label for="{{guest.name}}">{{guest.name}}</label>
+                    <input type="text" class="radio breadcrumb-item" id="{{guest.id}}" name="category" value= "{{guest.name}}"/>
+                    <input type="text" class="radio breadcrumb-item" id="{{guest.email}}" name="category" value= "{{guest.email}}"/>
+                    <input type="text" class="radio breadcrumb-item" id="{{guest.number}}" name="category" value= "{{guest.number}}"/>
+                    
                   </div>
                   {% endfor %}
                 </div>
@@ -184,8 +188,8 @@
                       type="text"
                       name="name"
                       class="form-control"
-                      id="yourName"
-                      value = "{{guest.name}}"
+                      id="registeredName"
+                      
                       readonly
                     />
                   </div>
@@ -196,8 +200,8 @@
                       type="email"
                       name="email"
                       class="form-control"
-                      id="yourEmail"
-                      value = "{{guest.email}}"
+                      id="registeredEmail"
+                      
                       readonly
                     />
                   </div>
@@ -209,7 +213,7 @@
                       name="phone"
                       class="form-control"
                       id="inputNumber"
-                      value= "{{guest.number}}"
+                      
                       readonly
                     />
                   </div>
