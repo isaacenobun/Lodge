@@ -343,6 +343,8 @@ def check_out(request):
     
     return redirect('sign-in')
 
+# Under construction
+# -------------------------------------------------
 def extend(request):
     # This function will take in a new date that is then saved as the new check out date for a user.
     # The changes will reflect in the guest duration and revenue.
@@ -369,6 +371,7 @@ def extend(request):
         
     }
     return render(request, '', context)
+# -------------------------------------------------
 
 def analytics(request):
     if not request.user.is_authenticated:
@@ -453,17 +456,89 @@ def download_analytics_csv(request):
     
     guests = Guest.objects.filter(company=request.user.company)
     
+    checkins = CheckIns.objects.filter(company=request.user.company)
+    
+    rooms = Room.objects.filter(company=request.user.company)
+    
+    years_set = set()
+    for guest in guests:
+        years_set.add(guest.check_in.year)
+    
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="Guest List.csv"'
+    response['Content-Disposition'] = 'attachment; filename="Report.csv"'
 
     writer = csv.writer(response)
     
-    writer.writerow(['#', 'Name', 'Email', 'Phone Number', 'Suite', 'Room', 'Check-in Date', 'Check-Out Date'])  # CSV Header
+    def calculate_rev(year,month=None,guests=guests):
+        if month is not None:
+            total = 0
+            for guest in guests:
+                if guest.check_in.year == year and guest.check_in.month == month:
+                    total+=guest.revenue.revenue
+            return round(total,1)
+        
+        total = 0
+        for guest in guests:
+            if guest.check_in.year == year:
+                total+=guest.revenue.revenue
+        return round(total,1)
+        
+        
+    def total_guests(year,month=None,guests=guests):
+        if month is not None:
+            total = 0
+            for guest in guests:
+                if guest.check_in.year == year and guest.check_in.month == month:
+                    total+=1
+            return round(total,1)
+        
+        total = 0
+        for guest in guests:
+            if guest.check_in.year == year:
+                total+=1
+        return round(total,1)
     
-    count=1
-    for guest in guests:
-        writer.writerow([count, guest.name, guest.email, guest.number, guest.room.suite.type, guest.room.room_number, guest.check_in.strftime('%a %d %b %Y, %I:%M%p'), guest.check_out.strftime('%a %d %b %Y, %I:%M%p')])
-        count+=1
+    def avg_daily_revenue(year,month=None,guests=guests):
+        if month is not None:
+            return round(calculate_rev(year,month,guests=guests)/calendar.monthrange(year,month)[1],1)
+        
+        return round(calculate_rev(year,month=None,guests=guests)/365,1)
+    
+    def occupancy_rate(year,month=None,checkins=checkins,rooms=rooms):
+        if month is not None:
+            total = 0
+            for checkin in checkins:
+                if checkin.time.year == year and checkin.time.month == month:
+                    total+=1
+            return round(total/rooms.count(),1)
+        
+        total = 0
+        for checkin in checkins:
+            if checkin.time.year == year:
+                total+=1
+        return round(total/rooms.count(),1)
+    
+    def rev_per_room(year,month=None,guests=guests,rooms=rooms):
+        if month is not None:
+            return calculate_rev(year,month,guests=guests)/rooms.count()
+        
+        return calculate_rev(year,month=None,guests=guests)/rooms.count()
+    
+    for year_ in years_set:
+         writer.writerow([year_])  # CSV Header
+         writer.writerow(['Month','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Total'])
+         
+         writer.writerow(['Revenue (Naira)',calculate_rev(year_,month=1),calculate_rev(year_,month=2),calculate_rev(year_,month=3),calculate_rev(year_,month=4),calculate_rev(year_,month=5),calculate_rev(year_,month=6),calculate_rev(year_,month=7),calculate_rev(year_,month=8),calculate_rev(year_,month=9),calculate_rev(year_,month=10),calculate_rev(year_,month=11),calculate_rev(year_,month=12),calculate_rev(year_,month=None)])
+         
+         writer.writerow(['Total Guests',total_guests(year_,month=1),total_guests(year_,month=2),total_guests(year_,month=3),total_guests(year_,month=4),total_guests(year_,month=5),total_guests(year_,month=6),total_guests(year_,month=7),total_guests(year_,month=8),total_guests(year_,month=9),total_guests(year_,month=10),total_guests(year_,month=11),total_guests(year_,month=12),total_guests(year_,month=None)])
+         
+         writer.writerow(['Average Daily Revenue (Naira)',avg_daily_revenue(year_,month=1),avg_daily_revenue(year_,month=2),avg_daily_revenue(year_,month=3),avg_daily_revenue(year_,month=4),avg_daily_revenue(year_,month=5),avg_daily_revenue(year_,month=6),avg_daily_revenue(year_,month=7),avg_daily_revenue(year_,month=8),avg_daily_revenue(year_,month=9),avg_daily_revenue(year_,month=10),avg_daily_revenue(year_,month=11),avg_daily_revenue(year_,month=12),avg_daily_revenue(year_,month=None)])
+         
+         writer.writerow(['Occupancy Rate',occupancy_rate(year_,month=1),occupancy_rate(year_,month=2),occupancy_rate(year_,month=3),occupancy_rate(year_,month=4),occupancy_rate(year_,month=5),occupancy_rate(year_,month=6),occupancy_rate(year_,month=7),occupancy_rate(year_,month=8),occupancy_rate(year_,month=9),occupancy_rate(year_,month=10),occupancy_rate(year_,month=11),occupancy_rate(year_,month=12),occupancy_rate(year_,month=None)])
+         
+         writer.writerow(['Revenue Per Available Room',rev_per_room(year_,month=1),rev_per_room(year_,month=2),rev_per_room(year_,month=3),rev_per_room(year_,month=4),rev_per_room(year_,month=5),rev_per_room(year_,month=6),rev_per_room(year_,month=7),rev_per_room(year_,month=8),rev_per_room(year_,month=9),rev_per_room(year_,month=10),rev_per_room(year_,month=11),rev_per_room(year_,month=12),rev_per_room(year_,month=None)])
+         
+         writer.writerow([''])
 
     return response
 
