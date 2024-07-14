@@ -1,23 +1,5 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from django.urls import reverse
-from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
+from .imports import *
 
-from .models import Staff, Room, Guest, Log, Revenue, CheckIns, Company, Suite
-
-from django.contrib.auth import login, authenticate, logout, get_user_model
-
-Staff = get_user_model()
-
-from datetime import datetime, date, timedelta
-from django.utils import timezone
-
-import numpy as np
-import re
-
-from collections import defaultdict
-
-# Create your views here.
 def sign_up(request):
     if request.user.is_authenticated:
         if request.user.company is not None:
@@ -226,6 +208,24 @@ def history(request):
     }
     return render(request, 'guest-history.html', context)
 
+def download_history_csv(request):
+    
+    guests = Guest.objects.filter(company=request.user.company)
+    
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="Guest List.csv"'
+
+    writer = csv.writer(response)
+    
+    writer.writerow(['#', 'Name', 'Email', 'Phone Number', 'Suite', 'Room', 'Check-in Date', 'Check-Out Date'])  # CSV Header
+    
+    count=1
+    for guest in guests:
+        writer.writerow([count, guest.name, guest.email, guest.number, guest.room.suite.type, guest.room.room_number, guest.check_in.strftime('%a %d %b %Y, %I:%M%p'), guest.check_out.strftime('%a %d %b %Y, %I:%M%p')])
+        count+=1
+
+    return response
+
 def logs(request):
     if not request.user.is_authenticated:
         return redirect('sign-in')
@@ -240,9 +240,25 @@ def logs(request):
     context={
         'available_rooms':available_rooms,
         'logs':logs,
+        'page_name':'Logs'
     }
     
     return render(request, 'logs.html', context)
+
+def settings(request):
+    if not request.user.is_authenticated:
+        return redirect('sign-in')
+    
+    if request.user.is_authenticated and request.user.company is None:
+        return redirect('onboarding')
+    
+    staffs = Staff.objects.filter(company = request.user.company)
+    
+    context = {
+        'staffs':staffs,
+        'page_name':'Settings'
+    }
+    return render(request, 'settings.html', context)
 
 def check_in(request):
     if request.method == 'POST':
@@ -430,6 +446,24 @@ def analytics(request):
         'page_name':'Analytics'
     }
     return render(request, 'analytics.html', context)
+
+def download_analytics_csv(request):
+    
+    guests = Guest.objects.filter(company=request.user.company)
+    
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="Guest List.csv"'
+
+    writer = csv.writer(response)
+    
+    writer.writerow(['#', 'Name', 'Email', 'Phone Number', 'Suite', 'Room', 'Check-in Date', 'Check-Out Date'])  # CSV Header
+    
+    count=1
+    for guest in guests:
+        writer.writerow([count, guest.name, guest.email, guest.number, guest.room.suite.type, guest.room.room_number, guest.check_in.strftime('%a %d %b %Y, %I:%M%p'), guest.check_out.strftime('%a %d %b %Y, %I:%M%p')])
+        count+=1
+
+    return response
 
 # For Demos
 def sign_in_test(request):

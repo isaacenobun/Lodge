@@ -16,4 +16,7 @@ urlpatterns = [
     path('log-out/', views.sign_out, name='logout'),
     path('landing', views.landing, name='landing'),
     path('search/', views.search, name='search'),
+    path('settings/', views.settings, name='settings'),
+    path('download-history-csv/', views.download_history_csv, name='download_history_csv'),
+    path('download-analytics-csv/', views.download_analytics_csv, name='download_analytics_csv'),
 ]
