@@ -142,7 +142,8 @@ def dashboard(request):
     total_guests = Guest.objects.filter(company=request.user.company).count()
     available_rooms = Room.objects.filter(room_status=False,
                                           company=request.user.company)
-    
+    guests = Guest.objects.filter(company=request.user.company)
+
     context = {
         'now':now,
         'active_guests': active_guests,
@@ -150,7 +151,8 @@ def dashboard(request):
         'staff': request.user,
         'logs': logs,
         'available_rooms': available_rooms,
-        'page_name':'Home'
+        'page_name':'Home',
+        'guests': guests
     }
     return render(request, 'index.html', context)
 
