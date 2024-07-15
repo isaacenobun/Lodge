@@ -64,12 +64,12 @@ class GuestHistory(models.Model):
     name = models.CharField(max_length=50)
     email = models.CharField(max_length=50)
     number = models.CharField(max_length=50)
-    room  = models.CharField(max_length=50)
-    check_in = models.CharField(max_length=50)
-    staff = models.CharField(max_length=50)
-    check_out = models.CharField(max_length=50)
-    revenue = models.CharField(max_length=50)
-    company = models.CharField(max_length=50)
+    room  = models.ForeignKey(Room, on_delete=models.CASCADE)
+    check_in = models.DateTimeField()
+    staff = models.ForeignKey(Staff, on_delete=models.CASCADE)
+    check_out = models.DateTimeField()
+    revenue = models.ForeignKey(Revenue, on_delete=models.CASCADE)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
     duration = models.CharField(max_length=50)
     
     def __str__(self):

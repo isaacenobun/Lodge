@@ -119,12 +119,6 @@ def sign_out(request):
     logout(request)
     return redirect('sign-in')
 
-def search(request):
-    query = request.GET.get('query', '')
-    results = Guest.objects.filter(name__icontains=query)
-    results_list = list(results.values('name'))
-    return JsonResponse(results_list, safe=False)
-
 def dashboard(request):
     if not request.user.is_authenticated:
         return redirect('sign-in')
@@ -181,14 +175,15 @@ def rooms(request):
     
     available_rooms = Room.objects.filter(room_status=False,
                                           company=request.user.company)
-    
+    guests = Guest.objects.filter(company=request.user.company)
     context = {
         'available_rooms':available_rooms,
         'suite_types': suite_types_dict,
         'room_guest_mapping': room_guest_mapping,
         'check_out_url': reverse('check-out'),
         'check_in_url': reverse('check-in'),
-        'page_name':'Rooms'
+        'page_name':'Rooms',
+        'guests':guests
     }
     
     return render(request, 'room-carousel.html', context)
@@ -239,10 +234,13 @@ def logs(request):
                                           company=request.user.company)
     logs = Log.objects.filter(company=request.user.company).order_by('-id')
     
+    guests = Guest.objects.filter(company=request.user.company)
+    
     context={
         'available_rooms':available_rooms,
         'logs':logs,
-        'page_name':'Logs'
+        'page_name':'Logs',
+        'guests':guests
     }
     
     return render(request, 'logs.html', context)
@@ -256,61 +254,131 @@ def settings(request):
     
     staffs = Staff.objects.filter(company = request.user.company)
     
+    guests = Guest.objects.filter(company=request.user.company)
+    
     context = {
         'staffs':staffs,
-        'page_name':'Settings'
+        'page_name':'Settings',
+        'guests':guests
     }
     return render(request, 'settings.html', context)
 
 def check_in(request):
     if request.method == 'POST':
-        room_id = request.POST.get('room')
-        room = get_object_or_404(Room, id=room_id)
         
-        duration = request.POST.get('duration')
-        revenue = float(duration) * float(room.suite.price)
-        revenue = Revenue.objects.create(
-            revenue = revenue,
-            company = request.user.company
-        )
-        check_out = datetime.now() + timedelta(days=int(duration))
+        if not request.POST.get('name_'):
+            room_id = request.POST.get('room')
+            room = get_object_or_404(Room, id=room_id)
+            
+            duration = request.POST.get('duration')
+            revenue = float(duration) * float(room.suite.price)
+            revenue = Revenue.objects.create(
+                revenue = revenue,
+                company = request.user.company
+            )
+            check_out = datetime.now() + timedelta(days=int(duration))
+            
+            guest = Guest.objects.create(
+                name=request.POST.get('name'),
+                email=request.POST.get('email'),
+                number=request.POST.get('phone'),
+                room=room,
+                staff=request.user,
+                check_out=check_out,
+                revenue=revenue,
+                company=request.user.company,
+                duration=request.POST.get('duration')
+            )
 
-        guest = Guest.objects.create(
-            name=request.POST.get('name'),
-            email=request.POST.get('email'),
-            number=request.POST.get('phone'),
-            room=room,
-            staff=request.user,
-            check_out=check_out,
-            revenue=revenue,
-            company=request.user.company,
-            duration=request.POST.get('duration')
-        )
+            room.room_status = True
+            room.save()
+            
+            Log.objects.create(
+                staff=request.user,
+                action=f'{request.user} checked in {guest.name} into Room {guest.room.room_number}',
+                check_status=True, 
+                timestamp=guest.check_in,
+                company=guest.company
+            )
+            
+            Log.objects.create(
+                staff=request.user,
+                action=f'{guest.name} paid N{revenue.revenue}',
+                check_status=True, 
+                timestamp=guest.check_in,
+                company=guest.company
+            )
+            
+            CheckIns.objects.create(
+                company=guest.staff.company
+            )
 
-        room.room_status = True
-        room.save()
+            return redirect('dashboard')
         
-        Log.objects.create(
-            staff=request.user,
-            action=f'{request.user} checked in {guest.name} into Room {guest.room.room_number}',
-            check_status=True, 
-            timestamp=guest.check_in,
-            company=guest.company
-        )
-        
-        Log.objects.create(
-            staff=request.user,
-            action=f'{guest.name} paid N{revenue.revenue}',
-            check_status=True, 
-            timestamp=guest.check_in,
-            company=guest.company
-        )
-        
-        CheckIns.objects.create(
-            company=guest.staff.company
-        )
+        else:
+            # Push old record to history
+            name_ = request.POST.get('name_')
+            guest = Guest.objects.get(name=name_)
+            
+            GuestHistory.objects.create(
+                guest=guest,
+                name=guest.name,
+                email=guest.email,
+                number=guest.number,
+                room=guest.room,
+                check_in=guest.check_in,
+                staff=guest.staff,
+                check_out=guest.check_out,
+                revenue=guest.revenue,
+                company=guest.company,
+                duration=guest.duration
+            )
+            
+            # Update old record instance to new record
+            room_id = request.POST.get('room_')
+            room = get_object_or_404(Room, id=room_id)
+            
+            duration = request.POST.get('duration_')
+            revenue = float(duration) * float(room.suite.price)
+            revenue = Revenue.objects.create(
+                revenue = revenue,
+                company = request.user.company
+            )
+            check_out = datetime.now() + timedelta(days=int(duration))
+            
+            guest.room = room
+            guest.check_in = datetime.now()
+            guest.staff = request.user
+            guest.check_out=check_out
+            guest.revenue = revenue
+            guest.duration = duration
+            
+            guest.save()
 
-        return redirect('dashboard')
+            room.room_status = True
+            room.save()
+            
+            Log.objects.create(
+                staff=request.user,
+                action=f'{request.user} checked in {guest.name} into Room {guest.room.room_number}',
+                check_status=True, 
+                timestamp=guest.check_in,
+                company=guest.company
+            )
+            
+            Log.objects.create(
+                staff=request.user,
+                action=f'{guest.name} paid N{revenue.revenue}',
+                check_status=True, 
+                timestamp=guest.check_in,
+                company=guest.company
+            )
+            
+            CheckIns.objects.create(
+                company=guest.staff.company
+            )
+
+            return redirect('dashboard')
 
 @csrf_exempt
 def check_out(request):
