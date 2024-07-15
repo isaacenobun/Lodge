@@ -3,6 +3,7 @@ let allowUpdate = true;
 
 let suitesArray = [];
 
+
 // Event listener for the 'Add another suite' button
 document.getElementById('add-suite').addEventListener('click', function () {
     // Disable updates
@@ -21,6 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const addSuiteBtn = document.getElementById('add-suite');
     const table = document.querySelector('.table-bordered tbody');
     const tablestyle = document.querySelector('.table-bordered');
+    const submitButton = document.querySelector('#submitButton');
 
     let suiteCount = 0;
 
@@ -79,8 +81,11 @@ document.addEventListener('DOMContentLoaded', function () {
     function checkTableEmpty() {
         if (suitesArray.length === 0) { // Check if the suitesArray is empty
             document.querySelector('.table thead').style.display = 'none';
+            submitButton.classList.add('disabled');
         } else {
             document.querySelector('.table thead').style.display = '';
+            // If not empty, remove the 'disabled' class
+            submitButton.classList.remove('disabled');
         }
     }
 
@@ -227,3 +232,18 @@ function updateModalContent() {
     // Clear any existing rows in the table body
     tableBody.innerHTML = '';
 }
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Get a reference to the button element
+
+
+    // Check if suitArray is empty
+    if (Array.isArray(suitesArray) && suitesArray.length === 0) {
+        // If empty, add the 'disabled' class
+        submitButton.classList.add('disabled');
+    } else {
+        // If not empty, remove the 'disabled' class
+        submitButton.classList.remove('disabled');
+    }
+});
