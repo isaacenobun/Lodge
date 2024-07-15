@@ -497,3 +497,7 @@ def sign_in_test(request):
     
 def landing(request):
     return render(request, 'landing.html')
+
+
+def error404(request):
+    return render(request, 'pages-error-404.html')
