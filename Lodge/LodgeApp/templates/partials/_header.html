@@ -158,8 +158,8 @@
                   
                   {% for guest in guests %}
                   <div class="option">
-                    <input type="radio" class="radio breadcrumb-item" id="{{guest.name}}" name="category" />
-                    <label for="{{guest.name}}">{{guest.name}}</label>
+                    <input type="radio" class="radio" id="{{guest.name}}" name="category" />
+                    <label for="{{guest.name}}"><span>#{{guest.id}} ~ </span>{{guest.name}}</label>
                     <input type="text" class="radio breadcrumb-item" id="{{guest.id}}" name="category" value= "{{guest.name}}"/>
                     <input type="text" class="radio breadcrumb-item" id="{{guest.email}}" name="category" value= "{{guest.email}}"/>
                     <input type="text" class="radio breadcrumb-item" id="{{guest.number}}" name="category" value= "{{guest.number}}"/>
@@ -169,7 +169,7 @@
                 </div>
 
                 <div class="selected-guest breadcrumb" style="">
-                  <i class="bi bi-search me-1"></i> Search Name 
+                  <i class="bi bi-search me-1"></i> Click here to search
                 </div>
     
                 <div class="search-box">
