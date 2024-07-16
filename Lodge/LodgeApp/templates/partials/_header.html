@@ -4,7 +4,7 @@
 <header id="header" class="header fixed-top d-flex align-items-center">
   <div class="d-flex align-items-center justify-content-between">
     <a href="{% url 'dashboard' %}" class="logo d-flex align-items-center">
-      <img src="{% static 'img/icon bg.png' %}" alt="" class="d-lg-none d-lg-block" />
+      <img src="{% static 'img/Icon-bg.png' %}" alt="" class="d-lg-none d-lg-block" />
       <span class="d-none d-lg-block">LodgeIt</span>
     </a>
     <i class="bi bi-list toggle-sidebar-btn"></i>
@@ -152,17 +152,116 @@
             </form> 
           </div>
           <div class="tab-pane fade" id="check-in-justified" role="tabpanel" aria-labelledby="check-in-tab">
-            <div class="form-group">
-              <label for="nameInput">Guest Name:</label>
-              <input type="text" id="nameInput" name="name" list="names" class="form-control">
-              <datalist id="names">
-                  <option value="Boston">
-                  <option value="Cambridge">
-                  <option value="New York">
-                  <option value="San Francisco">
-              </datalist>
+            <div class="container-search">
+              <div class="select-box">
+                <div class="options-container">
+                  
+                  {% for guest in guests %}
+                  <div class="option">
+                    <input type="radio" class="radio" id="{{guest.name}}" name="category" />
+                    <label for="{{guest.name}}"><span>#{{guest.id}} ~ </span>{{guest.name}}</label>
+                    <input type="text" class="radio breadcrumb-item" id="{{guest.id}}" name="category" value= "{{guest.name}}"/>
+                    <input type="text" class="radio breadcrumb-item" id="{{guest.email}}" name="category" value= "{{guest.email}}"/>
+                    <input type="text" class="radio breadcrumb-item" id="{{guest.number}}" name="category" value= "{{guest.number}}"/>
+                    
+                  </div>
+                  {% endfor %}
+                </div>
+
+                <div class="selected-guest breadcrumb" style="">
+                  <i class="bi bi-search me-1"></i> Click here to search
+                </div>
+    
+                <div class="search-box">
+                  <input type="text" placeholder="Search..." />
+                </div>
+                <form
+                  class="returning-form row g-3 needs-validation"
+                  novalidate
+                  method="post"
+                  action="{% url 'check-in' %}"
+                >
+                  {% csrf_token %}
+                  <div class="col-12">
+                    <label for="yourName" class="form-label">Name</label>
+                    <input
+                      type="text"
+                      name="name_"
+                      class="form-control"
+                      id="registeredName"
+                      
+                      readonly
+                    />
+                  </div>
+
+                  <div class="col-12">
+                    <label for="yourEmail" class="form-label">Email</label>
+                    <input
+                      type="email"
+                      name="email_"
+                      class="form-control"
+                      id="registeredEmail"
+                      
+                      readonly
+                    />
+                  </div>
+
+                  <div class="col-12">
+                    <label for="inputNumber" class="form-label">Phone number</label>
+                    <input
+                      type="number"
+                      name="phone_"
+                      class="form-control"
+                      id="inputNumber"
+                      
+                      readonly
+                    />
+                  </div>
+              
+                  <div class="col-12">
+                    <label for="inputNumber" class="form-label">Room number</label>
+                    <select name="room_" class="form-control" id="" required>
+                      <option value="">Choose a room</option>
+                      {% for room in available_rooms %}
+                      <option value="{{room.id}}">
+                        Room {{room.room_number}} - {{room.suite.type}} Suite
+                      </option>
+                      {% endfor %}
+                    </select>
+                    <div class="invalid-feedback">Please, choose a room!</div>
+                  </div>
+
+                  <div class="col-12">
+                    <label for="inputNumber" class="form-label">Length of Stay</label>
+                    <input
+                      type="number"
+                      name="duration_"
+                      min="1"
+                      class="form-control"
+                      id=""
+                      required
+                    />
+                    <div class="invalid-feedback">
+                      Please, enter the length of the guest's stay!
+                    </div>
+                  </div>
+
+                  <div class="modal-footer">
+                    <div class="col-12">
+                      <button class="btn btn-dark w-100" type="submit">
+                        Check in
+                      </button>
+                    </div>
+                  </div>
+                </form> 
+                
+              </div>
             </div>
+          </div>
             
+
+
+      
             <form id="nameForm">
               
             </form>
@@ -172,3 +271,5 @@
     </div>
   </div>
 </div>
+
+<script src="{% static 'js/check-in.js' %}"></script>

@@ -3,11 +3,18 @@ from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 class Company(models.Model):
-    name = models.CharField(max_length=255, unique=True, default='TestCompany')
+    name = models.CharField(max_length=255)
     
     def __str__(self):
         return self.name
     
+class Subscriptions(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    amount = models.IntegerField()
+    start_date = models.DateTimeField(auto_now_add=True)
+    due_date = models.DateTimeField()
+    payment_status = models.BooleanField(default=False)
+
 class Suite(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     type = models.CharField(max_length=255)
@@ -59,6 +66,25 @@ class Guest(models.Model):
     def __str__(self):
         return self.name
     
+<<<<<<< HEAD
+=======
+class GuestHistory(models.Model):
+    guest = models.ForeignKey(Guest, on_delete=models.CASCADE, related_name='history')
+    name = models.CharField(max_length=50)
+    email = models.CharField(max_length=50)
+    number = models.CharField(max_length=50)
+    room  = models.ForeignKey(Room, on_delete=models.CASCADE)
+    check_in = models.DateTimeField()
+    staff = models.ForeignKey(Staff, on_delete=models.CASCADE)
+    check_out = models.DateTimeField()
+    revenue = models.ForeignKey(Revenue, on_delete=models.CASCADE)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    duration = models.CharField(max_length=50)
+    
+    def __str__(self):
+        return f'{self.guest}'
+    
+>>>>>>> c2af57d22ab157d6cb5f2bb43ee8bccca9b557c0
 class Log(models.Model):
     staff = models.ForeignKey(Staff, on_delete=models.CASCADE)
     action = models.CharField(max_length=300, blank=True)

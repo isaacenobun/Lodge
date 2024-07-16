@@ -15,4 +15,7 @@ urlpatterns = [
     path('demo/', views.sign_in_test, name='sign-in-test'),
     path('log-out/', views.sign_out, name='logout'),
     path('landing', views.landing, name='landing'),
+    path('settings/', views.settings, name='settings'),
+    path('download-history-csv/', views.download_history_csv, name='download_history_csv'),
+    path('download-analytics-csv/', views.download_analytics_csv, name='download_analytics_csv'),
 ]

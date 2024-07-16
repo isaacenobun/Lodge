@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Staff, Room, Guest, Log, Revenue, CheckIns, Company, Suite
+from .models import Staff, Room, Guest, GuestHistory, Log, Revenue, CheckIns, Company, Suite
 from django.contrib.auth.admin import UserAdmin
 
 # Register your models here.
@@ -20,6 +20,10 @@ class RevenueAdmin(admin.ModelAdmin):
     search_fields = ('company__name',)
 
 class GuestAdmin(admin.ModelAdmin):
+    list_display = ('name', 'email', 'number', 'room', 'check_in', 'check_out', 'staff', 'company', 'duration')
+    search_fields = ('name', 'email', 'room__room_number', 'company__name', 'staff__username')
+
+class GuestHistoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'email', 'number', 'room', 'check_in', 'check_out', 'staff', 'company', 'duration')
     search_fields = ('name', 'email', 'room__room_number', 'company__name', 'staff__username')
 
@@ -51,5 +55,6 @@ admin.site.register(Room, RoomAdmin)
 admin.site.register(Staff, StaffAdmin)
 admin.site.register(Revenue, RevenueAdmin)
 admin.site.register(Guest, GuestAdmin)
+admin.site.register(GuestHistory, GuestHistoryAdmin)
 admin.site.register(Log, LogAdmin)
 admin.site.register(CheckIns, CheckInsAdmin)

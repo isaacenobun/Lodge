@@ -4,36 +4,13 @@
 {% block content %}
 <body>
   <header id="header" class="header fixed-top d-flex align-items-center justify-content-center">
-    {% comment %} <a href="{% url 'dashboard' %}" class="logo d-flex align-items-center">
-      <img src="{% static 'img/logoTEST.png' %}" alt="" class="d-lg-none" />
-      <span class="d-none d-lg-block logo">LodgeIt</span>
-    </a> {% endcomment %}
     
     <!-- End Logo -->
     <nav id="navmenu" class="navmenu">
       <ul>
         <li><a href="{% url 'landing' %}" class="active">Home<br></a></li>
-        <li><a href="#about">Testimonials</a></li>
         <li><a href="#services">Pricing</a></li>
         <li><a href="{% url 'sign-up' %}">Sign Up</a></li>
-        {% comment %} <li class="dropdown"><a href="#"><span>Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-          <ul>
-            <li><a href="#">Dropdown 1</a></li>
-            <li class="dropdown"><a href="#"><span>Deep Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-              <ul>
-                <li><a href="#">Deep Dropdown 1</a></li>
-                <li><a href="#">Deep Dropdown 2</a></li>
-                <li><a href="#">Deep Dropdown 3</a></li>
-                <li><a href="#">Deep Dropdown 4</a></li>
-                <li><a href="#">Deep Dropdown 5</a></li>
-              </ul>
-            </li>
-            <li><a href="#">Dropdown 2</a></li>
-            <li><a href="#">Dropdown 3</a></li>
-            <li><a href="#">Dropdown 4</a></li>
-          </ul>
-        </li> {% endcomment %}
-        {% comment %} <li><a href="#contact">Contact</a></li> {% endcomment %}
       </ul>
       <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
     </nav>
@@ -46,11 +23,11 @@
      <section id="hero" class="hero section">
 
       <div class="container d-flex flex-column justify-content-center align-items-center text-center position-relative" data-aos="zoom-out">
-        <img src="{% static 'img/icon bg.png' %}" class="img-fluid animated" alt="">
+        <img src="{% static 'img/hero.png' %}" class="img-fluid animated" alt="">
         <h1>Welcome to <span>LodgeIt</span></h1>
         <p>At LodgeIt, our mission is to provide seamless and efficient guest management solutions.</p>
         <div class="d-flex">
-          <a href="#about" class="btn-get-started scrollto">Get Started</a>
+          <a href="{% url 'sign-up' %}" class="btn-get-started scrollto">Get Started</a>
           <a href="" class="glightbox btn-watch-video d-flex align-items-center"><i class="bi bi-play-circle"></i><span>View Demo</span></a>
         </div>
       </div>
@@ -68,8 +45,8 @@
           <div class="col-xl-3 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="100">
             <div class="service-item position-relative">
               <div class="icon"><i class="bi bi-activity icon"></i></div>
-              <h4><a href="" class="stretched-link">Key Services</a></h4>
-              <p>Voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi</p>
+              <h4><a href="" class="stretched-link">Affordable</a></h4>
+              <p>Manage your guests effortlessly without breaking the bank—LodgeIt offers unbeatable affordability.</p>
             </div>
           </div
           ><!-- End Service Item -->
@@ -77,8 +54,8 @@
           <div class="col-xl-3 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="200">
             <div class="service-item position-relative">
               <div class="icon"><i class="bi bi-bounding-box-circles icon"></i></div>
-              <h4><a href="" class="stretched-link">Portfolio</a></h4>
-              <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore</p>
+              <h4><a href="" class="stretched-link">Powerful</a></h4>
+              <p>Unleash the full potential of your Lodge with our software's powerful features and capabilities.</p>
             </div>
           </div>
           <!-- End Service Item -->
@@ -86,8 +63,8 @@
           <div class="col-xl-3 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="300">
             <div class="service-item position-relative">
               <div class="icon"><i class="bi bi-calendar4-week icon"></i></div>
-              <h4><a href="" class="stretched-link">Testimonials</a></h4>
-              <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia</p>
+              <h4><a href="" class="stretched-link">Easy To use</a></h4>
+              <p>Get started in minutes—LodgeIt is designed to be intuitive and easy to use for your staff.</p>
             </div>
           </div>
           <!-- End Service Item -->
@@ -95,8 +72,8 @@
           <div class="col-xl-3 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="400">
             <div class="service-item position-relative">
               <div class="icon"><i class="bi bi-broadcast icon"></i></div>
-              <h4><a href="" class="stretched-link">Request Features</a></h4>
-              <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis</p>
+              <h4><a href="" class="stretched-link">Reliable</a></h4>
+              <p>Count on our reliability to keep your operations running smoothly, day in and day out.</p>
             </div>
           </div>
           <!-- End Service Item -->
@@ -109,131 +86,7 @@
     <!-- /Featured Services Section -->
 
 
-    <!-- Testimonials Section -->
-    <section id="testimonials" class="testimonials section dark-background">
-
-      <!-- Section Title -->
-      <div class="container section-title" data-aos="fade-up">
-        <h2>Testimonials</h2>
-        <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>
-      </div>
-      <!-- End Section Title -->
-
-      <img src="static/img/testimonials-bg.jpg" class="testimonials-bg" alt="">
-
-      <div class="container" data-aos="fade-up" data-aos-delay="100">
-
-        <div class="swiper init-swiper">
-          <script type="application/json" class="swiper-config">
-            {
-              "loop": true,
-              "speed": 600,
-              "autoplay": {
-                "delay": 5000
-              },
-              "slidesPerView": "auto",
-              "pagination": {
-                "el": ".swiper-pagination",
-                "type": "bullets",
-                "clickable": true
-              }
-            }
-          </script>
-          <div class="swiper-wrapper">
-
-            <div class="swiper-slide">
-              <div class="testimonial-item">
-                <img src="assets/img/testimonials/testimonials-1.jpg" class="testimonial-img" alt="">
-                <h3>Saul Goodman</h3>
-                <h4>Ceo &amp; Founder</h4>
-                <div class="stars">
-                  <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                </div>
-                <p>
-                  <i class="bi bi-quote quote-icon-left"></i>
-                  <span>Proin iaculis purus consequat sem cure digni ssim donec porttitora entum suscipit rhoncus. Accusantium quam, ultricies eget id, aliquam eget nibh et. Maecen aliquam, risus at semper.</span>
-                  <i class="bi bi-quote quote-icon-right"></i>
-                </p>
-              </div>
-            </div>
-            <!-- End testimonial item -->
-
-            <div class="swiper-slide">
-              <div class="testimonial-item">
-                <img src="assets/img/testimonials/testimonials-2.jpg" class="testimonial-img" alt="">
-                <h3>Sara Wilsson</h3>
-                <h4>Designer</h4>
-                <div class="stars">
-                  <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                </div>
-                <p>
-                  <i class="bi bi-quote quote-icon-left"></i>
-                  <span>Export tempor illum tamen malis malis eram quae irure esse labore quem cillum quid cillum eram malis quorum velit fore eram velit sunt aliqua noster fugiat irure amet legam anim culpa.</span>
-                  <i class="bi bi-quote quote-icon-right"></i>
-                </p>
-              </div>
-            </div>
-            <!-- End testimonial item -->
-
-            <div class="swiper-slide">
-              <div class="testimonial-item">
-                <img src="assets/img/testimonials/testimonials-3.jpg" class="testimonial-img" alt="">
-                <h3>Jena Karlis</h3>
-                <h4>Store Owner</h4>
-                <div class="stars">
-                  <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                </div>
-                <p>
-                  <i class="bi bi-quote quote-icon-left"></i>
-                  <span>Enim nisi quem export duis labore cillum quae magna enim sint quorum nulla quem veniam duis minim tempor labore quem eram duis noster aute amet eram fore quis sint minim.</span>
-                  <i class="bi bi-quote quote-icon-right"></i>
-                </p>
-              </div>
-            </div>
-            <!-- End testimonial item -->
-
-            <div class="swiper-slide">
-              <div class="testimonial-item">
-                <img src="assets/img/testimonials/testimonials-4.jpg" class="testimonial-img" alt="">
-                <h3>Matt Brandon</h3>
-                <h4>Freelancer</h4>
-                <div class="stars">
-                  <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                </div>
-                <p>
-                  <i class="bi bi-quote quote-icon-left"></i>
-                  <span>Fugiat enim eram quae cillum dolore dolor amet nulla culpa multos export minim fugiat minim velit minim dolor enim duis veniam ipsum anim magna sunt elit fore quem dolore labore illum veniam.</span>
-                  <i class="bi bi-quote quote-icon-right"></i>
-                </p>
-              </div>
-            </div>
-            <!-- End testimonial item -->
-
-            <div class="swiper-slide">
-              <div class="testimonial-item">
-                <img src="assets/img/testimonials/testimonials-5.jpg" class="testimonial-img" alt="">
-                <h3>John Larson</h3>
-                <h4>Entrepreneur</h4>
-                <div class="stars">
-                  <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                </div>
-                <p>
-                  <i class="bi bi-quote quote-icon-left"></i>
-                  <span>Quis quorum aliqua sint quem legam fore sunt eram irure aliqua veniam tempor noster veniam enim culpa labore duis sunt culpa nulla illum cillum fugiat legam esse veniam culpa fore nisi cillum quid.</span>
-                  <i class="bi bi-quote quote-icon-right"></i>
-                </p>
-              </div>
-            </div>
-            <!-- End testimonial item -->
-
-          </div>
-          <div class="swiper-pagination"></div>
-        </div>
-
-      </div>
-
-    </section>
-    <!-- /Testimonials Section -->
+            
 
 
      <!-- Pricing Section -->
@@ -242,7 +95,6 @@
       <!-- Section Title -->
       <div class="container section-title" data-aos="fade-up">
         <h2>Our Pricing</h2>
-        <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>
       </div>
       <!-- End Section Title -->
 
@@ -250,76 +102,32 @@
 
         <div class="row gy-4">
 
-          <div class="col-lg-4" data-aos="zoom-in" data-aos-delay="200">
-            <div class="pricing-item">
-
-              <div class="pricing-header">
-                <h3>Free Plan</h3>
-                <h4><sup>$</sup>0<span> / month</span></h4>
-              </div>
-
-              <ul>
-                <li><i class="bi bi-dot"></i> <span>Quam adipiscing vitae proin</span></li>
-                <li><i class="bi bi-dot"></i> <span>Nec feugiat nisl pretium</span></li>
-                <li><i class="bi bi-dot"></i> <span>Nulla at volutpat diam uteera</span></li>
-                <li class="na"><i class="bi bi-x"></i> <span>Pharetra massa massa ultricies</span></li>
-                <li class="na"><i class="bi bi-x"></i> <span>Massa ultricies mi quis hendrerit</span></li>
-              </ul>
-
-              <div class="text-center mt-auto">
-                <a href="#" class="buy-btn">Buy Now</a>
-              </div>
-
-            </div>
-          </div>
-          <!-- End Pricing Item -->
+          
 
           <div class="col-lg-4" data-aos="zoom-in" data-aos-delay="400">
             <div class="pricing-item featured">
 
               <div class="pricing-header">
-                <h3>Business Plan</h3>
-                <h4><sup>$</sup>29<span> / month</span></h4>
+                <h3>Lodge Plan</h3>
+                <h4><span>From </span>N20,000<span> / month</span></h4>
               </div>
 
               <ul>
-                <li><i class="bi bi-dot"></i> <span>Quam adipiscing vitae proin</span></li>
-                <li><i class="bi bi-dot"></i> <span>Nec feugiat nisl pretium</span></li>
-                <li><i class="bi bi-dot"></i> <span>Nulla at volutpat diam uteera</span></li>
-                <li><i class="bi bi-dot"></i> <span>Pharetra massa massa ultricies</span></li>
-                <li><i class="bi bi-dot"></i> <span>Massa ultricies mi quis hendrerit</span></li>
+                <li><i class="bi bi-dot"></i> <span>Guest/Room Management</span></li>
+                <li><i class="bi bi-dot"></i> <span>Analytics and Reporting</span></li>
+                <li><i class="bi bi-dot"></i> <span>Unlimited Usage</span></li>
+                <li><i class="bi bi-dot"></i> <span>Free Business Landing Page</span></li>
+                <li><i class="bi bi-dot"></i> <span>Optional Custom Feature Add-ons</span></li>
               </ul>
 
               <div class="text-center mt-auto">
-                <a href="#" class="buy-btn">Buy Now</a>
+                <a href="{% url 'sign-up' %}" class="buy-btn">Get Started</a>
               </div>
 
             </div>
           </div><!-- End Pricing Item -->
 
-          <div class="col-lg-4" data-aos="zoom-in" data-aos-delay="600">
-            <div class="pricing-item">
-
-              <div class="pricing-header">
-                <h3>Developer Plan</h3>
-                <h4><sup>$</sup>49<span> / month</span></h4>
-              </div>
-
-              <ul>
-                <li><i class="bi bi-dot"></i> <span>Quam adipiscing vitae proin</span></li>
-                <li><i class="bi bi-dot"></i> <span>Nec feugiat nisl pretium</span></li>
-                <li><i class="bi bi-dot"></i> <span>Nulla at volutpat diam uteera</span></li>
-                <li><i class="bi bi-dot"></i> <span>Pharetra massa massa ultricies</span></li>
-                <li><i class="bi bi-dot"></i> <span>Massa ultricies mi quis hendrerit</span></li>
-              </ul>
-
-              <div class="text-center mt-auto">
-                <a href="#" class="buy-btn">Buy Now</a>
-              </div>
-
-            </div>
-          </div>
-          <!-- End Pricing Item -->
+          
 
         </div>
 
@@ -332,82 +140,12 @@
   
   <footer id="footer" class="footer dark-background">
 
-    {% comment %} <div class="footer-top">
-      <div class="container">
-        <div class="row gy-4">
-          <div class="col-lg-4 col-md-6 footer-about">
-            <a href="index.html" class="logo d-flex align-items-center">
-              <span class="sitename">HeroBiz</span>
-            </a>
-            <div class="footer-contact pt-3">
-              <p>A108 Adam Street</p>
-              <p>New York, NY 535022</p>
-              <p class="mt-3"><strong>Phone:</strong> <span>+1 5589 55488 55</span></p>
-              <p><strong>Email:</strong> <span>info@example.com</span></p>
-            </div>
-          </div>
-
-          <div class="col-lg-2 col-md-3 footer-links">
-            <h4>Useful Links</h4>
-            <ul>
-              <li><a href="#">Home</a></li>
-              <li><a href="#">About us</a></li>
-              <li><a href="#">Services</a></li>
-              <li><a href="#">Terms of service</a></li>
-              <li><a href="#">Privacy policy</a></li>
-            </ul>
-          </div>
-
-          <div class="col-lg-2 col-md-3 footer-links">
-            <h4>Our Services</h4>
-            <ul>
-              <li><a href="#">Web Design</a></li>
-              <li><a href="#">Web Development</a></li>
-              <li><a href="#">Product Management</a></li>
-              <li><a href="#">Marketing</a></li>
-              <li><a href="#">Graphic Design</a></li>
-            </ul>
-          </div>
-
-          <div class="col-lg-2 col-md-3 footer-links">
-            <h4>Hic solutasetp</h4>
-            <ul>
-              <li><a href="#">Molestiae accusamus iure</a></li>
-              <li><a href="#">Excepturi dignissimos</a></li>
-              <li><a href="#">Suscipit distinctio</a></li>
-              <li><a href="#">Dilecta</a></li>
-              <li><a href="#">Sit quas consectetur</a></li>
-            </ul>
-          </div>
-
-          <div class="col-lg-2 col-md-3 footer-links">
-            <h4>Nobis illum</h4>
-            <ul>
-              <li><a href="#">Ipsam</a></li>
-              <li><a href="#">Laudantium dolorum</a></li>
-              <li><a href="#">Dinera</a></li>
-              <li><a href="#">Trodelas</a></li>
-              <li><a href="#">Flexo</a></li>
-            </ul>
-          </div>
-
-        </div>
-      </div>
-    </div> {% endcomment %}
-
     <div class="copyright text-center">
       <div class="container d-flex flex-column flex-lg-row justify-content-center justify-content-lg-between align-items-center">
 
         <div class="d-flex flex-column align-items-center align-items-lg-start">
           <div>
-            © Copyright <strong><span>MyWebsite</span></strong>. All Rights Reserved
-          </div>
-          <div class="credits">
-            <!-- All the links in the footer should remain intact. -->
-            <!-- You can delete the links only if you purchased the pro version. -->
-            <!-- Licensing information: https://bootstrapmade.com/license/ -->
-            <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/herobiz-bootstrap-business-template/ -->
-            Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+            © Copyright <strong><span>LodgeIt</span></strong>. All Rights Reserved
           </div>
         </div>
 
