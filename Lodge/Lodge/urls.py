@@ -24,4 +24,6 @@ urlpatterns = [
     path('', include('LodgeApp.urls')),
 ]
 
+handler404 = "Lodge.views.error404"
+
 urlpatterns += staticfiles_urlpatterns()

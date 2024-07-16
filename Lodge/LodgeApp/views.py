@@ -49,15 +49,15 @@ def onboarding(request):
         
         suite_type_pattern = re.compile(r'suite_type_\d+')
         suite_types = [value for key, value in request.POST.items() if suite_type_pattern.match(key)]
-        print (suite_types)
+        # print (suite_types)
         
         suite_price_pattern = re.compile(r'suite_price_\d+')
         suite_prices = [value for key, value in request.POST.items() if suite_price_pattern.match(key)]
-        print (suite_prices)
+        # print (suite_prices)
         
         suite_rooms_pattern = re.compile(r'suite_rooms_\d+')
         suite_rooms = [value for key, value in request.POST.items() if suite_rooms_pattern.match(key)]
-        print (suite_rooms)
+        # print (suite_rooms)
         
         for iter in range(len(suite_types)):
             suite_type = suite_types[iter]
@@ -80,6 +80,28 @@ def onboarding(request):
         owner.company = company
         owner.owner = True
         owner.save()
+        
+        subscription = Subscriptions.objects.create(
+                company=request.user.company,
+                amount=len(suite_rooms)*1000,
+                due_date=timezone.now()+ relativedelta(months=1)
+            )
+        
+        start_date = subscription.start_date.strftime('%a %d %b %Y, %I:%M%p')
+        due_date = subscription.due_date.strftime('%a %d %b %Y, %I:%M%p')
+        
+        # Send a subscription email to LodgeIt admin
+        mail = f'Hello Isaac,\n\n{owner.username} from {owner.company} just subscribed to LodgeIt.\nKindly send an invoice to {owner.email} as soon as possible.\n\nInvoice details\nClient: {owner.username}\nCompany: {owner.company}\nSubscription: N{subscription.amount}\nStart Date: {(start_date)}\nDue Date: {due_date}'
+        
+        send_mail(
+            'New LodgeIt Subscription',
+            
+            mail,
+            
+            'lodgeitng@gmail.com',
+            
+            ['Isaacenobun@gmail.com']
+        )
             
         return redirect('dashboard')
     
@@ -136,7 +158,7 @@ def dashboard(request):
     total_guests = Guest.objects.filter(company=request.user.company).count()
     available_rooms = Room.objects.filter(room_status=False,
                                           company=request.user.company)
-    guests = Guest.objects.filter(company=request.user.company)
+    guests = Guest.objects.filter(company=request.user.company, check_out__lte=now)
 
     context = {
         'now':now,
@@ -232,7 +254,29 @@ def logs(request):
     
     available_rooms = Room.objects.filter(room_status=False,
                                           company=request.user.company)
+    
+    # Group logs
     logs = Log.objects.filter(company=request.user.company).order_by('-id')
+    
+    annotated_logs = logs.annotate(
+        year=ExtractYear('timestamp'),
+        month=ExtractMonth('timestamp'),
+        day=ExtractDay('timestamp')
+    )
+    
+    logs_by_year_month_day = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
+    
+    for log in annotated_logs:
+        month_name = calendar.month_name[log.month]
+        logs_by_year_month_day[log.year][month_name][log.day].append(log)
+        
+    logs_structure = {
+        year: {
+            month: {
+                day: list(day_logs) for day, day_logs in days.items()
+            } for month, days in months.items()
+        } for year, months in logs_by_year_month_day.items()
+    }
     
     guests = Guest.objects.filter(company=request.user.company)
     
@@ -240,7 +284,8 @@ def logs(request):
         'available_rooms':available_rooms,
         'logs':logs,
         'page_name':'Logs',
-        'guests':guests
+        'guests':guests,
+        'logs_structure':logs_structure,
     }
     
     return render(request, 'logs.html', context)
@@ -289,6 +334,8 @@ def check_in(request):
                 company=request.user.company,
                 duration=request.POST.get('duration')
             )
+            guest.check_in = guest.check_in + timedelta(hours=1)
+            guest.save()
 
             room.room_status = True
             room.save()
@@ -309,9 +356,11 @@ def check_in(request):
                 company=guest.company
             )
             
-            CheckIns.objects.create(
+            checkIn = CheckIns.objects.create(
                 company=guest.staff.company
             )
+            
+            checkIn.time = checkIn.time + timedelta(hours=1)
 
             return redirect('dashboard')
         
@@ -640,7 +689,3 @@ def sign_in_test(request):
     
 def landing(request):
     return render(request, 'landing.html')
-
-
-def error404(request):
-    return render(request, 'pages-error-404.html')

@@ -3,11 +3,18 @@ from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 class Company(models.Model):
-    name = models.CharField(max_length=255, unique=True, default='TestCompany')
+    name = models.CharField(max_length=255)
     
     def __str__(self):
         return self.name
     
+class Subscriptions(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    amount = models.IntegerField()
+    start_date = models.DateTimeField(auto_now_add=True)
+    due_date = models.DateTimeField()
+    payment_status = models.BooleanField(default=False)
+
 class Suite(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     type = models.CharField(max_length=255)
