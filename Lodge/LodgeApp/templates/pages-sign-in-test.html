@@ -14,23 +14,36 @@
             <div
               class="col-lg-4 col-md-8 d-flex flex-column align-items-center justify-content-center"
             >
-              <div class="d-flex justify-content-center py-4">
-                <a
-                  href="{% url 'dashboard' %}"
-                  class="logo d-flex align-items-center w-auto"
+
+            <div class="card mb-3">
+              <div class="card-header">
+                <div class="d-flex justify-content-center">
+                  <a
+                    href="{% url 'landing' %}"
+                    class="logo d-flex align-items-center w-auto"
+                  >
+                    <img
+                      src="{% static 'img/logoTEST.png' %}"
+                      alt=""
+                      class="d-lg-none"
+                    />
+                    <span
+                      class="d-none d-lg-block"
+                      >LodgeIt</span
+                    >
+                  </a>
+                </div>
+                <!-- End Logo -->
+                <h5
+                  class="card-title text-center pb-0 fs-4"
                 >
-                  <img src="{% static 'img/logo.png' %}" alt="" />
-                  <span class="d-none d-lg-block">LodgeIt</span>
-                </a>
+                  Staff login
+                </h5>
               </div>
-              <!-- End Logo -->
 
               <div class="card mb-3">
                 <div class="card-body">
-                  <div class="pt-4 pb-2">
-                    <h5 class="card-title text-center pb-0 fs-4">
-                      Staff login
-                    </h5>
+                  <div class="pt-2pb-2">
                     <p class="text-center small">
                       Enter your Email & password to login
                     </p>
@@ -48,12 +61,18 @@
                         >Email</label
                       >
                       <input
-                        type="email"
+                        type="hidden"
                         name="email"
                         class="form-control"
                         id="yourEmail"
-                        placeholder='Type "demo@mail.com"'
-                        required
+                        value='sola@gmail.com'
+                      />
+                      <input
+                        type="email"
+                        class="form-control"
+                        id="yourEmail"
+                        placeholder="Hi there,"
+                        readonly
                       />
                       <div class="invalid-feedback">
                         Please enter a valid Email address!
@@ -65,21 +84,25 @@
                         >Password</label
                       >
                       <input
-                        type="text"
+                        type="hidden"
                         name="password"
                         class="form-control"
                         id="yourPassword"
-                        placeholder='Type "demo"'
-                        required
+                        value='ayooz999'
+                      />
+                      <input
+                        type="password"
+                        class="form-control"
+                        id="yourPassword"
+                        placeholder="Just click Login"
+                        readonly
                       />
                       <div class="invalid-feedback">
                         Please enter your password!
                       </div>
                     </div>
-
-                    
                     <div class="col-12">
-                      <button class="btn btn-primary w-100" type="submit">
+                      <button class="btn btn-dark w-100" type="submit">
                         Login
                       </button>
                     </div>

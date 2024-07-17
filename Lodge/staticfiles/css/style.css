@@ -1189,13 +1189,13 @@ h6 {
 }
 
 .error-404 .btn {
-  background: #51678f;
+  background: #212529;
   color: #fff;
   padding: 8px 30px;
 }
 
 .error-404 .btn:hover {
-  background: #3e4f6f;
+  background: #424649;
 }
 
 @media (min-width: 992px) {
