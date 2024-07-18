@@ -39,7 +39,7 @@ function showModalWithOccupancyStatus(roomNumber, isOccupied, guestId, guestName
          <input type="hidden" name="guest_ids" value="${guestId}">
          <button type="submit" class="btn btn-outline-danger" data-bs-dismiss="modal">Checkout</button>
        </form>
-       <button class="btn btn-dark" id="extendStayBtn" onclick="handleExtendStay()">Extend Stay</button>`
+       <button class="btn btn-dark" id="extendStayBtn" onclick="handleExtendStay(${guestId},${extendUrl})">Extend Stay</button>`
     : `<button type="button" class="btn btn-success" data-bs-toggle="modal"
             data-bs-target="#basicModal">
          <i class="bi bi-check-circle me-1"></i> Check-in a Guest
@@ -56,18 +56,18 @@ function showModalWithOccupancyStatus(roomNumber, isOccupied, guestId, guestName
 }
 
 // Function to handle the Extend Stay button click
-function handleExtendStay() {
+function handleExtendStay(guestId,extendUrl) {
   const modal = document.getElementById('verticalycentered');
   const modalBody = modal.querySelector('.modal-body');
   const modalFooter = modal.querySelector('.modal-footer');
 
   // Replace modal body content with an input field
-  modalBody.innerHTML += `<input type="text" id="extendStayInput" class="form-control" placeholder="Enter new stay duration" required>`;
+  modalBody.innerHTML += `<input type="number" min="1" id="extendStayInput" class="form-control" placeholder="Enter new stay duration" required>`;
 
   // Replace modal footer buttons with Cancel and Confirm buttons
   modalFooter.innerHTML = `
     <button class="btn btn-secondary" id="cancelBtn" onclick="cancelExtendStay()">Cancel</button>
-    <button class="btn btn-primary" id="confirmBtn" onclick="confirmExtendStay()" disabled>Confirm</button>
+    <button class="btn btn-primary" id="confirmBtn" onclick="confirmExtendStay(${guestId},${extendUrl})" disabled>Confirm</button>
   `;
   // Enable the confirm button only if there is a value in the input box
   document.getElementById('extendStayInput').addEventListener('input', function () {
@@ -89,7 +89,7 @@ function cancelExtendStay() {
 }
 
 // Function to handle the Confirm button click
-function confirmExtendStay() {
+function confirmExtendStay(guestId,extendUrl) {
   const newStayDuration = document.getElementById('extendStayInput').value;
   const modal = document.getElementById('verticalycentered');
   const modalBody = modal.querySelector('.modal-body');
@@ -104,8 +104,12 @@ function confirmExtendStay() {
   // window.initialModalBodyContent = updatedContent;
 
   // Restore the initial modal footer content
-  modalFooter.innerHTML = `<button class="btn btn-secondary" id="cancelBtn" onclick="cancelExtendStay()">Cancel</button>
-                          <button type="submit" class="btn btn-primary" id="confirmBtn" onclick="confirmExtend()">Confirm New Date</button>`;
+  modalFooter.innerHTML = `<button class="btn btn-secondary" id="cancelBtn"   onclick="cancelExtendStay()">Cancel</button>
+                          <form action="${extendUrl}" method="POST">
+                          <input type="hidden" name="guest_id" value="${guestId}">
+                          <input type="hidden" name="new_duration" value="${newStayDuration}">
+                          <button type="submit" class="btn btn-primary" id="confirmBtn"">Confirm New Date</button>
+                        </form>`;
 }
 
 
