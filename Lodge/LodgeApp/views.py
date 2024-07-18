@@ -81,9 +81,16 @@ def onboarding(request):
         owner.owner = True
         owner.save()
         
+        no_of_rooms = 0
+        for room in Room.objects.filter(company=company):
+            no_of_rooms+=1
+            
+        if no_of_rooms <= 20:
+            no_of_rooms=20
+        
         subscription = Subscriptions.objects.create(
                 company=request.user.company,
-                amount=len(suite_rooms)*1000,
+                amount= (no_of_rooms)*1000,
                 due_date=timezone.now()+ relativedelta(months=1)
             )
         
@@ -100,7 +107,7 @@ def onboarding(request):
             
             'lodgeitng@gmail.com',
             
-            ['Isaacenobun@gmail.com']
+            ['Isaacenobun@gmail.com','etinosa.enobun@gmail.com']
         )
             
         return redirect('dashboard')
@@ -148,7 +155,7 @@ def dashboard(request):
     elif request.user.is_authenticated and request.user.company is None:
         return redirect('onboarding')
     
-    now=timezone.now()
+    now=timezone.now()+ timedelta(hours=2)
     
     logs = Log.objects.filter(
         company=request.user.company
@@ -503,7 +510,7 @@ def analytics(request):
         month = check_in.time.month
         year_dict[month] += 1
     check_in_data = list(year_dict.values())
-    # check_in_data = [8,8,8,8,8,15]
+    # test_check_in_data = [8,8,8,8,8,15]
     check_in_rate = int(np.sum(check_in_data)/(timezone.now().month * 4))
     
     if timezone.now().month == 1:
