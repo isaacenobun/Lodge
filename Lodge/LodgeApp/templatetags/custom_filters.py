@@ -25,3 +25,8 @@ def get_guest_name(room_id, room_guest_mapping):
 def get_guest_id(room_id, room_guest_mapping):
     guest = room_guest_mapping.get(room_id)
     return guest.id
+
+@register.filter(name='get_guest_checkout')
+def get_guest_id(room_id, room_guest_mapping):
+    guest = room_guest_mapping.get(room_id)
+    return guest.check_out
