@@ -18,6 +18,15 @@
             <li class="breadcrumb-item active">Welcome, <span style = "color: #00796b; font-weight: bold">{{staff.username|title}}</span>.</li>
             <div id="MyClockDisplay" class="clock" onload="showTime()"></div>
           </ol>
+          {% if messages %}
+          {% for message in messages %}
+          <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle me-1"></i>
+            {{message}}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+          {% endfor %}
+      {% endif %}
         </nav>
       </div>
       <!-- End Page Title -->

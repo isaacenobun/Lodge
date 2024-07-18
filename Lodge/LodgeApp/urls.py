@@ -19,4 +19,5 @@ urlpatterns = [
     path('settings/', views.settings, name='settings'),
     path('download-history-csv/', views.download_history_csv, name='download_history_csv'),
     path('download-analytics-csv/', views.download_analytics_csv, name='download_analytics_csv'),
+    path('extend/', views.extend, name='extend'),
 ]

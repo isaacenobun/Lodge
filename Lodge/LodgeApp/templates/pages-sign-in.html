@@ -5,6 +5,16 @@
 {% block content %}
 <body>
   <main>
+      {% if messages %}
+          {% for message in messages %}
+          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-octagon me-1"></i>
+            {{message}}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+          {% endfor %}
+      {% endif %}
+    
     <div class="container">
       <section
         class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4"

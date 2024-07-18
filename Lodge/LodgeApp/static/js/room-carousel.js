@@ -96,7 +96,7 @@ function confirmExtendStay() {
   const modalFooter = modal.querySelector('.modal-footer');
 
   // Update the modal body with the new checkout date
-  const updatedContent = `${window.initialModalBodyContent} <div class= "breadcrumb">New checkout date:  <span id= "newCheckoutDate" style = "color: #00796b; font-weight: bold">${newStayDuration}</span></div>`;
+  const updatedContent = `${window.initialModalBodyContent} <div class= "breadcrumb">New checkout date:  <span id= "newCheckoutDate" style = "color: #00796b; font-weight: bold"> ${newStayDuration} days from now</span></div>`;
   modalBody.innerHTML = updatedContent;
 
 
@@ -105,7 +105,7 @@ function confirmExtendStay() {
 
   // Restore the initial modal footer content
   modalFooter.innerHTML = `<button class="btn btn-secondary" id="cancelBtn" onclick="cancelExtendStay()">Cancel</button>
-                           <button class="btn btn-primary" id="confirmBtn" onclick="confirmExtend()">Confirm New Date</button>`;
+                          <button type="submit" class="btn btn-primary" id="confirmBtn" onclick="confirmExtend()">Confirm New Date</button>`;
 }
 
 

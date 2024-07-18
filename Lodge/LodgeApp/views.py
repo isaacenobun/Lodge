@@ -109,6 +109,8 @@ def onboarding(request):
             
             ['Isaacenobun@gmail.com','etinosa.enobun@gmail.com']
         )
+        
+        messages.success(request, f"An invoice for a Subscription fee of {subscription.amount} has been sent to {owner.email}. Kindly pay within two days")
             
         return redirect('dashboard')
     
@@ -128,7 +130,7 @@ def sign_in(request):
         try:
             staff = Staff.objects.get(email=email)
         except Staff.DoesNotExist:
-            # messages.warning(request, f"Staff with {email} does not exist")
+            messages.warning(request, f"Staff with {email} does not exist")
             return redirect('sign-in')
 
         staff = authenticate(request, email=email, password=password)
@@ -138,7 +140,7 @@ def sign_in(request):
             # messages.success(request, f"Welcome {request.POST.get('email')}")
             return redirect('dashboard')
         else:
-            # messages.warning(request, "Invalid password")
+            messages.warning(request, "Invalid password")
             return redirect('sign-in')
     else:
         context = {'page_name':'Sign in'}
@@ -467,18 +469,14 @@ def check_out(request):
     
     return redirect('sign-in')
 
-# Under construction
-# -------------------------------------------------
+@csrf_exempt
 def extend(request):
-    # This function will take in a new date that is then saved as the new check out date for a user.
-    # The changes will reflect in the guest duration and revenue.
-    
-    new_time = request.POST.get('new_date')
+    new_duration = request.POST.get('new_duration')
     guest_id = request.POST.get('guest_id')
     guest = get_object_or_404(Guest, id=guest_id)
     
-    guest.check_out=new_time
-    new_duration = new_time - guest.check_in
+    guest.check_out= guest.check_out + timedelta(days=int(new_duration))
+    new_duration = guest.check_out - guest.check_in
     guest.duration= new_duration
     guest.save()
     guest.revenue.revenue = float(guest.duration) * float(guest.room.suite.price)
@@ -494,8 +492,7 @@ def extend(request):
     context = {
         
     }
-    return render(request, '', context)
-# -------------------------------------------------
+    return redirect('rooms')
 
 def analytics(request):
     if not request.user.is_authenticated:
