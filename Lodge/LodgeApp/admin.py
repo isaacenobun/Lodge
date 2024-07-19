@@ -1,11 +1,15 @@
 from django.contrib import admin
-from .models import Staff, Room, Guest, GuestHistory, Log, Revenue, CheckIns, Company, Suite
+from .models import Staff, Room, Guest, GuestHistory, Log, Revenue, CheckIns, Company, Suite, Subscriptions
 from django.contrib.auth.admin import UserAdmin
 
 # Register your models here.
 class CompanyAdmin(admin.ModelAdmin):
     list_display = ('name',)
     search_fields = ('name',)
+    
+class SubscriptionsAdmin(admin.ModelAdmin):
+    list_display = ('company', 'amount', 'start_date', 'due_date', 'payment_status')
+    search_fields = ('company__name', 'due_date')
 
 class SuiteAdmin(admin.ModelAdmin):
     list_display = ('type', 'company', 'price')
@@ -50,6 +54,7 @@ class StaffAdmin(UserAdmin):
     ordering = ('email',)
 
 admin.site.register(Company, CompanyAdmin)
+admin.site.register(Subscriptions, SubscriptionsAdmin)
 admin.site.register(Suite, SuiteAdmin)
 admin.site.register(Room, RoomAdmin)
 admin.site.register(Staff, StaffAdmin)

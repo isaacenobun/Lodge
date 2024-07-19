@@ -10,7 +10,7 @@ class Company(models.Model):
     
 class Subscriptions(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
-    amount = models.IntegerField()
+    amount = models.BigIntegerField()
     start_date = models.DateTimeField(auto_now_add=True)
     due_date = models.DateTimeField()
     payment_status = models.BooleanField(default=False)
@@ -54,7 +54,7 @@ class Revenue(models.Model):
 class Guest(models.Model):
     name = models.CharField(max_length=50)
     email = models.EmailField()
-    number = models.CharField(max_length=50)
+    number = models.BigIntegerField()
     room  = models.ForeignKey(Room, on_delete=models.CASCADE)
     check_in = models.DateTimeField(auto_now_add=True)
     staff = models.ForeignKey(Staff, on_delete=models.CASCADE)

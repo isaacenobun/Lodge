@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.landing, name='LodgeIt'),
+    path('', views.landing, name='index'),
     path('home', views.dashboard, name='dashboard'),
     path('onboarding', views.onboarding, name='onboarding'),
     path('analytics', views.analytics, name='analytics'),
@@ -19,4 +19,5 @@ urlpatterns = [
     path('settings/', views.settings, name='settings'),
     path('download-history-csv/', views.download_history_csv, name='download_history_csv'),
     path('download-analytics-csv/', views.download_analytics_csv, name='download_analytics_csv'),
+    path('extend/', views.extend, name='extend'),
 ]

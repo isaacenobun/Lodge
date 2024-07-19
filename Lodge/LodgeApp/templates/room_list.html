@@ -11,6 +11,7 @@
             <div class="room-number d-flex align-items-center justify-content-center">{{ room.id|get_guest_name:room_guest_mapping }}
                 <input type="hidden" name="guest_id" value="{{ room.id|get_guest_id:room_guest_mapping }}">
                 <input type="hidden" name="guest_name" value="{{ room.id|get_guest_name:room_guest_mapping }}">
+                <input type="hidden" name="guest_checkout" value="{{ room.id|get_guest_checkout:room_guest_mapping }}">
             </div>
         </div>
     {% else %}

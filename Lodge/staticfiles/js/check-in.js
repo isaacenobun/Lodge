@@ -30,9 +30,9 @@ document.addEventListener("DOMContentLoaded", () => {
       optionsContainer.classList.remove("active");
 
       // Populate the form fields
-      document.getElementById("registeredName").value = guestName;
-      document.getElementById("registeredEmail").value = guestEmail;
-      document.getElementById("inputNumber").value = guestNumber;
+      document.getElementById("yourName").value = guestName;
+      document.getElementById("yourEmail").value = guestEmail;
+      document.getElementById("yourPhone").value = guestNumber;
 
       returningForm.classList.add("active");
     });

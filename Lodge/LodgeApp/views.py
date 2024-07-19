@@ -81,9 +81,16 @@ def onboarding(request):
         owner.owner = True
         owner.save()
         
+        no_of_rooms = 0
+        for room in Room.objects.filter(company=company):
+            no_of_rooms+=1
+            
+        if no_of_rooms <= 20:
+            no_of_rooms=20
+        
         subscription = Subscriptions.objects.create(
                 company=request.user.company,
-                amount=len(suite_rooms)*1000,
+                amount= (no_of_rooms)*1000,
                 due_date=timezone.now()+ relativedelta(months=1)
             )
         
@@ -100,8 +107,10 @@ def onboarding(request):
             
             'lodgeitng@gmail.com',
             
-            ['Isaacenobun@gmail.com']
+            ['Isaacenobun@gmail.com','etinosa.enobun@gmail.com']
         )
+        
+        messages.warning(request, f"An invoice for a Subscription fee of {subscription.amount} has been sent to {owner.email}. Kindly pay within two days")
             
         return redirect('dashboard')
     
@@ -121,7 +130,7 @@ def sign_in(request):
         try:
             staff = Staff.objects.get(email=email)
         except Staff.DoesNotExist:
-            # messages.warning(request, f"Staff with {email} does not exist")
+            messages.warning(request, f"Staff with {email} does not exist")
             return redirect('sign-in')
 
         staff = authenticate(request, email=email, password=password)
@@ -131,7 +140,7 @@ def sign_in(request):
             # messages.success(request, f"Welcome {request.POST.get('email')}")
             return redirect('dashboard')
         else:
-            # messages.warning(request, "Invalid password")
+            messages.warning(request, "Invalid password")
             return redirect('sign-in')
     else:
         context = {'page_name':'Sign in'}
@@ -148,7 +157,7 @@ def dashboard(request):
     elif request.user.is_authenticated and request.user.company is None:
         return redirect('onboarding')
     
-    now=timezone.now()
+    now=timezone.now()+ timedelta(hours=2)
     
     logs = Log.objects.filter(
         company=request.user.company
@@ -159,6 +168,8 @@ def dashboard(request):
     available_rooms = Room.objects.filter(room_status=False,
                                           company=request.user.company)
     guests = Guest.objects.filter(company=request.user.company, check_out__lte=now)
+    
+    print (timezone.now())
 
     context = {
         'now':now,
@@ -361,6 +372,8 @@ def check_in(request):
             )
             
             checkIn.time = checkIn.time + timedelta(hours=1)
+            
+            messages.success(request, f"{guest.name} checked in successfully")
 
             return redirect('dashboard')
         
@@ -426,6 +439,8 @@ def check_in(request):
             CheckIns.objects.create(
                 company=guest.staff.company
             )
+            
+            messages.success(request, f"{guest.name} checked in successfully")
 
             return redirect('dashboard')
 
@@ -456,39 +471,39 @@ def check_out(request):
                 timestamp=guest.check_out,
                 company=request.user.company
             )
+            
+        messages.success(request, f"Check out successful")
+            
         return redirect('dashboard')
     
     return redirect('sign-in')
 
-# Under construction
-# -------------------------------------------------
+@csrf_exempt
 def extend(request):
-    # This function will take in a new date that is then saved as the new check out date for a user.
-    # The changes will reflect in the guest duration and revenue.
-    
-    new_time = request.POST.get('new_date')
+    new_duration = request.POST.get('new_duration')
     guest_id = request.POST.get('guest_id')
     guest = get_object_or_404(Guest, id=guest_id)
     
-    guest.check_out=new_time
-    new_duration = new_time - guest.check_in
-    guest.duration= new_duration
+    guest.check_out= guest.check_out + timedelta(days=int(new_duration))
+    guest.duration= int(new_duration)
     guest.save()
-    guest.revenue.revenue = float(guest.duration) * float(guest.room.suite.price)
+    
+    formatted_checkout = guest.check_out.strftime('%a %d %b %Y, %I:%M%p')
+    
+    guest.revenue.revenue = float(guest.revenue.revenue) + float(guest.duration) * float(guest.room.suite.price)
     guest.revenue.save()
     
     Log.objects.create(
         staff = request.user,
-        action = f'{guest.name} extended checkout to {guest.check_out}',
+        action = f'{guest.name} extended checkout by {int(new_duration)} day to {formatted_checkout}',
         check_status = True,
         timestamp = timezone.now(),
         company = request.user.company
     )
-    context = {
-        
-    }
-    return render(request, '', context)
-# -------------------------------------------------
+    
+    messages.success(request, f"{guest.name}'s check out date was extended by {guest.duration} days to {formatted_checkout}")
+    
+    return redirect('rooms')
 
 def analytics(request):
     if not request.user.is_authenticated:
@@ -503,7 +518,7 @@ def analytics(request):
         month = check_in.time.month
         year_dict[month] += 1
     check_in_data = list(year_dict.values())
-    # check_in_data = [8,8,8,8,8,15]
+    # test_check_in_data = [8,8,8,8,8,15]
     check_in_rate = int(np.sum(check_in_data)/(timezone.now().month * 4))
     
     if timezone.now().month == 1:

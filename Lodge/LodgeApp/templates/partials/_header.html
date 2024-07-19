@@ -42,7 +42,7 @@
             href="{% url 'dashboard' %}"
             class="logo d-flex align-items-center w-auto"
           >
-            <img src="{% static 'img/icon bg.png' %}" alt="" />
+            <img src="{% static 'img/Icon-bg.png' %}" alt="" />
           </a>
           <h5 class="card-title text-center pb-0 fs-4">Check-in a guest</h5>
         </div>
@@ -64,6 +64,8 @@
             <button class="nav-link w-100" id="check-in-tab" data-bs-toggle="tab" data-bs-target="#check-in-justified" type="button" role="tab" aria-controls="returning-guest" aria-selected="false">Returning Guest</button>
           </li>
         </ul>
+
+
         <div class="tab-content pt-2" id="myTabjustifiedContent">
           <div class="tab-pane fade show active" id="new-guest-justified" role="tabpanel" aria-labelledby="new-guest-tab">
             <p class="text-center small">Fill in the guest information here</p>
@@ -101,12 +103,12 @@
               </div>
 
               <div class="col-12">
-                <label for="inputNumber" class="form-label">Phone number</label>
+                <label for="yourPhone" class="form-label">Phone number</label>
                 <input
                   type="number"
                   name="phone"
                   class="form-control"
-                  id=""
+                  id="yourPhone"
                   required
                 />
                 <div class="invalid-feedback">
@@ -115,8 +117,8 @@
               </div>
 
               <div class="col-12">
-                <label for="inputNumber" class="form-label">Room number</label>
-                <select name="room" class="form-control" id="" required>
+                <label for="yourRoom" class="form-label">Room number</label>
+                <select name="room" class="form-control" id="yourRoom" required>
                   <option value="">Choose a room</option>
                   {% for room in available_rooms %}
                   <option value="{{room.id}}">
@@ -128,13 +130,13 @@
               </div>
 
               <div class="col-12">
-                <label for="inputNumber" class="form-label">Length of Stay</label>
+                <label for="yourDuration" class="form-label">Length of Stay</label>
                 <input
                   type="number"
                   name="duration"
                   min="1"
                   class="form-control"
-                  id=""
+                  id="yourDuration"
                   required
                 />
                 <div class="invalid-feedback">
@@ -151,6 +153,8 @@
               </div>
             </form> 
           </div>
+
+
           <div class="tab-pane fade" id="check-in-justified" role="tabpanel" aria-labelledby="check-in-tab">
             <div class="container-search">
               <div class="select-box">
@@ -175,6 +179,8 @@
                 <div class="search-box">
                   <input type="text" placeholder="Search..." />
                 </div>
+
+
                 <form
                   class="returning-form row g-3 needs-validation"
                   novalidate
@@ -188,7 +194,7 @@
                       type="text"
                       name="name_"
                       class="form-control"
-                      id="registeredName"
+                      id="yourName"
                       
                       readonly
                     />
@@ -200,27 +206,27 @@
                       type="email"
                       name="email_"
                       class="form-control"
-                      id="registeredEmail"
+                      id="yourEmail"
                       
                       readonly
                     />
                   </div>
 
                   <div class="col-12">
-                    <label for="inputNumber" class="form-label">Phone number</label>
+                    <label for="yourPhone" class="form-label">Phone number</label>
                     <input
                       type="number"
                       name="phone_"
                       class="form-control"
-                      id="inputNumber"
+                      id="yourPhone"
                       
                       readonly
                     />
                   </div>
               
                   <div class="col-12">
-                    <label for="inputNumber" class="form-label">Room number</label>
-                    <select name="room_" class="form-control" id="" required>
+                    <label for="yourRoom" class="form-label">Room number</label>
+                    <select name="room_" class="form-control" id="yourRoom" required>
                       <option value="">Choose a room</option>
                       {% for room in available_rooms %}
                       <option value="{{room.id}}">
@@ -232,13 +238,13 @@
                   </div>
 
                   <div class="col-12">
-                    <label for="inputNumber" class="form-label">Length of Stay</label>
+                    <label for="yourDuration" class="form-label">Length of Stay</label>
                     <input
                       type="number"
                       name="duration_"
                       min="1"
                       class="form-control"
-                      id=""
+                      id="yourDuration"
                       required
                     />
                     <div class="invalid-feedback">
@@ -254,14 +260,12 @@
                     </div>
                   </div>
                 </form> 
-                
               </div>
             </div>
           </div>
             
 
 
-      
             <form id="nameForm">
               
             </form>

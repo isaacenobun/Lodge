@@ -10,6 +10,7 @@ import csv as csv
 from .models import Room as Room, Guest as Guest, GuestHistory as GuestHistory, Log as Log, Revenue as Revenue, CheckIns as CheckIns, Company as Company, Suite as Suite, Subscriptions as Subscriptions
 
 from django.contrib.auth import login as login, authenticate as authenticate, logout as logout, get_user_model as get_user_model
+from django.contrib import messages as messages
 
 Staff = get_user_model()
 
