@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
+from django.conf.urls import handler500
 
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
@@ -25,5 +26,7 @@ urlpatterns = [
 ]
 
 handler404 = "Lodge.views.error404"
+
+handler500 = 'Lodge.views.error505'
 
 urlpatterns += staticfiles_urlpatterns()
