@@ -31,73 +31,45 @@
                 <button class="nav-link w-100 active" id="home-tab" data-bs-toggle="tab" data-bs-target="#bordered-justified-home" type="button" role="tab" aria-controls="home" aria-selected="true">General</button>
               </li>
               <li class="nav-item flex-fill" role="presentation">
-                <button class="nav-link w-100" id="profile-tab" data-bs-toggle="tab" data-bs-target="#bordered-justified-profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Profiles</button>
+                <button class="nav-link w-100" id="profile-tab" data-bs-toggle="tab" data-bs-target="#bordered-justified-profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Staff Profiles</button>
               </li>
-              <li class="nav-item flex-fill" role="presentation">
-                <button class="nav-link w-100" id="tags-tab" data-bs-toggle="tab" data-bs-target="#bordered-justified-contact" type="button" role="tab" aria-controls="tags" aria-selected="false">Room tags</button>
-              </li>
-              <li class="nav-item flex-fill" role="presentation">
-                <button class="nav-link w-100" id="pricing-tab" data-bs-toggle="tab" data-bs-target="#bordered-justified-contact" type="button" role="tab" aria-controls="pricing" aria-selected="false">Pricing</button>
-              </li>
+
             </ul>
             <div class="tab-content pt-2" id="borderedTabJustifiedContent">
               <div class="tab-pane fade show active" id="bordered-justified-home" role="tabpanel" aria-labelledby="home-tab">
-                Sunt est soluta temporibus accusantium neque nam maiores cumque temporibus. Tempora libero non est unde veniam est qui dolor. Ut sunt iure rerum quae quisquam autem eveniet perspiciatis odit. Fuga sequi sed ea saepe at unde.
+                
               </div>
               <div class="tab-pane fade" id="bordered-justified-profile" role="tabpanel" aria-labelledby="profile-tab">
-                <div class="card-header">Header</div>
-                <div class="row align-item-left mt-3">
-                  <div class="col-4">
-                    <!-- Card with an image on left -->
-                    <div class="card">
-                      <div class="row g-0">
-                        <div class="col-auto">
-                          <img src="../static/img/icon-bg.png" class="img-fluid rounded-start" alt="..."  style="max-width: 120px; max-height: 120px;">
-                        </div>
-                        <div class="col">
-                          {% for staff in staffs %}
-                          <h3 class="card-title">{{staff}} <a href="#"><small>edit</small></a></h3>
-                          <p class="card-text">Job description</p>
-                          {% endfor %}
-                        </div>    
-                      </div>
-                    </div>
-                                   
-                    <!-- End Card with an image on left -->
-                  </div>
+                <section class="section contact">
 
-                  <div class="col-4">
-                    <!-- Card with an image on left -->
-                    <div class="card">
-                      <div class="row g-0">
-                        <div class="col-auto">
-                          <img src="../static/img/icon-bg.png" class="img-fluid rounded-start" alt="..." style="max-width: 120px; max-height: 120px;">
+                  
+                
+                    <div class="col-12">
+
+                      <div class="row">
+                        <div class="col-4">
+                          <div class="info-box card">
+                            <i class="bi bi-person"></i>
+                            {% for staff in staffs %}
+                            <h3 class="card-title">{{staff}} </h3>
+                            {% endfor %}
+                            <a href="#"><small>edit</small></a>
+                          </div>
                         </div>
-                        <div class="col">
-                          {% for staff in staffs %}
-                          <h3 class="card-title">{{staff}} <a href="#"><small>edit</small></a></h3>
-                          <p class="card-text">Job description</p>
-                          {% endfor %}
-                        </div>    
+                        <div class="col-4">
+                          <div class="info-box card">
+                            <i class="bi bi-telephone"></i>
+                            <h3>Call Us</h3>
+                            <p>+1 5589 55488 55<br>+1 6678 254445 41</p>
+                          </div>
+                        </div>
+                        <a href="#"><p>Add new staff</p></a>  
                       </div>
                     </div>
-                </div>
-                <h5 class="card-title">Staff</h5>
-                  
-                  {% for staff in staffs %}
-  
-                        <p>{{staff}} <a href="#"><small>edit</small></a></p>
-                  
-                  {% endfor %}
-                  <a href="#"><p>Add new staff</p></a>  
-              </div>
-              <div class="tab-pane fade" id="bordered-justified-contact" role="tabpanel" aria-labelledby="tags-tab">
-                Saepe animi et soluta ad odit soluta sunt. Nihil quos omnis animi debitis cumque. Accusantium quibusdam perspiciatis qui qui omnis magnam. Officiis accusamus impedit molestias nostrum veniam. Qui amet ipsum iure. Dignissimos fuga tempore dolor.
-              </div>
-              <div class="tab-pane fade" id="bordered-justified-contact" role="tabpanel" aria-labelledby="pricing-tab">
-                Saepe animi et soluta ad odit soluta sunt. Nihil quos omnis animi debitis cumque. Accusantium quibusdam perspiciatis qui qui omnis magnam. Officiis accusamus impedit molestias nostrum veniam. Qui amet ipsum iure. Dignissimos fuga tempore dolor.
-              </div>
-            </div><!-- End Bordered Tabs Justified -->
+                  </div>
+                </section>
+             
+              </div><!-- End Bordered Tabs Justified -->
 
           </div>
         </div>
@@ -105,6 +77,8 @@
       </div>
     </main>
     <!-- End #main -->
+
+    
 
     <a
       href="#"

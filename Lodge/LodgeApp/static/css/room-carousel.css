@@ -3,7 +3,15 @@
 
 @import url("https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css");
 
+.editable {
+  border: 1px dashed #000;
+  background-color: white;
+  color: black;
+}
 
+.no-click {
+  pointer-events: none;
+}
 
 /* * {
 	font-family: "Montserrat", sans-serif !important;
@@ -15,21 +23,21 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
-	background-color: white;
+  background-color: white;
   color: #fff;
   margin: 0;
-	padding-top: 30px;
-	border: 2px solid #ced4da;
-	
+  padding-top: 30px;
+  border: 2px solid #ced4da;
+
 }
 
 .movie-container select {
   appearance: none;
   -moz-appearance: none;
   -webkit-appearance: none;
-  
+
   padding: 5px 15px;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
   font-size: 14px;
   border-radius: 5px;
 }
@@ -40,15 +48,15 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-	margin-left: auto;
-	margin-right: auto;
-	padding-left: var(--bs-gutter-x, .75rem);
-	padding-right: var(--bs-gutter-x, .75rem);
-	width: 100%
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--bs-gutter-x, .75rem);
+  padding-right: var(--bs-gutter-x, .75rem);
+  width: 100%
 }
 
 .room-des {
-	background-color: #444451;
+  background-color: #444451;
   height: 12px;
   width: 15px;
   margin: 3px;
@@ -63,7 +71,7 @@
   margin: 6px;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
-	cursor: pointer;
+  cursor: pointer;
   align-content: center;
   font-size: xx-large;
 }
@@ -89,6 +97,11 @@
   transform: scale(1.2);
 }
 
+.no-hover .room:not(.occupied):hover {
+  cursor: default;
+  transform: none;
+}
+
 .showcase .room:not(.occupied):hover {
   cursor: default;
   transform: scale(1);
@@ -98,7 +111,7 @@
   display: flex;
   justify-content: space-between;
   list-style-type: none;
-  background: rgba(0,0,0,0.1);
+  background: rgba(0, 0, 0, 0.1);
   padding: 5px 10px;
   border-radius: 5px;
   color: #777;
@@ -113,7 +126,7 @@
 
 .showcase li small {
   margin-left: 2px;
-} 
+}
 
 .row {
   display: flex;
@@ -124,8 +137,8 @@
 
 p.text {
   margin-top: 40px;
-	text-align: center;
-	color: #000;
+  text-align: center;
+  color: #000;
 }
 
 p.text span {
@@ -139,15 +152,15 @@ p.text span {
 }
 
 .room-select {
-	border-radius: .2rem;
-	color: #495057;
-	display: block;
-	font-size: .875rem;
-	font-weight: 400;
-	line-height: 1.5;
-	padding: .3rem .85rem;
-	transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-	width: 50%
+  border-radius: .2rem;
+  color: #495057;
+  display: block;
+  font-size: .875rem;
+  font-weight: 400;
+  line-height: 1.5;
+  padding: .3rem .85rem;
+  transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+  width: 50%
 }
 
 
@@ -162,11 +175,15 @@ p.text span {
   flex-direction: row;
   justify-content: center;
   align-items: center;
-	margin-left: auto;
-	margin-right: auto;
+  margin-left: auto;
+  margin-right: auto;
   margin-bottom: 5%;
 }
 
 .room-number {
+  font-size: small;
+}
+
+.room-tag {
   font-size: small;
 }
