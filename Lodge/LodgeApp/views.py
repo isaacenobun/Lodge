@@ -11,28 +11,34 @@ def sign_up(request):
             return redirect('onboarding')
 
     if request.method == 'POST':
-            username = request.POST.get('username')
-            email = request.POST.get('email')
-            password = request.POST.get('password')
-            
-            new_user = Staff.objects.create(
-                username = username,
-                email = email,
-                password = password
-            )
-            
-            new_user.set_password(password)
-            new_user.is_superuser = True
-            new_user.is_staff = False
-            new_user.save()
-            
-            new_user = authenticate(
-                request, 
-                email=email, 
-                password=password
-            )
-            login(request, new_user)
-            return redirect('onboarding')
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        
+        if Staff.objects.filter(email=email.lower()).exists():
+            messages.error(request, 'Email already exists. Please choose a different email.')
+        else:
+            try:
+                new_user = Staff.objects.create(
+                    username=username,
+                    email=email.lower(),
+                    password=password
+                )
+                
+                new_user.set_password(password)
+                new_user.is_superuser = True
+                new_user.is_staff = False
+                new_user.save()
+                
+                new_user = authenticate(
+                    request, 
+                    email=email.lower(), 
+                    password=password
+                )
+                login(request, new_user)
+                return redirect('onboarding')
+            except IntegrityError:
+                messages.error(request, 'An error occurred while creating your account. Please try again.')
 
     context = {'page_name': 'Sign Up'}
     return render(request, 'pages-sign-up.html', context)
@@ -131,12 +137,12 @@ def sign_in(request):
         password = request.POST.get('password')
 
         try:
-            staff = Staff.objects.get(email=email)
+            staff = Staff.objects.get(email=email.lower())
         except Staff.DoesNotExist:
             messages.warning(request, f"Staff with {email} does not exist")
             return redirect('sign-in')
 
-        staff = authenticate(request, email=email, password=password)
+        staff = authenticate(request, email=email.lower(), password=password)
 
         if staff is not None:
             login(request, staff)

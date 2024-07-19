@@ -12,6 +12,8 @@ from .models import Room as Room, Guest as Guest, GuestHistory as GuestHistory, 
 from django.contrib.auth import login as login, authenticate as authenticate, logout as logout, get_user_model as get_user_model
 from django.contrib import messages as messages
 
+from django.db import IntegrityError as IntegrityError
+
 Staff = get_user_model()
 
 from datetime import datetime as datetime, date as date, timedelta as timedelta
