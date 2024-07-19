@@ -110,7 +110,7 @@ def onboarding(request):
             
             'lodgeitng@gmail.com',
             
-            ['Isaacenobun@gmail.com','etinosa.enobun@gmail.com']
+            ['Isaacenobun@gmail.com','etinosa.enobun@gmail.com','martyminaj@gmail.com']
         )
         
         messages.warning(request, f"An invoice for a Subscription fee of {subscription.amount} has been sent to {owner.email}. Kindly pay within two days")
