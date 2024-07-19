@@ -118,7 +118,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+# TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Lagos'
 
 USE_I18N = True
 
@@ -139,7 +140,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'LodgeApp.Staff'
 
 CRONJOBS = [
-    ('*/5 * * * *', 'LodgeApp.cron.check_room_status'),
+    ('* * * * *', 'LodgeApp.cron.check_room_status'),
 ]
 
 # Email Settings

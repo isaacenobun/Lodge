@@ -1,5 +1,8 @@
 from .imports import *
 
+naive_datetime = datetime.now()
+aware_datetime = timezone.make_aware(naive_datetime, timezone.get_default_timezone())
+
 def sign_up(request):
     if request.user.is_authenticated:
         if request.user.company is not None:
@@ -20,7 +23,7 @@ def sign_up(request):
             
             new_user.set_password(password)
             new_user.is_superuser = True
-            new_user.is_staff = True
+            new_user.is_staff = False
             new_user.save()
             
             new_user = authenticate(
@@ -91,7 +94,7 @@ def onboarding(request):
         subscription = Subscriptions.objects.create(
                 company=request.user.company,
                 amount= (no_of_rooms)*1000,
-                due_date=timezone.now()+ relativedelta(months=1)
+                due_date=datetime.now()+ relativedelta(months=1)
             )
         
         start_date = subscription.start_date.strftime('%a %d %b %Y, %I:%M%p')
@@ -157,7 +160,7 @@ def dashboard(request):
     elif request.user.is_authenticated and request.user.company is None:
         return redirect('onboarding')
     
-    now=timezone.now()+ timedelta(hours=2)
+    now=datetime.now()
     
     logs = Log.objects.filter(
         company=request.user.company
@@ -168,8 +171,6 @@ def dashboard(request):
     available_rooms = Room.objects.filter(room_status=False,
                                           company=request.user.company)
     guests = Guest.objects.filter(company=request.user.company, check_out__lte=now)
-    
-    print (timezone.now())
 
     context = {
         'now':now,
@@ -190,7 +191,7 @@ def rooms(request):
     if request.user.is_authenticated and request.user.company is None:
         return redirect('onboarding')
     
-    now = timezone.now()
+    now = datetime.now()
     
     suite_types = Suite.objects.filter(company=request.user.company).values_list('type', flat=True).distinct()
     
@@ -454,7 +455,7 @@ def check_out(request):
         guests_to_check_out = Guest.objects.filter(id__in=guest_ids)
 
         for guest in guests_to_check_out:
-            guest.check_out = timezone.now()
+            guest.check_out = datetime.now()
             new_duration = (guest.check_out - guest.check_in).days
             guest.duration = new_duration
             guest.save()
@@ -497,7 +498,7 @@ def extend(request):
         staff = request.user,
         action = f'{guest.name} extended checkout by {int(new_duration)} day to {formatted_checkout}',
         check_status = True,
-        timestamp = timezone.now(),
+        timestamp = datetime.now(),
         company = request.user.company
     )
     
@@ -512,20 +513,20 @@ def analytics(request):
     top_guests = Guest.objects.filter(company=request.user.company).order_by('-revenue__revenue')[:5]
     guests = Guest.objects.filter(company=request.user.company)
     
-    check_ins = CheckIns.objects.filter(time__year=timezone.now().year, company=request.user.company)
+    check_ins = CheckIns.objects.filter(time__year=datetime.now().year, company=request.user.company)
     year_dict = {i:0 for i in range(1,13)}
     for check_in in check_ins:
         month = check_in.time.month
         year_dict[month] += 1
     check_in_data = list(year_dict.values())
     # test_check_in_data = [8,8,8,8,8,15]
-    check_in_rate = int(np.sum(check_in_data)/(timezone.now().month * 4))
+    check_in_rate = int(np.sum(check_in_data)/(datetime.now().month * 4))
     
-    if timezone.now().month == 1:
+    if datetime.now().month == 1:
         guest_growth = 0
     else:
         try:
-            guest_growth = (check_in_data[(timezone.now().month)-1] - check_in_data[(timezone.now().month)-2])/check_in_data[(timezone.now().month)-2] *100
+            guest_growth = (check_in_data[(datetime.now().month)-1] - check_in_data[(datetime.now().month)-2])/check_in_data[(datetime.now().month)-2] *100
         except:
             guest_growth = 0
     
@@ -537,12 +538,12 @@ def analytics(request):
         except:
             total_revenue += 0
         
-    monthly_revenue = (total_revenue/(timezone.now().month))
+    monthly_revenue = (total_revenue/(datetime.now().month))
     
-    month_revenue_guests = Guest.objects.filter(check_out__month=timezone.now().month, company=request.user.company)
+    month_revenue_guests = Guest.objects.filter(check_out__month=datetime.now().month, company=request.user.company)
     
-    if timezone.now().month != 1:
-        prev_month_revenue_guests = Guest.objects.filter(check_out__month=(timezone.now().month)-1, company=request.user.company)
+    if datetime.now().month != 1:
+        prev_month_revenue_guests = Guest.objects.filter(check_out__month=(datetime.now().month)-1, company=request.user.company)
     else:
         prev_month_revenue_guests = {}
     
