@@ -1,8 +1,5 @@
 from .imports import *
 
-naive_datetime = datetime.now()
-aware_datetime = timezone.make_aware(naive_datetime, timezone.get_default_timezone())
-
 def sign_up(request):
     if request.user.is_authenticated:
         if request.user.company is not None:
@@ -100,24 +97,24 @@ def onboarding(request):
         subscription = Subscriptions.objects.create(
                 company=request.user.company,
                 amount= (no_of_rooms)*1000,
-                due_date=datetime.now()+ relativedelta(months=1)
+                due_date=timezone.make_aware(datetime.now(), timezone.get_default_timezone()) + relativedelta(months=1)
             )
         
-        start_date = subscription.start_date.strftime('%a %d %b %Y, %I:%M%p')
-        due_date = subscription.due_date.strftime('%a %d %b %Y, %I:%M%p')
+        # start_date = subscription.start_date.strftime('%a %d %b %Y, %I:%M%p')
+        # due_date = subscription.due_date.strftime('%a %d %b %Y, %I:%M%p')
         
         # Send a subscription email to LodgeIt admin
-        mail = f'Hello Isaac,\n\n{owner.username} from {owner.company} just subscribed to LodgeIt.\nKindly send an invoice to {owner.email} as soon as possible.\n\nInvoice details\nClient: {owner.username}\nCompany: {owner.company}\nSubscription: N{subscription.amount}\nStart Date: {(start_date)}\nDue Date: {due_date}'
+        # mail = f'Hello Isaac,\n\n{owner.username} from {owner.company} just subscribed to LodgeIt.\nKindly send an invoice to {owner.email} as soon as possible.\n\nInvoice details\nClient: {owner.username}\nCompany: {owner.company}\nSubscription: N{subscription.amount}\nStart Date: {(start_date)}\nDue Date: {due_date}'
         
-        send_mail(
-            'New LodgeIt Subscription',
+        # send_mail(
+        #     'New LodgeIt Subscription',
             
-            mail,
+        #     mail,
             
-            'lodgeitng@gmail.com',
+        #     'lodgeitng@gmail.com',
             
-            ['Isaacenobun@gmail.com','etinosa.enobun@gmail.com','martyminaj@gmail.com']
-        )
+        #     ['Isaacenobun@gmail.com','etinosa.enobun@gmail.com','martyminaj@gmail.com']
+        # )
         
         messages.warning(request, f"An invoice for a Subscription fee of {subscription.amount} has been sent to {owner.email}. Kindly pay within two days")
             
@@ -166,7 +163,7 @@ def dashboard(request):
     elif request.user.is_authenticated and request.user.company is None:
         return redirect('onboarding')
     
-    now=datetime.now()
+    now=timezone.make_aware(datetime.now(), timezone.get_default_timezone())
     
     logs = Log.objects.filter(
         company=request.user.company
@@ -177,6 +174,8 @@ def dashboard(request):
     available_rooms = Room.objects.filter(room_status=False,
                                           company=request.user.company)
     guests = Guest.objects.filter(company=request.user.company, check_out__lte=now)
+    
+    print (timezone.make_aware(datetime.now(), timezone.get_default_timezone()))
 
     context = {
         'now':now,
@@ -197,7 +196,7 @@ def rooms(request):
     if request.user.is_authenticated and request.user.company is None:
         return redirect('onboarding')
     
-    now = datetime.now()
+    now = timezone.make_aware(datetime.now(), timezone.get_default_timezone())
     
     suite_types = Suite.objects.filter(company=request.user.company).values_list('type', flat=True).distinct()
     
@@ -339,7 +338,7 @@ def check_in(request):
                 revenue = revenue,
                 company = request.user.company
             )
-            check_out = datetime.now() + timedelta(days=int(duration))
+            check_out = timezone.make_aware(datetime.now(), timezone.get_default_timezone()) + timedelta(days=int(duration))
             
             guest = Guest.objects.create(
                 name=request.POST.get('name'),
@@ -352,8 +351,6 @@ def check_in(request):
                 company=request.user.company,
                 duration=request.POST.get('duration')
             )
-            guest.check_in = guest.check_in + timedelta(hours=1)
-            guest.save()
 
             room.room_status = True
             room.save()
@@ -378,7 +375,7 @@ def check_in(request):
                 company=guest.staff.company
             )
             
-            checkIn.time = checkIn.time + timedelta(hours=1)
+            checkIn.time = checkIn.time
             
             messages.success(request, f"{guest.name} checked in successfully")
 
@@ -413,10 +410,10 @@ def check_in(request):
                 revenue = revenue,
                 company = request.user.company
             )
-            check_out = datetime.now() + timedelta(days=int(duration))
+            check_out = timezone.make_aware(datetime.now(), timezone.get_default_timezone()) + timedelta(days=int(duration))
             
             guest.room = room
-            guest.check_in = datetime.now()
+            guest.check_in = timezone.make_aware(datetime.now(), timezone.get_default_timezone())
             guest.staff = request.user
             guest.check_out=check_out
             guest.revenue = revenue
@@ -461,7 +458,7 @@ def check_out(request):
         guests_to_check_out = Guest.objects.filter(id__in=guest_ids)
 
         for guest in guests_to_check_out:
-            guest.check_out = datetime.now()
+            guest.check_out = timezone.make_aware(datetime.now(), timezone.get_default_timezone())
             new_duration = (guest.check_out - guest.check_in).days
             guest.duration = new_duration
             guest.save()
@@ -504,7 +501,7 @@ def extend(request):
         staff = request.user,
         action = f'{guest.name} extended checkout by {int(new_duration)} day to {formatted_checkout}',
         check_status = True,
-        timestamp = datetime.now(),
+        timestamp = timezone.make_aware(datetime.now(), timezone.get_default_timezone()),
         company = request.user.company
     )
     
@@ -519,20 +516,20 @@ def analytics(request):
     top_guests = Guest.objects.filter(company=request.user.company).order_by('-revenue__revenue')[:5]
     guests = Guest.objects.filter(company=request.user.company)
     
-    check_ins = CheckIns.objects.filter(time__year=datetime.now().year, company=request.user.company)
+    check_ins = CheckIns.objects.filter(time__year=timezone.make_aware(datetime.now(), timezone.get_default_timezone()).year, company=request.user.company)
     year_dict = {i:0 for i in range(1,13)}
     for check_in in check_ins:
         month = check_in.time.month
         year_dict[month] += 1
     check_in_data = list(year_dict.values())
     # test_check_in_data = [8,8,8,8,8,15]
-    check_in_rate = int(np.sum(check_in_data)/(datetime.now().month * 4))
+    check_in_rate = int(np.sum(check_in_data)/(timezone.make_aware(datetime.now(), timezone.get_default_timezone()).month * 4))
     
-    if datetime.now().month == 1:
+    if timezone.make_aware(datetime.now(), timezone.get_default_timezone()).month == 1:
         guest_growth = 0
     else:
         try:
-            guest_growth = (check_in_data[(datetime.now().month)-1] - check_in_data[(datetime.now().month)-2])/check_in_data[(datetime.now().month)-2] *100
+            guest_growth = (check_in_data[(timezone.make_aware(datetime.now(), timezone.get_default_timezone()).month)-1] - check_in_data[(timezone.make_aware(datetime.now(), timezone.get_default_timezone()).month)-2])/check_in_data[(timezone.make_aware(datetime.now(), timezone.get_default_timezone()).month)-2] *100
         except:
             guest_growth = 0
     
@@ -544,12 +541,12 @@ def analytics(request):
         except:
             total_revenue += 0
         
-    monthly_revenue = (total_revenue/(datetime.now().month))
+    monthly_revenue = (total_revenue/(timezone.make_aware(datetime.now(), timezone.get_default_timezone()).month))
     
-    month_revenue_guests = Guest.objects.filter(check_out__month=datetime.now().month, company=request.user.company)
+    month_revenue_guests = Guest.objects.filter(check_out__month=timezone.make_aware(datetime.now(), timezone.get_default_timezone()).month, company=request.user.company)
     
-    if datetime.now().month != 1:
-        prev_month_revenue_guests = Guest.objects.filter(check_out__month=(datetime.now().month)-1, company=request.user.company)
+    if timezone.make_aware(datetime.now(), timezone.get_default_timezone()).month != 1:
+        prev_month_revenue_guests = Guest.objects.filter(check_out__month=(timezone.make_aware(datetime.now(), timezone.get_default_timezone()).month)-1, company=request.user.company)
     else:
         prev_month_revenue_guests = {}
     
