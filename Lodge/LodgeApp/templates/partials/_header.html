@@ -160,7 +160,7 @@
               <div class="select-box">
                 <div class="options-container">
                   
-                  {% for guest in guests %}
+                  {% for guest in returning_guests %}
                   <div class="option">
                     <input type="radio" class="radio" id="{{guest.name}}" name="category" />
                     <label for="{{guest.name}}"><span>#{{guest.id}} ~ </span>{{guest.name}}</label>

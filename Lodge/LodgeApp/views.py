@@ -13,7 +13,7 @@ def sign_up(request):
         password = request.POST.get('password')
         
         if Staff.objects.filter(email=email.lower()).exists():
-            messages.error(request, 'Email already exists. Please choose a different email.')
+            messages.error(request, 'Email already exists. Please choose a different email or sign in.')
         else:
             try:
                 new_user = Staff.objects.create(
@@ -173,9 +173,8 @@ def dashboard(request):
     total_guests = Guest.objects.filter(company=request.user.company).count()
     available_rooms = Room.objects.filter(room_status=False,
                                           company=request.user.company)
-    guests = Guest.objects.filter(company=request.user.company, check_out__lte=now)
     
-    print (timezone.make_aware(datetime.now(), timezone.get_default_timezone()))
+    returning_guests = Guest.objects.filter(company=request.user.company, check_out__lte=now)
 
     context = {
         'now':now,
@@ -185,7 +184,7 @@ def dashboard(request):
         'logs': logs,
         'available_rooms': available_rooms,
         'page_name':'Home',
-        'guests': guests
+        'returning_guests': returning_guests
     }
     return render(request, 'index.html', context)
 
@@ -214,7 +213,7 @@ def rooms(request):
     
     available_rooms = Room.objects.filter(room_status=False,
                                           company=request.user.company)
-    guests = Guest.objects.filter(company=request.user.company)
+    returning_guests = Guest.objects.filter(company=request.user.company, check_out__lte=now)
     context = {
         'available_rooms':available_rooms,
         'suite_types': suite_types_dict,
@@ -222,7 +221,7 @@ def rooms(request):
         'check_out_url': reverse('check-out'),
         'check_in_url': reverse('check-in'),
         'page_name':'Rooms',
-        'guests':guests
+        'returning_guests':returning_guests
     }
     
     return render(request, 'room-carousel.html', context)
@@ -237,9 +236,14 @@ def history(request):
     guests = Guest.objects.filter(company=request.user.company)
     available_rooms = Room.objects.filter(room_status=False,
                                           company=request.user.company)
+    
+    now = timezone.make_aware(datetime.now(), timezone.get_default_timezone())
+    returning_guests = Guest.objects.filter(company=request.user.company, check_out__lte=now)
+    
     context = {
         'available_rooms':available_rooms,
-        'guests': guests, 
+        'guests': guests,
+        'returning_guests':returning_guests, 
         'page_name':'History'
     }
     return render(request, 'guest-history.html', context)
@@ -269,6 +273,8 @@ def logs(request):
     if request.user.is_authenticated and request.user.company is None:
         return redirect('onboarding')
     
+    now = timezone.make_aware(datetime.now(), timezone.get_default_timezone())
+    
     available_rooms = Room.objects.filter(room_status=False,
                                           company=request.user.company)
     
@@ -297,11 +303,14 @@ def logs(request):
     
     guests = Guest.objects.filter(company=request.user.company)
     
+    returning_guests = Guest.objects.filter(company=request.user.company, check_out__lte=now)
+    
     context={
         'available_rooms':available_rooms,
         'logs':logs,
         'page_name':'Logs',
         'guests':guests,
+        'returning_guests':returning_guests,
         'logs_structure':logs_structure,
     }
     
@@ -314,13 +323,18 @@ def settings(request):
     if request.user.is_authenticated and request.user.company is None:
         return redirect('onboarding')
     
+    now = timezone.make_aware(datetime.now(), timezone.get_default_timezone())
+    
     staffs = Staff.objects.filter(company = request.user.company)
     
     guests = Guest.objects.filter(company=request.user.company)
     
+    returning_guests = Guest.objects.filter(company=request.user.company, check_out__lte=now)
+    
     context = {
         'staffs':staffs,
         'page_name':'Settings',
+        'returning_guests':returning_guests,
         'guests':guests
     }
     return render(request, 'settings.html', context)
@@ -329,124 +343,195 @@ def check_in(request):
     if request.method == 'POST':
         
         if not request.POST.get('name_'):
-            room_id = request.POST.get('room')
-            room = get_object_or_404(Room, id=room_id)
-            
-            duration = request.POST.get('duration')
-            revenue = float(duration) * float(room.suite.price)
-            revenue = Revenue.objects.create(
-                revenue = revenue,
-                company = request.user.company
-            )
-            check_out = timezone.make_aware(datetime.now(), timezone.get_default_timezone()) + timedelta(days=int(duration))
-            
-            guest = Guest.objects.create(
-                name=request.POST.get('name'),
-                email=request.POST.get('email'),
-                number=request.POST.get('phone'),
-                room=room,
-                staff=request.user,
-                check_out=check_out,
-                revenue=revenue,
-                company=request.user.company,
-                duration=request.POST.get('duration')
-            )
+            try:
+                guest = Guest.objects.get(name=request.POST.get('name'), company=request.user.company)
+                
+                if guest.check_out>timezone.make_aware(datetime.now(), timezone.get_default_timezone()):
+                    messages.error(request, f"{guest.name} is already checked in.")
+                    return redirect('dashboard')
 
-            room.room_status = True
-            room.save()
-            
-            Log.objects.create(
-                staff=request.user,
-                action=f'{request.user} checked in {guest.name} into Room {guest.room.room_number}',
-                check_status=True, 
-                timestamp=guest.check_in,
-                company=guest.company
-            )
-            
-            Log.objects.create(
-                staff=request.user,
-                action=f'{guest.name} paid N{revenue.revenue}',
-                check_status=True, 
-                timestamp=guest.check_in,
-                company=guest.company
-            )
-            
-            checkIn = CheckIns.objects.create(
-                company=guest.staff.company
-            )
-            
-            checkIn.time = checkIn.time
-            
-            messages.success(request, f"{guest.name} checked in successfully")
+                # Create GuestHistory entry for the existing guest
+                GuestHistory.objects.create(
+                    guest=guest,
+                    name=guest.name,
+                    email=guest.email,
+                    number=guest.number,
+                    room=guest.room,
+                    check_in=guest.check_in,
+                    staff=guest.staff,
+                    check_out=guest.check_out,
+                    revenue=guest.revenue,
+                    company=guest.company,
+                    duration=guest.duration
+                )
+                
+                # Update current record
+                room_id = request.POST.get('room')
+                room = get_object_or_404(Room, id=room_id)
+                
+                duration = request.POST.get('duration')
+                revenue = float(duration) * float(room.suite.price)
+                revenue = Revenue.objects.create(
+                    revenue = revenue,
+                    company = request.user.company
+                )
+                check_out = timezone.make_aware(datetime.now(), timezone.get_default_timezone()) + timedelta(days=int(duration))
+                
+                guest.room = room
+                guest.check_in = timezone.make_aware(datetime.now(), timezone.get_default_timezone())
+                guest.staff = request.user
+                guest.check_out=check_out
+                guest.revenue = revenue
+                guest.duration = duration
+                
+                guest.save()
 
-            return redirect('dashboard')
+                room.room_status = True
+                room.save()
+                
+                Log.objects.create(
+                    staff=request.user,
+                    action=f'{request.user} checked in {guest.name} into Room {guest.room.room_number}',
+                    check_status=True, 
+                    timestamp=guest.check_in,
+                    company=guest.company
+                )
+                
+                Log.objects.create(
+                    staff=request.user,
+                    action=f'{guest.name} paid N{revenue.revenue}',
+                    check_status=True, 
+                    timestamp=guest.check_in,
+                    company=guest.company
+                )
+                
+                CheckIns.objects.create(
+                    company=guest.staff.company
+                )
+                
+                messages.success(request, f"{guest.name} checked in successfully")
+
+                return redirect('dashboard')
+            
+            except:
+                room_id = request.POST.get('room')
+                room = get_object_or_404(Room, id=room_id)
+                
+                duration = request.POST.get('duration')
+                revenue = float(duration) * float(room.suite.price)
+                revenue = Revenue.objects.create(
+                    revenue = revenue,
+                    company = request.user.company
+                )
+                check_out = timezone.make_aware(datetime.now(), timezone.get_default_timezone()) + timedelta(days=int(duration))
+                
+                guest = Guest.objects.create(
+                    name=request.POST.get('name'),
+                    email=request.POST.get('email'),
+                    number=request.POST.get('phone'),
+                    room=room,
+                    staff=request.user,
+                    check_out=check_out,
+                    revenue=revenue,
+                    company=request.user.company,
+                    duration=request.POST.get('duration')
+                )
+
+                room.room_status = True
+                room.save()
+                
+                Log.objects.create(
+                    staff=request.user,
+                    action=f'{request.user} checked in {guest.name} into Room {guest.room.room_number}',
+                    check_status=True, 
+                    timestamp=guest.check_in,
+                    company=guest.company
+                )
+                
+                Log.objects.create(
+                    staff=request.user,
+                    action=f'{guest.name} paid N{revenue.revenue}',
+                    check_status=True, 
+                    timestamp=guest.check_in,
+                    company=guest.company
+                )
+                
+                checkIn = CheckIns.objects.create(
+                    company=guest.staff.company
+                )
+                
+                checkIn.time = checkIn.time
+                
+                messages.success(request, f"{guest.name} checked in successfully")
+
+                return redirect('dashboard')
         
-        else:
-            # Push old record to history
-            name_ = request.POST.get('name_')
-            guest = Guest.objects.get(name=name_)
-            
-            GuestHistory.objects.create(
-                guest=guest,
-                name=guest.name,
-                email=guest.email,
-                number=guest.number,
-                room=guest.room,
-                check_in=guest.check_in,
-                staff=guest.staff,
-                check_out=guest.check_out,
-                revenue=guest.revenue,
-                company=guest.company,
-                duration=guest.duration
-            )
-            
-            # Update old record instance to new record
-            room_id = request.POST.get('room_')
-            room = get_object_or_404(Room, id=room_id)
-            
-            duration = request.POST.get('duration_')
-            revenue = float(duration) * float(room.suite.price)
-            revenue = Revenue.objects.create(
-                revenue = revenue,
-                company = request.user.company
-            )
-            check_out = timezone.make_aware(datetime.now(), timezone.get_default_timezone()) + timedelta(days=int(duration))
-            
-            guest.room = room
-            guest.check_in = timezone.make_aware(datetime.now(), timezone.get_default_timezone())
-            guest.staff = request.user
-            guest.check_out=check_out
-            guest.revenue = revenue
-            guest.duration = duration
-            
-            guest.save()
+    else:
+        # Push old record to history
+        name_ = request.POST.get('name_')
+        guest = Guest.objects.get(name=name_)
+        
+        GuestHistory.objects.create(
+            guest=guest,
+            name=guest.name,
+            email=guest.email,
+            number=guest.number,
+            room=guest.room,
+            check_in=guest.check_in,
+            staff=guest.staff,
+            check_out=guest.check_out,
+            revenue=guest.revenue,
+            company=guest.company,
+            duration=guest.duration
+        )
+        
+        # Update old record instance to new record
+        room_id = request.POST.get('room_')
+        room = get_object_or_404(Room, id=room_id)
+        
+        duration = request.POST.get('duration_')
+        revenue = float(duration) * float(room.suite.price)
+        revenue = Revenue.objects.create(
+            revenue = revenue,
+            company = request.user.company
+        )
+        check_out = timezone.make_aware(datetime.now(), timezone.get_default_timezone()) + timedelta(days=int(duration))
+        
+        guest.room = room
+        guest.check_in = timezone.make_aware(datetime.now(), timezone.get_default_timezone())
+        guest.staff = request.user
+        guest.check_out=check_out
+        guest.revenue = revenue
+        guest.duration = duration
+        
+        guest.save()
 
-            room.room_status = True
-            room.save()
-            
-            Log.objects.create(
-                staff=request.user,
-                action=f'{request.user} checked in {guest.name} into Room {guest.room.room_number}',
-                check_status=True, 
-                timestamp=guest.check_in,
-                company=guest.company
-            )
-            
-            Log.objects.create(
-                staff=request.user,
-                action=f'{guest.name} paid N{revenue.revenue}',
-                check_status=True, 
-                timestamp=guest.check_in,
-                company=guest.company
-            )
-            
-            CheckIns.objects.create(
-                company=guest.staff.company
-            )
-            
-            messages.success(request, f"{guest.name} checked in successfully")
+        room.room_status = True
+        room.save()
+        
+        Log.objects.create(
+            staff=request.user,
+            action=f'{request.user} checked in {guest.name} into Room {guest.room.room_number}',
+            check_status=True, 
+            timestamp=guest.check_in,
+            company=guest.company
+        )
+        
+        Log.objects.create(
+            staff=request.user,
+            action=f'{guest.name} paid N{revenue.revenue}',
+            check_status=True, 
+            timestamp=guest.check_in,
+            company=guest.company
+        )
+        
+        CheckIns.objects.create(
+            company=guest.staff.company
+        )
+        
+        messages.success(request, f"{guest.name} checked in successfully")
 
-            return redirect('dashboard')
+        return redirect('dashboard')
 
 @csrf_exempt
 def check_out(request):
@@ -489,7 +574,9 @@ def extend(request):
     guest = get_object_or_404(Guest, id=guest_id)
     
     guest.check_out= guest.check_out + timedelta(days=int(new_duration))
-    guest.duration= int(new_duration)
+    
+    guest.duration= int(new_duration) + (guest.check_out - guest.check_in).days
+    
     guest.save()
     
     formatted_checkout = guest.check_out.strftime('%a %d %b %Y, %I:%M%p')
@@ -505,7 +592,7 @@ def extend(request):
         company = request.user.company
     )
     
-    messages.success(request, f"{guest.name}'s check out date was extended by {guest.duration} days to {formatted_checkout}")
+    messages.success(request, f"{guest.name}'s check out date was extended by {new_duration} days to {formatted_checkout}")
     
     return redirect('rooms')
 
@@ -573,11 +660,13 @@ def analytics(request):
         
     available_rooms = Room.objects.filter(room_status=False,
                                           company=request.user.company)
+    now=timezone.make_aware(datetime.now(), timezone.get_default_timezone())
     
     context = {
         'available_rooms':available_rooms,
         'check_in_data':check_in_data, 
         'guests':Guest.objects.filter(company=request.user.company), 
+        'returning_guests':Guest.objects.filter(company=request.user.company, check_out__lte=now),
         'top_guests':top_guests, 
         'check_in_rate':check_in_rate, 
         'guest_growth':guest_growth, 
