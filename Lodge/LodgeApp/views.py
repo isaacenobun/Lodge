@@ -40,7 +40,6 @@ def sign_up(request):
     context = {'page_name': 'Sign Up'}
     return render(request, 'pages-sign-up.html', context)
 
-@csrf_exempt
 def onboarding(request):
     if not request.user.is_authenticated:
         return redirect('sign-in')
@@ -76,11 +75,11 @@ def onboarding(request):
                 price=float(suite_price)
             )
             
-            for room_number in range(1,int(suite_room)+1):
+            for room_tag in range(1,int(suite_room)+1):
                 new_room = Room.objects.create(
                     suite=new_suite,
                     company=company,
-                    room_number=room_number
+                    room_tag="Room "+str(room_tag)
                 )
         owner = request.user
         owner.company = company
@@ -97,7 +96,7 @@ def onboarding(request):
         subscription = Subscriptions.objects.create(
                 company=request.user.company,
                 amount= (no_of_rooms)*1000,
-                due_date=timezone.make_aware(datetime.now(), timezone.get_default_timezone()) + relativedelta(months=1)
+                due_date=timezone.now() + relativedelta(months=1)
             )
         
         # start_date = subscription.start_date.strftime('%a %d %b %Y, %I:%M%p')
@@ -163,21 +162,19 @@ def dashboard(request):
     elif request.user.is_authenticated and request.user.company is None:
         return redirect('onboarding')
     
-    now=timezone.make_aware(datetime.now(), timezone.get_default_timezone())
-    
     logs = Log.objects.filter(
         company=request.user.company
         ).order_by('-id')[:5]
-    active_guests = Guest.objects.filter(check_out__gte=now,
+    active_guests = Guest.objects.filter(check_out__gte=timezone.now(),
                                          company=request.user.company)
     total_guests = Guest.objects.filter(company=request.user.company).count()
     available_rooms = Room.objects.filter(room_status=False,
                                           company=request.user.company)
     
-    returning_guests = Guest.objects.filter(company=request.user.company, check_out__lte=now)
+    returning_guests = Guest.objects.filter(company=request.user.company, check_out__lte=timezone.now())
 
     context = {
-        'now':now,
+        'now':timezone.now(),
         'active_guests': active_guests,
         'total_guests': total_guests,
         'staff': request.user,
@@ -195,8 +192,6 @@ def rooms(request):
     if request.user.is_authenticated and request.user.company is None:
         return redirect('onboarding')
     
-    now = timezone.make_aware(datetime.now(), timezone.get_default_timezone())
-    
     suite_types = Suite.objects.filter(company=request.user.company).values_list('type', flat=True).distinct()
     
     suite_types_dict = {}
@@ -206,14 +201,14 @@ def rooms(request):
     
     suite_types_dict['All'] = Room.objects.filter(company=request.user.company)
     
-    guests = Guest.objects.filter(check_out__gt=now,
+    guests = Guest.objects.filter(check_out__gt=timezone.now(),
                                   company=request.user.company
                                   )
     room_guest_mapping = {guest.room.id: guest for guest in guests}
     
     available_rooms = Room.objects.filter(room_status=False,
                                           company=request.user.company)
-    returning_guests = Guest.objects.filter(company=request.user.company, check_out__lte=now)
+    returning_guests = Guest.objects.filter(company=request.user.company, check_out__lte=timezone.now())
     context = {
         'available_rooms':available_rooms,
         'suite_types': suite_types_dict,
@@ -226,6 +221,65 @@ def rooms(request):
     
     return render(request, 'room-carousel.html', context)
 
+def edit_rooms(request):
+    if request.method == 'POST':
+        room_ids = request.POST.getlist('rooms')
+        room_tags = request.POST.getlist('room_tags')
+        
+        # print (room_ids)
+        # print (room_tags)
+        
+        if len(room_ids) != len(room_tags):
+            messages.error(request, "There was an error. Try again.")
+            return redirect('rooms')
+
+        rooms = Room.objects.filter(id__in=room_ids)
+        
+        for room, room_tag in zip(rooms, room_tags):
+            if not room_tag:
+                messages.warning(request, f"A room tag cannot be empty.")
+                return redirect('rooms')
+            else:
+                room.room_tag = room_tag
+                room.save()
+        messages.success(request, f"Room tag changed successfully")
+        return redirect('rooms')
+    
+    return redirect('rooms')
+
+def extend(request):
+    new_duration = request.POST.get('new_duration')
+    
+    if int(new_duration) < 1:
+        messages.warning(request, f"You can't entend by 0 days")
+        return redirect('rooms')
+    
+    guest_id = request.POST.get('guest_id')
+    guest = get_object_or_404(Guest, id=guest_id)
+    
+    guest.check_out= guest.check_out + timedelta(days=int(new_duration))
+    
+    guest.duration= int(new_duration) + (guest.check_out - guest.check_in).days
+    
+    guest.save()
+    
+    formatted_checkout = guest.check_out.strftime('%a %d %b %Y, %I:%M%p')
+    
+    guest.revenue.revenue = float(guest.revenue.revenue) + float(guest.duration) * float(guest.room.suite.price)
+    guest.revenue.save()
+    
+    Log.objects.create(
+        staff = request.user,
+        action = f'{guest.name} extended checkout by {int(new_duration)} day to {formatted_checkout}',
+        check_status = True,
+        timestamp = timezone.now(),
+        company = request.user.company
+    )
+    
+    messages.success(request, f"{guest.name}'s check out date was extended by {new_duration} days to {formatted_checkout}")
+    
+    return redirect('rooms')
+
 def history(request):
     if not request.user.is_authenticated:
         return redirect('sign-in')
@@ -237,8 +291,8 @@ def history(request):
     available_rooms = Room.objects.filter(room_status=False,
                                           company=request.user.company)
     
-    now = timezone.make_aware(datetime.now(), timezone.get_default_timezone())
-    returning_guests = Guest.objects.filter(company=request.user.company, check_out__lte=now)
+    
+    returning_guests = Guest.objects.filter(company=request.user.company, check_out__lte=timezone.now())
     
     context = {
         'available_rooms':available_rooms,
@@ -261,7 +315,7 @@ def download_history_csv(request):
     
     count=1
     for guest in guests:
-        writer.writerow([count, guest.name, guest.email, guest.number, guest.room.suite.type, guest.room.room_number, guest.check_in.strftime('%a %d %b %Y, %I:%M%p'), guest.check_out.strftime('%a %d %b %Y, %I:%M%p')])
+        writer.writerow([count, guest.name, guest.email, guest.number, guest.room.suite.type, guest.room.room_tag, guest.check_in.strftime('%a %d %b %Y, %I:%M%p'), guest.check_out.strftime('%a %d %b %Y, %I:%M%p')])
         count+=1
 
     return response
@@ -273,7 +327,7 @@ def logs(request):
     if request.user.is_authenticated and request.user.company is None:
         return redirect('onboarding')
     
-    now = timezone.make_aware(datetime.now(), timezone.get_default_timezone())
+    
     
     available_rooms = Room.objects.filter(room_status=False,
                                           company=request.user.company)
@@ -303,7 +357,7 @@ def logs(request):
     
     guests = Guest.objects.filter(company=request.user.company)
     
-    returning_guests = Guest.objects.filter(company=request.user.company, check_out__lte=now)
+    returning_guests = Guest.objects.filter(company=request.user.company, check_out__lte=timezone.now())
     
     context={
         'available_rooms':available_rooms,
@@ -323,13 +377,13 @@ def settings(request):
     if request.user.is_authenticated and request.user.company is None:
         return redirect('onboarding')
     
-    now = timezone.make_aware(datetime.now(), timezone.get_default_timezone())
+    
     
     staffs = Staff.objects.filter(company = request.user.company)
     
     guests = Guest.objects.filter(company=request.user.company)
     
-    returning_guests = Guest.objects.filter(company=request.user.company, check_out__lte=now)
+    returning_guests = Guest.objects.filter(company=request.user.company, check_out__lte=timezone.now())
     
     context = {
         'staffs':staffs,
@@ -346,7 +400,7 @@ def check_in(request):
             try:
                 guest = Guest.objects.get(name=request.POST.get('name'), company=request.user.company)
                 
-                if guest.check_out>timezone.make_aware(datetime.now(), timezone.get_default_timezone()):
+                if guest.check_out>timezone.now():
                     messages.error(request, f"{guest.name} is already checked in.")
                     return redirect('dashboard')
 
@@ -375,10 +429,10 @@ def check_in(request):
                     revenue = revenue,
                     company = request.user.company
                 )
-                check_out = timezone.make_aware(datetime.now(), timezone.get_default_timezone()) + timedelta(days=int(duration))
+                check_out = timezone.now() + timedelta(days=int(duration))
                 
                 guest.room = room
-                guest.check_in = timezone.make_aware(datetime.now(), timezone.get_default_timezone())
+                guest.check_in = timezone.now()
                 guest.staff = request.user
                 guest.check_out=check_out
                 guest.revenue = revenue
@@ -391,7 +445,7 @@ def check_in(request):
                 
                 Log.objects.create(
                     staff=request.user,
-                    action=f'{request.user} checked in {guest.name} into Room {guest.room.room_number}',
+                    action=f'{request.user} checked in {guest.name} into {guest.room.room_tag}',
                     check_status=True, 
                     timestamp=guest.check_in,
                     company=guest.company
@@ -423,7 +477,7 @@ def check_in(request):
                     revenue = revenue,
                     company = request.user.company
                 )
-                check_out = timezone.make_aware(datetime.now(), timezone.get_default_timezone()) + timedelta(days=int(duration))
+                check_out = timezone.now() + timedelta(days=int(duration))
                 
                 guest = Guest.objects.create(
                     name=request.POST.get('name'),
@@ -442,7 +496,7 @@ def check_in(request):
                 
                 Log.objects.create(
                     staff=request.user,
-                    action=f'{request.user} checked in {guest.name} into Room {guest.room.room_number}',
+                    action=f'{request.user} checked in {guest.name} into {guest.room.room_tag}',
                     check_status=True, 
                     timestamp=guest.check_in,
                     company=guest.company
@@ -466,74 +520,77 @@ def check_in(request):
 
                 return redirect('dashboard')
         
-    else:
-        # Push old record to history
-        name_ = request.POST.get('name_')
-        guest = Guest.objects.get(name=name_)
-        
-        GuestHistory.objects.create(
-            guest=guest,
-            name=guest.name,
-            email=guest.email,
-            number=guest.number,
-            room=guest.room,
-            check_in=guest.check_in,
-            staff=guest.staff,
-            check_out=guest.check_out,
-            revenue=guest.revenue,
-            company=guest.company,
-            duration=guest.duration
-        )
-        
-        # Update old record instance to new record
-        room_id = request.POST.get('room_')
-        room = get_object_or_404(Room, id=room_id)
-        
-        duration = request.POST.get('duration_')
-        revenue = float(duration) * float(room.suite.price)
-        revenue = Revenue.objects.create(
-            revenue = revenue,
-            company = request.user.company
-        )
-        check_out = timezone.make_aware(datetime.now(), timezone.get_default_timezone()) + timedelta(days=int(duration))
-        
-        guest.room = room
-        guest.check_in = timezone.make_aware(datetime.now(), timezone.get_default_timezone())
-        guest.staff = request.user
-        guest.check_out=check_out
-        guest.revenue = revenue
-        guest.duration = duration
-        
-        guest.save()
+        else:
+            # Push old record to history
+            name_ = request.POST.get('name_')
+            guest = Guest.objects.get(name=name_)
+            
+            print ('1/4')
+            
+            GuestHistory.objects.create(
+                guest=guest,
+                name=guest.name,
+                email=guest.email,
+                number=guest.number,
+                room=guest.room,
+                check_in=guest.check_in,
+                staff=guest.staff,
+                check_out=guest.check_out,
+                revenue=guest.revenue,
+                company=guest.company,
+                duration=guest.duration
+            )
+            
+            # Update old record instance to new record
+            room_id = request.POST.get('room_')
+            room = get_object_or_404(Room, id=room_id)
+            
+            duration = request.POST.get('duration_')
+            revenue = float(duration) * float(room.suite.price)
+            revenue = Revenue.objects.create(
+                revenue = revenue,
+                company = request.user.company
+            )
+            check_out = timezone.now() + timedelta(days=int(duration))
+            
+            guest.room = room
+            guest.check_in = timezone.now()
+            guest.staff = request.user
+            guest.check_out=check_out
+            guest.revenue = revenue
+            guest.duration = duration
+            
+            guest.save()
 
-        room.room_status = True
-        room.save()
-        
-        Log.objects.create(
-            staff=request.user,
-            action=f'{request.user} checked in {guest.name} into Room {guest.room.room_number}',
-            check_status=True, 
-            timestamp=guest.check_in,
-            company=guest.company
-        )
-        
-        Log.objects.create(
-            staff=request.user,
-            action=f'{guest.name} paid N{revenue.revenue}',
-            check_status=True, 
-            timestamp=guest.check_in,
-            company=guest.company
-        )
-        
-        CheckIns.objects.create(
-            company=guest.staff.company
-        )
-        
-        messages.success(request, f"{guest.name} checked in successfully")
+            room.room_status = True
+            room.save()
+            
+            Log.objects.create(
+                staff=request.user,
+                action=f'{request.user} checked in {guest.name} into {guest.room.room_tag}',
+                check_status=True, 
+                timestamp=guest.check_in,
+                company=guest.company
+            )
+            
+            Log.objects.create(
+                staff=request.user,
+                action=f'{guest.name} paid N{revenue.revenue}',
+                check_status=True, 
+                timestamp=guest.check_in,
+                company=guest.company
+            )
+            
+            CheckIns.objects.create(
+                company=guest.staff.company
+            )
+            
+            messages.success(request, f"{guest.name} checked in successfully")
 
-        return redirect('dashboard')
+            return redirect('dashboard')
+    
+    return redirect('dashboard')
 
-@csrf_exempt
 def check_out(request):
     if not request.user.is_authenticated:
         return redirect('sign-in')
@@ -543,7 +600,7 @@ def check_out(request):
         guests_to_check_out = Guest.objects.filter(id__in=guest_ids)
 
         for guest in guests_to_check_out:
-            guest.check_out = timezone.make_aware(datetime.now(), timezone.get_default_timezone())
+            guest.check_out = timezone.now()
             new_duration = (guest.check_out - guest.check_in).days
             guest.duration = new_duration
             guest.save()
@@ -555,7 +612,7 @@ def check_out(request):
             
             Log.objects.create(
                 staff=request.user,
-                action=f'{request.user} checked out {guest.name} from Room {guest.room.room_number}',
+                action=f'{request.user} checked out {guest.name} from {guest.room.room_tag}',
                 check_status=False, 
                 timestamp=guest.check_out,
                 company=request.user.company
@@ -567,73 +624,97 @@ def check_out(request):
     
     return redirect('sign-in')
 
-@csrf_exempt
-def extend(request):
-    new_duration = request.POST.get('new_duration')
-    guest_id = request.POST.get('guest_id')
-    guest = get_object_or_404(Guest, id=guest_id)
-    
-    guest.check_out= guest.check_out + timedelta(days=int(new_duration))
-    
-    guest.duration= int(new_duration) + (guest.check_out - guest.check_in).days
-    
-    guest.save()
-    
-    formatted_checkout = guest.check_out.strftime('%a %d %b %Y, %I:%M%p')
-    
-    guest.revenue.revenue = float(guest.revenue.revenue) + float(guest.duration) * float(guest.room.suite.price)
-    guest.revenue.save()
-    
-    Log.objects.create(
-        staff = request.user,
-        action = f'{guest.name} extended checkout by {int(new_duration)} day to {formatted_checkout}',
-        check_status = True,
-        timestamp = timezone.make_aware(datetime.now(), timezone.get_default_timezone()),
-        company = request.user.company
-    )
-    
-    messages.success(request, f"{guest.name}'s check out date was extended by {new_duration} days to {formatted_checkout}")
-    
-    return redirect('rooms')
-
 def analytics(request):
     if not request.user.is_authenticated:
         return redirect('sign-in')
     
+    elif request.user.is_authenticated and request.user.company is None:
+        return redirect('onboarding')
+    
+    guests = Guest.objects.filter(company=request.user.company)
+    analytics_data = []
+    
+    for guest in guests:
+        guest_data = {
+            'current': {
+                'name': guest.name,
+                'email': guest.email,
+                'number': guest.number,
+                'room': guest.room,
+                'check_in': guest.check_in,
+                'staff': guest.staff,
+                'check_out': guest.check_out,
+                'revenue': guest.revenue,
+                'company': guest.company,
+                'duration': guest.duration,
+            },
+            'history': []
+        }
+        
+        history = GuestHistory.objects.filter(guest=guest)
+        for hist in history:
+            guest_data['history'].append({
+                'name': hist.name,
+                'email': hist.email,
+                'number': hist.number,
+                'room': hist.room,
+                'check_in': hist.check_in,
+                'staff': hist.staff,
+                'check_out': hist.check_out,
+                'revenue': hist.revenue,
+                'company': hist.company,
+                'duration': hist.duration,
+            })
+            
+        analytics_data.append(guest_data)
+    
+    # print (analytics_data)
+    
     top_guests = Guest.objects.filter(company=request.user.company).order_by('-revenue__revenue')[:5]
     guests = Guest.objects.filter(company=request.user.company)
+    guestsH = GuestHistory.objects.filter(company=request.user.company)
     
-    check_ins = CheckIns.objects.filter(time__year=timezone.make_aware(datetime.now(), timezone.get_default_timezone()).year, company=request.user.company)
+    check_ins = CheckIns.objects.filter(time__year=timezone.now().year, company=request.user.company)
     year_dict = {i:0 for i in range(1,13)}
     for check_in in check_ins:
         month = check_in.time.month
         year_dict[month] += 1
     check_in_data = list(year_dict.values())
     # test_check_in_data = [8,8,8,8,8,15]
-    check_in_rate = int(np.sum(check_in_data)/(timezone.make_aware(datetime.now(), timezone.get_default_timezone()).month * 4))
+    check_in_rate = int(np.sum(check_in_data)/(timezone.now().month * 4))
     
-    if timezone.make_aware(datetime.now(), timezone.get_default_timezone()).month == 1:
+    if timezone.now().month == 1:
         guest_growth = 0
     else:
         try:
-            guest_growth = (check_in_data[(timezone.make_aware(datetime.now(), timezone.get_default_timezone()).month)-1] - check_in_data[(timezone.make_aware(datetime.now(), timezone.get_default_timezone()).month)-2])/check_in_data[(timezone.make_aware(datetime.now(), timezone.get_default_timezone()).month)-2] *100
+            guest_growth = (check_in_data[(timezone.now().month)-1] - check_in_data[(timezone.now().month)-2])/check_in_data[(timezone.now().month)-2] *100
         except:
             guest_growth = 0
     
-    total_revenue = 0
-    for guest in guests:
-        try:
-            rev = guest.revenue
-            total_revenue += rev.revenue
-        except:
-            total_revenue += 0
+    total_revenue = Revenue.objects.filter(company=request.user.company).aggregate(total=Sum('revenue'))['total']
+    if total_revenue is None:
+        total_revenue = 0
+    
+    # for guest in guests:
+    #     try:
+    #         rev = guest.revenue
+    #         total_revenue += rev.revenue
+    #     except:
+    #         total_revenue += 0
+            
+    # for guest in guestsH:
+    #     try:
+    #         rev = guest.revenue
+    #         total_revenue += rev.revenue
+    #     except:
+    #         total_revenue += 0
         
-    monthly_revenue = (total_revenue/(timezone.make_aware(datetime.now(), timezone.get_default_timezone()).month))
+    monthly_revenue = (total_revenue/(timezone.now().month))
     
-    month_revenue_guests = Guest.objects.filter(check_out__month=timezone.make_aware(datetime.now(), timezone.get_default_timezone()).month, company=request.user.company)
+    month_revenue_guests = Guest.objects.filter(check_out__month=timezone.now().month, company=request.user.company)
     
-    if timezone.make_aware(datetime.now(), timezone.get_default_timezone()).month != 1:
-        prev_month_revenue_guests = Guest.objects.filter(check_out__month=(timezone.make_aware(datetime.now(), timezone.get_default_timezone()).month)-1, company=request.user.company)
+    if timezone.now().month != 1:
+        prev_month_revenue_guests = Guest.objects.filter(check_out__month=(timezone.now().month)-1, company=request.user.company)
     else:
         prev_month_revenue_guests = {}
     
@@ -660,13 +741,12 @@ def analytics(request):
         
     available_rooms = Room.objects.filter(room_status=False,
                                           company=request.user.company)
-    now=timezone.make_aware(datetime.now(), timezone.get_default_timezone())
     
     context = {
         'available_rooms':available_rooms,
         'check_in_data':check_in_data, 
         'guests':Guest.objects.filter(company=request.user.company), 
-        'returning_guests':Guest.objects.filter(company=request.user.company, check_out__lte=now),
+        'returning_guests':Guest.objects.filter(company=request.user.company, check_out__lte=timezone.now()),
         'top_guests':top_guests, 
         'check_in_rate':check_in_rate, 
         'guest_growth':guest_growth, 

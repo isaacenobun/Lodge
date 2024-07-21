@@ -122,7 +122,7 @@
                   <option value="">Choose a room</option>
                   {% for room in available_rooms %}
                   <option value="{{room.id}}">
-                    Room {{room.room_number}} - {{room.suite.type}} Suite
+                    {{room.room_tag}} - {{room.suite.type}} Suite
                   </option>
                   {% endfor %}
                 </select>
@@ -163,7 +163,7 @@
                   {% for guest in returning_guests %}
                   <div class="option">
                     <input type="radio" class="radio" id="{{guest.name}}" name="category" />
-                    <label for="{{guest.name}}"><span>#{{guest.id}} ~ </span>{{guest.name}}</label>
+                    <label for="{{guest.name}}"><span>{{forloop.counter}} - </span>{{guest.name}}</label>
                     <input type="text" class="radio breadcrumb-item" id="{{guest.id}}" name="category" value= "{{guest.name}}"/>
                     <input type="text" class="radio breadcrumb-item" id="{{guest.email}}" name="category" value= "{{guest.email}}"/>
                     <input type="text" class="radio breadcrumb-item" id="{{guest.number}}" name="category" value= "{{guest.number}}"/>
@@ -230,7 +230,7 @@
                       <option value="">Choose a room</option>
                       {% for room in available_rooms %}
                       <option value="{{room.id}}">
-                        Room {{room.room_number}} - {{room.suite.type}} Suite
+                        {{room.room_tag}} - {{room.suite.type}} Suite
                       </option>
                       {% endfor %}
                     </select>

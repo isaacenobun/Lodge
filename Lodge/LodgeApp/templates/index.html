@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load custom_filters %}
+{% load tz %}
 
 
 {% block content %}
@@ -159,7 +160,7 @@
                                         <td class="text-center d-none d-lg-table-cell">
                                             <a href="mailto:{{guest.email}}">{{guest.email}}</a>
                                         </td>
-                                        <td class="text-center">{{guest.room.room_number}}</td>
+                                        <td class="text-center">{{guest.room.room_tag}}</td>
                                         <td class="text-center">{{guest.number}}</td>
                                     </tr>
                                     {% endfor %}
@@ -227,7 +228,7 @@
 
                 <div class="activity">
                   <div class="activity-item d-flex">
-                    <div class="activite-label">{{log.timestamp | add_one_hour | date:'P'}}</div>
+                    <div class="activite-label">{{log.timestamp |timezone:"Africa/Lagos" | date:'P'}}</div>
                     
                     {% if log.check_status %}
                         <i

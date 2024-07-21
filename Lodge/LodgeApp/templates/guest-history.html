@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load tz %}
 
 {% block content %}
 
@@ -59,15 +60,11 @@
                     <td>{{guest.email}}</td>
                     <td>{{guest.number}}</td>
                     <td style="text-align: center">
-                      {{guest.room.room_number}}
+                      {{guest.room.room_tag}}
                     </td>
-                    <td>{{guest.check_in}}</td>
-
-                    {% if guest.check_out %}
-                    <td>{{guest.check_out}}</td>
-                    {% else %}
-                    <td style="text-align: center">-</td>
-                    {% endif %} {% if guest.room.room_status %}
+                    <td>{{guest.check_in|timezone:"Africa/Lagos"}}</td>
+                    <td>{{guest.check_out|timezone:"Africa/Lagos"}}</td>
+                    {% if guest.room.room_status %}
                     <td>
                       <span class="badge bg-warning">Room Occupied</span>
                     </td>

@@ -3,7 +3,10 @@
 {% for room in rooms %}
     {% if room.room_status %}
         <div class="room occupied">
-            <div class="room-number d-flex align-items-center justify-content-center">Room {{ room.room_number }}</div>
+            <div class="room-tag d-flex align-items-center justify-content-center">{{ room.room_tag }}
+                <input type="hidden" name="rooms" value="{{room.id}}">
+                <input type="hidden" name="room_tags" value="{{room.room_tag}}">
+            </div>
             <div class="room-number d-flex align-items-center justify-content-center" >{{ room.suite.type }} Suite</div>
             <div class="rounded-circle d-flex align-items-center justify-content-center">
                 <i class="bi bi-person"></i>
@@ -16,7 +19,9 @@
         </div>
     {% else %}
         <div class="room">
-            <div class="room-number d-flex align-items-center justify-content-center" >Room {{ room.room_number }}
+            <div class="room-tag d-flex align-items-center justify-content-center" >{{ room.room_tag }}
+                <input type="hidden" name="rooms" value="{{room.id}}">
+                <input type="hidden" name="room_tags" value="{{room.room_tag}}">
                 <input type="hidden" name="room_queryset" value="{{ room }}">
             </div>
             <div class="room-number d-flex align-items-center justify-content-center" >{{ room.suite.type }} Suite</div>

@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load custom_filters %}
+{% load tz %}
 
 
 {% block content %}
@@ -53,7 +54,7 @@
                             <div id="flush-collapse-{{ year }}-{{ month }}-{{ day }}" class="accordion-collapse collapse" aria-labelledby="flush-heading-{{ year }}-{{ month }}-{{ day }}" data-bs-parent="#accordionFlush-{{ year }}-{{ month }}">
                                 <div class="accordion-body">
                                     {% for log in logs %}
-                                    <div>{{ log.timestamp|date:"H:i a" }} {{ log.action }} {{ log.username }}</div>
+                                    <div>{{ log.timestamp|timezone:"Africa/Lagos"|date:"H:i a" }} {{ log.action }} {{ log.username }}</div>
                                     {% endfor %}
                                 </div>
                             </div>

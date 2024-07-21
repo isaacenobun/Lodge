@@ -18,15 +18,28 @@
           <li class="breadcrumb-item"><a href="{% url 'dashboard' %}"><i class="bi bi-house-door"> Home</i></a></li>
           <li class="breadcrumb-item active">Rooms</li>
         </ol>
-        {% if messages %}
-          {% for message in messages %}
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-          <i class="bi bi-check-circle me-1"></i>
-          {{message}}
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        {% endfor %}
-      {% endif %}
+        {% for message in messages %}
+            {% if message.tags == "warning" %}
+              <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle me-1"></i>
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% elif message.tags == "success" %}
+              <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle me-1"></i>
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endif %}
+            {% if message.tags == "error" %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+              <i class="bi bi-exclamation-octagon me-1"></i>
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endif %}
+          {% endfor %}
       </nav>
     </div>
     <!-- End Page Title -->
@@ -40,19 +53,20 @@
               <p>Suites Overview</p>
 
               <!-- Room carousel -->
+              <form id="edit-form" action="{% url 'edit-rooms' %}" method="POST">
+                {% csrf_token %}
               <div class="movie-container">
                 <select id="suite" class="room-select form-select" onchange="updateUI(this)">
                   <option value="" selected disabled>
                     Select a suite
                   </option>
-                  {% comment %} <option value="All">All Suites</option> {% endcomment %}
-                  {% for suite_type in suite_types %}
                     
-                      <option value="{{suite_type}}">{{suite_type}} Suite</option>
-                      
-                  {% endfor %}
-                    
-                  
+                      {% for suite_type in suite_types %}
+                        
+                          <option value="{{suite_type}}">{{suite_type}} Suite</option>
+                          
+                      {% endfor %}
+
                 </select>
       
                 <ul class="showcase">
@@ -98,13 +112,15 @@
                     {% endfor %}
                   </div>
               <!-- End Table with stripped rows -->
+              </div>
+              </form>
             </div>
-          </div>
         </div>
       </div>
     </section>
   </main>
   <!-- End #main -->
+   
 
   <!-- ======= Footer ======= -->
   <footer id="footer" class="footer"></footer>

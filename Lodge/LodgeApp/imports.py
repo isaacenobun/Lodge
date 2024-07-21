@@ -22,6 +22,7 @@ from dateutil.relativedelta import relativedelta as relativedelta
 import calendar as calendar
 
 from django.db.models.functions import ExtractYear as ExtractYear, ExtractMonth as ExtractMonth, ExtractDay as ExtractDay
+from django.db.models import Sum as Sum
 
 from collections import defaultdict as defaultdict
 

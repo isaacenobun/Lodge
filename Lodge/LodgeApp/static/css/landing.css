@@ -735,6 +735,7 @@ section,
   min-height: 400px;
   background: linear-gradient(color-mix(in srgb, #ffffff, transparent 90%), color-mix(in srgb, #ffffff, transparent 75%)), url("../img/onfocus-video-bg.jpg") center center;
   background-size: cover;
+  border: 1px solid color-mix(in srgb, black, transparent 90%);
 }
 
 .onfocus .content {
