@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
   editButton.type = 'button';
   editButton.id = 'editButton'
   editButton.className = 'btn btn-link';
-  editButton.textContent = 'Edit SSSStags';
+  editButton.textContent = 'Edit tags';
   editButton.style.display = 'none'; // Initially hidden
 
   saveButton.type = 'button';
