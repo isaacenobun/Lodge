@@ -377,19 +377,34 @@ def settings(request):
     if request.user.is_authenticated and request.user.company is None:
         return redirect('onboarding')
     
+    if request.method == 'POST':
+        # print (request.POST)
+        # print (request.POST.get('input_1'))
+        # print (request.POST.getlist('input_2'))
+        # print (request.POST.getlist('input_3'))
+        # print (request.POST.getlist('input_4'))
+        pass
     
+    company = request.user.company
     
-    staffs = Staff.objects.filter(company = request.user.company)
+    suites = Suite.objects.filter(company=request.user.company)
     
-    guests = Guest.objects.filter(company=request.user.company)
+    suite_room_types={}
+    for suite in suites:
+        suite_room_types[suite] = [Room.objects.filter(suite=suite).count(),suite.price]
+    
+    owners = Staff.objects.filter(company = request.user.company, owner=True)
+    staffs = Staff.objects.filter(company = request.user.company, is_active=True, owner=True)
     
     returning_guests = Guest.objects.filter(company=request.user.company, check_out__lte=timezone.now())
     
     context = {
+        'suite_room_types':suite_room_types,
+        'company':company,
+        'owners':owners,
         'staffs':staffs,
         'page_name':'Settings',
         'returning_guests':returning_guests,
-        'guests':guests
     }
     return render(request, 'settings.html', context)
 
@@ -632,6 +647,7 @@ def analytics(request):
         return redirect('onboarding')
     
     guests = Guest.objects.filter(company=request.user.company)
+    guest_history = GuestHistory.objects.filter(company=request.user.company)
     analytics_data = []
     
     for guest in guests:
@@ -668,11 +684,26 @@ def analytics(request):
             
         analytics_data.append(guest_data)
     
-    # print (analytics_data)
+    current_month = timezone.now().month
+    monthly_revenue = guests.filter(check_in__month=current_month).aggregate(Sum('revenue__revenue'))['revenue__revenue__sum'] or 0
+    monthly_revenue += guest_history.filter(guest__in=guests, check_in__month=current_month).aggregate(Sum('revenue__revenue'))['revenue__revenue__sum'] or 0
     
-    top_guests = Guest.objects.filter(company=request.user.company).order_by('-revenue__revenue')[:5]
-    guests = Guest.objects.filter(company=request.user.company)
-    guestsH = GuestHistory.objects.filter(company=request.user.company)
+    last_month = timezone.now() - timedelta(days=30)
+    revenue_last_month = guests.filter(check_in__month=last_month.month).aggregate(Sum('revenue__revenue'))['revenue__revenue__sum'] or 0
+    revenue_last_month += guest_history.filter(guest__in=guests, check_in__month=last_month.month).aggregate(Sum('revenue__revenue'))['revenue__revenue__sum'] or 0
+    revenue_growth = ((monthly_revenue - revenue_last_month) / revenue_last_month) * 100 if revenue_last_month else 0
+    
+    current_week_check_ins = guests.annotate(week=TruncWeek('check_in')).values('week').annotate(count=Count('id')).order_by('week')
+    history_week_check_ins = guest_history.filter(guest__in=guests).annotate(week=TruncWeek('check_in')).values('week').annotate(count=Count('id')).order_by('week')
+
+    # check_in_rate_per_week = {item['week']: item['count'] for item in current_week_check_ins}
+    # for item in history_week_check_ins:
+    #     if item['week'] in check_in_rate_per_week:
+    #         check_in_rate_per_week[item['week']] += item['count']
+    #     else:
+    #         check_in_rate_per_week[item['week']] = item['count']
+    
+    # print (check_in_rate_per_week)
     
     check_ins = CheckIns.objects.filter(time__year=timezone.now().year, company=request.user.company)
     year_dict = {i:0 for i in range(1,13)}
@@ -680,65 +711,37 @@ def analytics(request):
         month = check_in.time.month
         year_dict[month] += 1
     check_in_data = list(year_dict.values())
-    # test_check_in_data = [8,8,8,8,8,15]
-    check_in_rate = int(np.sum(check_in_data)/(timezone.now().month * 4))
+    check_in_rate = float(check_in_data[timezone.now().month-1])/30
     
-    if timezone.now().month == 1:
-        guest_growth = 0
-    else:
-        try:
-            guest_growth = (check_in_data[(timezone.now().month)-1] - check_in_data[(timezone.now().month)-2])/check_in_data[(timezone.now().month)-2] *100
-        except:
-            guest_growth = 0
+    top_guests = Guest.objects.filter(company=request.user.company).order_by('-revenue__revenue')[:5]
+    
+    total_guests_last_month = guests.filter(check_in__month=last_month.month).count()
+    guest_growth = ((guests.count()) / total_guests_last_month) * 100 if total_guests_last_month else 0
+    
+    guests_data = []
+    
+    for guest in guests:
+        current_revenue = guest.revenue.revenue
+        history = guest_history.filter(guest=guest)
+        historical_revenue = sum(hist.revenue.revenue for hist in history)
+        total_revenue = current_revenue + historical_revenue
+        
+        guests_data.append({
+            'name': guest.name,
+            'email': guest.email,
+            'number': guest.number,
+            'total_revenue': total_revenue,
+            'total_days': int(guest.duration) + sum(int(hist.duration) for hist in history),  
+        })
+    
+    top_guests_data = sorted(guests_data, key=lambda x: x['total_revenue'], reverse=True)[:5]
     
     total_revenue = Revenue.objects.filter(company=request.user.company).aggregate(total=Sum('revenue'))['total']
     if total_revenue is None:
         total_revenue = 0
-    
-    # for guest in guests:
-    #     try:
-    #         rev = guest.revenue
-    #         total_revenue += rev.revenue
-    #     except:
-    #         total_revenue += 0
-            
-    # for guest in guestsH:
-    #     try:
-    #         rev = guest.revenue
-    #         total_revenue += rev.revenue
-    #     except:
-    #         total_revenue += 0
         
-    monthly_revenue = (total_revenue/(timezone.now().month))
+    # print (top_guests_data)
     
-    month_revenue_guests = Guest.objects.filter(check_out__month=timezone.now().month, company=request.user.company)
-    
-    if timezone.now().month != 1:
-        prev_month_revenue_guests = Guest.objects.filter(check_out__month=(timezone.now().month)-1, company=request.user.company)
-    else:
-        prev_month_revenue_guests = {}
-    
-    month_revenue = 0
-    for guests in month_revenue_guests:
-        revenue = guests.revenue
-        try:
-            month_revenue+= revenue.revenue
-        except:
-            month_revenue+= 0
-        
-    prev_month_revenue = 0
-    for guests in prev_month_revenue_guests:
-        revenue = guests.revenue
-        try:
-            prev_month_revenue+= revenue.revenue
-        except:
-            prev_month_revenue+= 0
-        
-    try:
-        revenue_growth = ((month_revenue-prev_month_revenue)/prev_month_revenue)*100
-    except:
-        revenue_growth = 0
-        
     available_rooms = Room.objects.filter(room_status=False,
                                           company=request.user.company)
     
@@ -747,7 +750,8 @@ def analytics(request):
         'check_in_data':check_in_data, 
         'guests':Guest.objects.filter(company=request.user.company), 
         'returning_guests':Guest.objects.filter(company=request.user.company, check_out__lte=timezone.now()),
-        'top_guests':top_guests, 
+        'top_guests':top_guests,
+        'top_guests_data':top_guests_data,
         'check_in_rate':check_in_rate, 
         'guest_growth':guest_growth, 
         'total_revenue':float(total_revenue), 

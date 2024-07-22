@@ -21,10 +21,12 @@ from django.utils import timezone as timezone
 from dateutil.relativedelta import relativedelta as relativedelta
 import calendar as calendar
 
-from django.db.models.functions import ExtractYear as ExtractYear, ExtractMonth as ExtractMonth, ExtractDay as ExtractDay
-from django.db.models import Sum as Sum
+from django.db.models.functions import ExtractYear as ExtractYear, ExtractMonth as ExtractMonth, ExtractDay as ExtractDay, TruncWeek as TruncWeek
+from django.db.models import Sum as Sum, Avg as Avg, Count as Count
 
 from collections import defaultdict as defaultdict
+
+from decimal import Decimal as Decimal
 
 from django.core.mail import send_mail as send_mail
 
