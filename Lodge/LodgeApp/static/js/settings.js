@@ -1,170 +1,282 @@
-document.body.addEventListener('click', function(event) {
+// Store the initial state of the card profiles
+var initialCardProfilesHTML = document.getElementById('card-profiles-container').innerHTML;
+
+document.body.addEventListener('click', function (event) {
   if (event.target.classList.contains('editButton')) {
-    var cardProfile = event.target.closest('.card-profile');
-    var span = cardProfile.querySelector('.current-text');
-    var currentText = span.textContent;
-    var labelText = cardProfile.dataset.label;
-    var uniqueId = 'input_' + cardProfile.dataset.id;
+    var editButton = event.target;
+    var isEditing = editButton.textContent === 'Edit';
 
-    var inputBox = document.createElement('input');
-    inputBox.type = 'text';
-    inputBox.className = 'form-control';
-    inputBox.name = uniqueId;
-    inputBox.id = uniqueId; // Set the unique id for the input box
-    inputBox.value = currentText; // Set the value of the input box to the current text
+    if (isEditing) {
+      editButton.textContent = 'Cancel';
 
-    var label = document.createElement('label');
-    label.className = 'form-label small';
-    label.htmlFor = uniqueId; // Associate the label with the input box
-    label.textContent = labelText;
+      // Loop through all card-profile elements
+      document.querySelectorAll('.card-profile').forEach(function (cardProfile) {
+        var span = cardProfile.querySelector('.current-text');
+        var currentText = span.textContent;
+        var labelText = cardProfile.dataset.label;
+        var uniqueId = 'input_' + cardProfile.dataset.id;
 
-    var invalidFeedback = document.createElement('div');
-    invalidFeedback.className = 'invalid-feedback';
-    invalidFeedback.textContent = 'Please, enter a value!';
+        var inputBox = document.createElement('input');
+        inputBox.type = 'text';
+        inputBox.className = 'form-control';
+        inputBox.name = uniqueId;
+        inputBox.id = uniqueId; // Set the unique id for the input box
+        inputBox.value = currentText; // Set the value of the input box to the current text
 
-    var formFloatingDiv = document.createElement('div');
-    formFloatingDiv.className = 'form-floating';
-    formFloatingDiv.appendChild(inputBox);
-    formFloatingDiv.appendChild(label);
-    formFloatingDiv.appendChild(invalidFeedback);
+        var label = document.createElement('label');
+        label.className = 'form-label small';
+        label.htmlFor = uniqueId; // Associate the label with the input box
+        label.textContent = labelText;
 
-    span.replaceWith(formFloatingDiv);
+        var invalidFeedback = document.createElement('div');
+        invalidFeedback.className = 'invalid-feedback';
+        invalidFeedback.textContent = 'Please, enter a value!';
 
-    // Change the edit button to a cancel button
-    var cancelButton = document.createElement('button');
-    cancelButton.type = 'button';
-    cancelButton.className = 'btn btn-link small cancelButton';
-    cancelButton.textContent = 'Cancel';
-    event.target.replaceWith(cancelButton);
+        var formFloatingDiv = document.createElement('div');
+        formFloatingDiv.className = 'form-floating';
+        formFloatingDiv.appendChild(inputBox);
+        formFloatingDiv.appendChild(label);
+        formFloatingDiv.appendChild(invalidFeedback);
 
-    // Add event listener to the cancel button to restore the original state
-    cancelButton.addEventListener('click', function() {
-      formFloatingDiv.replaceWith(span);
-      cancelButton.replaceWith(event.target);
-    });
+        span.replaceWith(formFloatingDiv);
+      });
+    } else {
+      editButton.textContent = 'Edit';
+
+      // Loop through all card-profile elements to reset them
+      document.querySelectorAll('.card-profile').forEach(function (cardProfile) {
+        var formFloatingDiv = cardProfile.querySelector('.form-floating');
+        var inputBox = formFloatingDiv.querySelector('input');
+        var currentText = inputBox.value;
+
+        var span = document.createElement('span');
+        span.className = 'current-text';
+        span.textContent = currentText;
+
+        formFloatingDiv.replaceWith(span);
+      });
+    }
+  }
+
+  if (event.target.id === 'settings-add-suite') {
+    addNewSuite();
+  }
+
+  if (event.target.id === 'reset-button') {
+    resetPage();
   }
 });
 
-document.getElementById('settings-add-suite').addEventListener('click', function() {
-  const buttonGroupRow = document.getElementById('button-group-row');
+function addNewSuite() {
+  var newId = 'new';
 
-  const newRow = document.createElement('div');
-  newRow.className = 'row suite-row';
+  var newSuiteRow = document.createElement('div');
+  newSuiteRow.className = 'row suite-row'; // Add class suite-row for dynamically added rows
 
-  newRow.innerHTML = `
-    <div class="col-md-4">
-      <div class="card-profile" data-id="1" data-label="Suite Type">
-        <div class="profile-box"><i class="bi bi-door-open"></i><span class="current-text">Suite Type</span></div>
-        <button type="button" class="btn btn-link small editButton">Edit</button>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="card-profile" data-id="2" data-label="Rooms">
-        <div class="profile-box"><i class="bi bi-grid-3x3-gap"></i><span class="current-text">Rooms</span></div>
-        <button type="button" class="btn btn-link small editButton">Edit</button>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="card-profile" data-id="3" data-label="Current Price">
-        <div class="profile-box"><i class="custom-icon">₦</i><span class="current-text">Price</span></div>
-        <button type="button" class="btn btn-link small editButton">Edit</button>
-      </div>
-    </div>
-  `;
+  var suiteTypes = [
+    { label: 'Suite Type', icon: 'bi bi-door-open' },
+    { label: 'Rooms', icon: 'bi bi-grid-3x3-gap' },
+    { label: 'Current Price', icon: 'custom-icon', text: '₦' }
+  ];
 
-  buttonGroupRow.parentNode.insertBefore(newRow, buttonGroupRow);
-});
+  suiteTypes.forEach(function (suiteType, index) {
+    var colDiv = document.createElement('div');
+    colDiv.className = 'col-md-4';
 
-document.getElementById('reset-button').addEventListener('click', function() {
+    var cardProfileDiv = document.createElement('div');
+    cardProfileDiv.className = 'card-profile';
+    cardProfileDiv.dataset.id = newId;
+    cardProfileDiv.dataset.label = suiteType.label;
+
+    var profileBoxDiv = document.createElement('div');
+    profileBoxDiv.className = 'profile-box';
+
+    var icon = document.createElement('i');
+    icon.className = suiteType.icon;
+    profileBoxDiv.appendChild(icon);
+
+    if (suiteType.text) {
+      var customIcon = document.createElement('i');
+      customIcon.className = 'custom-icon';
+      customIcon.textContent = suiteType.text;
+      profileBoxDiv.appendChild(customIcon);
+    }
+
+    var span = document.createElement('span');
+    span.className = 'current-text';
+    span.textContent = suiteType.label;
+    profileBoxDiv.appendChild(span);
+
+    cardProfileDiv.appendChild(profileBoxDiv);
+    colDiv.appendChild(cardProfileDiv);
+    newSuiteRow.appendChild(colDiv);
+  });
+
+  // Check if the heading already exists
+  var heading = document.querySelector('.new-suites-heading');
+  if (!heading) {
+    heading = document.createElement('p');
+    heading.className = 'text-center card-subtitle mb-3 text-muted small new-suites-heading';
+    heading.textContent = 'Newly added suites';
+    document.querySelector('#button-group-row').before(heading);
+  }
+
+
+  document.querySelector('#button-group-row').before(newSuiteRow);
+
+  // Check if currently in edit mode
+  var editButton = document.querySelector('.editButton');
+  if (editButton && editButton.textContent === 'Cancel') {
+    // Convert new suite row to edit mode
+    newSuiteRow.querySelectorAll('.card-profile').forEach(function (cardProfile) {
+      var span = cardProfile.querySelector('.current-text');
+      var currentText = span.textContent;
+      var labelText = cardProfile.dataset.label;
+      var uniqueId = 'input_' + cardProfile.dataset.id;
+
+      var inputBox = document.createElement('input');
+      inputBox.type = 'text';
+      inputBox.className = 'form-control';
+      inputBox.name = uniqueId;
+      inputBox.id = uniqueId; // Set the unique id for the input box
+      inputBox.value = currentText; // Set the value of the input box to the current text
+
+      var label = document.createElement('label');
+      label.className = 'form-label small';
+      label.htmlFor = uniqueId; // Associate the label with the input box
+      label.textContent = labelText;
+
+      var invalidFeedback = document.createElement('div');
+      invalidFeedback.className = 'invalid-feedback';
+      invalidFeedback.textContent = 'Please, enter a value!';
+
+      var formFloatingDiv = document.createElement('div');
+      formFloatingDiv.className = 'form-floating';
+      formFloatingDiv.appendChild(inputBox);
+      formFloatingDiv.appendChild(label);
+      formFloatingDiv.appendChild(invalidFeedback);
+
+      span.replaceWith(formFloatingDiv);
+    });
+  }
+}
+
+function resetPage() {
   // Remove all dynamically added rows
   const addedRows = document.querySelectorAll('.suite-row');
   addedRows.forEach(row => row.remove());
 
-  // Reset the form fields
-  const form = document.querySelector('form');
-  form.reset();
+  // Remove the heading if it exists
+  const heading = document.querySelector('.new-suites-heading');
+  if (heading) {
+    heading.remove();
+  }
+
+
+  // Reset the existing card profiles to their original state
+  document.querySelectorAll('.card-profile').forEach(function (cardProfile) {
+    var formFloatingDiv = cardProfile.querySelector('.form-floating');
+    if (formFloatingDiv) {
+      var inputBox = formFloatingDiv.querySelector('input');
+      var currentText = inputBox.value;
+
+      var span = document.createElement('span');
+      span.className = 'current-text';
+      span.textContent = currentText;
+
+      formFloatingDiv.replaceWith(span);
+    }
+  });
+
+  // Reset the edit button text
+  var editButton = document.querySelector('.editButton');
+  if (editButton) {
+    editButton.textContent = 'Edit';
+  }
+  window.location.reload();
+}
+
+document.querySelectorAll('.editStaffButton, .addstaffButton').forEach(button => {
+  button.addEventListener('click', function () {
+    const staffName = this.getAttribute('data-staff');
+    if (this.classList.contains('editStaffButton')) {
+      document.getElementById('modalTitle').innerText = `Editing details for ${staffName}`;
+      document.getElementById('modal-footer').innerHTML = `<button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-dark">Save changes</button>`;
+      document.getElementById('modalContent').innerHTML = `<form 
+                      class="row g-3 needs-validation"
+                      novalidate
+                      method="post"
+                      action="{% url 'sign-up' %}">
+
+                      <div class="col-12">
+                        <label for="yourEmail" class="form-label">Username</label>
+                        <input type="text" name="username" class="form-control" id="yourUsername" required />
+                        <div class="invalid-feedback">Please enter a username!</div>
+                      </div>
+                      
+                      <div class="col-12">
+                        <label for="yourEmail" class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control" id="yourEmail" required />
+                        <div class="invalid-feedback">Please enter a valid Email address!</div>
+                      </div>
+
+                      <div class="col-12">
+                        <label for="yourPassword" class="form-label">Password</label>
+                        <input type="password" name="password" class="form-control" id="yourPassword" required>
+                        <div class="invalid-feedback">Please enter your password!</div>
+                      </div>
+
+                      <div class="col-12">
+                        <div class="form-check">
+                          <input class="form-check-input" name="terms" type="checkbox" value="" id="adminStatus" required>
+                          <label class="form-check-label" for="adminStatus">Assign Admin Status</label>
+                        </div>
+                      </div>
+                    </form>`;
+    } else if (this.classList.contains('addstaffButton')) {
+      document.getElementById('modalTitle').innerText = 'Add New Staff';
+      document.getElementById('modal-footer').innerHTML = `<button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-dark">Submit</button>`;
+      document.getElementById('modalContent').innerHTML = `<form 
+                      class="row g-3 needs-validation"
+                      novalidate
+                      method="post"
+                      action="{% url 'sign-up' %}">
+
+                      <div class="col-12">
+                        <label for="newName" class="form-label">Name</label>
+                        <input type="text" name="userName" class="form-control" id="newName" required />
+                        <div class="invalid-feedback">Please enter a username!</div>
+                      </div>
+
+                      <div class="col-12">
+                        <label for="newUsername" class="form-label">Username</label>
+                        <input type="text" name="username" class="form-control" id="newUsername" required />
+                        <div class="invalid-feedback">Please enter a username!</div>
+                      </div>
+                      
+                      <div class="col-12">
+                        <label for="newEmail" class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control" id="newEmail" required />
+                        <div class="invalid-feedback">Please enter a valid Email address!</div>
+                      </div>
+
+                      <div class="col-12">
+                        <label for="newPassword" class="form-label">Password</label>
+                        <input type="password" name="password" class="form-control" id="newPassword" required>
+                        <div class="invalid-feedback">Please enter your password!</div>
+                      </div>
+
+                      <div class="col-12">
+                        <div class="form-check">
+                          <input class="form-check-input" name="terms" type="checkbox" value="" id="newAdminStatus" required>
+                          <label class="form-check-label" for="newAdminStatus">Assign Admin Status</label>
+                        </div>
+                      </div>
+                    </form>`;
+    }
+    $('#verticalycentered').modal('show');
+  });
 });
-
-
-// document.addEventListener('click', function (event) {
-//   if (event.target && event.target.classList.contains('editButton')) {
-//     const cardProfile = event.target.closest('.card-profile');
-//     const formFloating = event.target.getAttribute('data-form');
-//     cardProfile.outerHTML = formFloating;
-//   }
-// });
-
-
-// document.addEventListener('DOMContentLoaded', function () {
-//   const addSuiteButton = document.getElementById('settings-add-suite');
-//   const form = document.querySelector('.row.g-2');
-
-//   addSuiteButton.addEventListener('click', function () {
-//     const newRow = document.createElement('div');
-//     newRow.classList.add('row');
-
-//     newRow.innerHTML = `
-//         <!-- Suite Type -->
-//         <div class="col-md-4">
-//           <div class="card-profile">
-//             <div class="profile-box"><i class="bi bi-door-open"></i><span> New Suite</span></div>
-//             <button type="button" class="btn btn-link small editButton" data-form='<div class="form-floating">
-//             <input
-//               type="text"
-//               class="form-control"
-//               name="suite_type"
-//               placeholder="Suite type"
-//             />
-//             <label class="form-label small">Suite type</label>
-//             <div class="invalid-feedback">
-//               Please, enter a value!
-//             </div>
-//             </div>'>Edit</button>
-//           </div>
-//         </div>
-      
-//         <!-- No of rooms -->
-//         <div class="col-md-4">
-//           <div class="card-profile">
-//             <div class="profile-box"><i class="bi bi-grid-3x3-gap"></i><span>Rooms</span></div>
-//             <button type="button" class="btn btn-link small editButton" data-form='<div class="form-floating">
-//             <input
-//               type="number"
-//               name="suite_rooms"
-//               min="1"
-//               class="room-count form-control"
-//               placeholder="Rooms in suite"
-//             />
-//             <label class="form-label small">Rooms in Suite</label>
-//             <div class="invalid-feedback">
-//               Please, enter a value!
-//             </div>
-//             </div>'>Edit</button>
-//           </div>
-//         </div>
-
-//         <!-- Current price -->
-//         <div class="col-md-4">
-//           <div class="card-profile">
-//             <div class="profile-box"><i class="custom-icon">₦</i><span>Price</span></div>
-//             <button type="button" class="btn btn-link small editButton" data-form='<div class="form-floating">
-//             <input
-//               type="number"
-//               class="form-control"
-//               name="suite_price"
-//               min="0"
-//               placeholder="Price"
-//             />
-//             <label class="form-label small">Price</label>
-//             <div class="invalid-feedback">
-//               Please, enter a value!
-//             </div>
-//             </div>'>Edit</button>
-//           </div>
-//         </div>
-//       `;
-
-//     form.insertBefore(newRow, form.querySelector('.btn-group').parentNode);
-//   });
-// });
 

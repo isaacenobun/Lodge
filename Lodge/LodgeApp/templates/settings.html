@@ -18,6 +18,28 @@
             <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
             <li class="breadcrumb-item active">Settings</li>
           </ol>
+          {% for message in messages %}
+            {% if message.tags == "warning" %}
+              <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle me-1"></i>
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% elif message.tags == "success" %}
+              <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle me-1"></i>
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endif %}
+            {% if message.tags == "error" %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+              <i class="bi bi-exclamation-octagon me-1"></i>
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endif %}
+          {% endfor %}
         </nav>
       </div>
       <!-- End Page Title -->
@@ -38,65 +60,63 @@
           <div class="mb-3 mt-2">
             <div class="card-body settings">
               <p class="text-center card-subtitle mb-3 text-muted">
-                Edit your company information here
+                Edit your company information here <span><button type="button" class="btn btn-link small editButton">Edit</button></span>
               </p>
               <div class="pt-2 pb-2">
                 <form class="row g-2" action="{% url 'settings' %}" method="POST">
                   {% csrf_token %}
 
-                  <!-- Company Name -->
-                  <div class="row">
-                    <div class="col-md-12">
-                      <div class="card-profile" data-id="0" data-label="Company Name">
-                        <div class="profile-box"><i class="bi bi-bank"></i><span id="companyText" class="current-text form-floating">{{company.name}}</span></div>
-                        <button type="button" class="btn btn-link small editButton">Edit</button>
+                <!-- HTML Structure -->
+                  <div id="card-profiles-container">
+                    
+                    <div class="row">
+                      <div class="col-md-12">
+                        <div class="card-profile" data-id="0" data-label="Company Name">
+                          <div class="profile-box"><i class="bi bi-bank"></i><span class="current-text form-floating">{{company.name}}</span></div>
+                        </div>
                       </div>
                     </div>
+
+                    <p class="text-center card-subtitle mb-3 text-muted small">
+                      Currently Available Suites
+                    </p>
+                    
+                    
+                    {% for suite,details in suite_room_types.items %}
+                      
+                      <div class="row">
+                        <div class="col-md-4">
+                          <div class="card-profile" data-id="1" data-label="Suite Type">
+                            <div class="profile-box"><i class="bi bi-door-open"></i><span class="current-text">{{suite.type}}</span></div>
+                            <input type="hidden" name="input_id" value="{{suite.id}}">
+                          </div>
+                        </div>
+
+                        <div class="col-md-4">
+                          <div class="card-profile" data-id="2" data-label="Rooms">
+                            <div class="profile-box"><i class="bi bi-grid-3x3-gap"></i><span class="current-text">{{details.0}}</span></div>
+                          </div>
+                        </div>
+
+                        <div class="col-md-4">
+                          <div class="card-profile" data-id="3" data-label="Current Price">
+                            <div class="profile-box"><i class="custom-icon">₦</i><span class="current-text">{{details.1}}</span></div>
+                          </div>
+                        </div>
+                      </div>
+
+                    {% endfor %}
+                      
+                    
                   </div>
 
-                
-                  {% for suite,details in suite_room_types.items %}
-
-                  <div class="row">
-                    <!-- Suite Type -->
-                    <div class="col-md-4">
-                      <div class="card-profile" data-id="{{forloop.counter}}" data-label="Suite Type">
-                        <div class="profile-box"><i class="bi bi-door-open"></i><span class="current-text">{{suite.type}}</span></div>
-                        <button type="button" class="btn btn-link small editButton">Edit</button>
-                      </div>
-                    </div>
-
-                    <!-- No of rooms -->
-                    <div class="col-md-4">
-                      <div class="card-profile" data-id="{{forloop.counter}}" data-label="Rooms">
-                        <div class="profile-box"><i class="bi bi-grid-3x3-gap"></i><span class="current-text">{{details.0}} Rooms</span></div>
-                        <button type="button" class="btn btn-link small editButton">Edit</button>
-                      </div>
-                    </div>
-
-                    <!-- Price -->
-                    <div class="col-md-4">
-                      <div class="card-profile" data-id="{{forloop.counter}}" data-label="Current Price">
-                        <div class="profile-box"><i class="custom-icon">₦</i><span class="current-text">{{details.1}}</span></div>
-                        <button type="button" class="btn btn-link small editButton">Edit</button>
-                      </div>
-                    </div>
-                  </div>
-
-                  {% endfor %}
-
-                  <div class="row"  id="button-group-row">
+                  <div class="row" id="button-group-row">
                     <div class="btn-group" role="group" aria-label="Basic example">
                       <button type="button" id="settings-add-suite" class="btn btn-dark">Add suite</button>
                       <button type="button" id="reset-button" class="btn btn-warning">Reset</button>
-                      <button type="submit"
-                      data-bs-toggle="modal"
-                      data-bs-target="#verticalycentered"
-                      id="submitButton" class="btn btn-dark">Submit</button>
+                      <button type="submit" data-bs-toggle="modal" data-bs-target="#verticalycentered" id="submitButton" class="btn btn-dark">Submit</button>
                     </div>
-                    <!-- Button to add more suites -->
                   </div>
-
                   <div
                     class="text-center"
                     id="suites-container"
@@ -118,23 +138,46 @@
           <p class="text-center card-subtitle mb-3 mt-3 text-muted">
             Edit your staff profiles here
           </p>
-          {% for owner in owners %}
-          <div class="col-md-4">
-            <div class="card-profile">
-              <div class="profile-box"><i class="bi bi-person"></i><span>{{owner}}</span></div>
-              <button type="button" id="editButton" class="btn btn-link small editButton">Edit</button>
+          <div class="row">
+            {% for staff in staffs %}
+            <div class="col-md-4">
+              <div class="card-profile">
+                <div class="profile-box"><i class="bi bi-person"></i><span class="staff-name">{{staff}}
+                  
+                  {% if staff.owner == True %}
+                    (Admin)
+                  {% endif %}
+                    
+                </span></div>
+                
+                {% if user.owner == True %}
+                <button type="button" id="editStaffButton" class="btn btn-link small editStaffButton" data-staff="John Doe">Edit</button>
+                {% endif %}
+              </div>
             </div>
-          </div>
           {% endfor %}
+          <button type="button" id="addStaffButton" class="btn btn-link small addstaffButton" data-staff="New Staff">Add New Staff</button>
+
+        </div>
           
-          {% for staff in staffs %}
-          <div class="col-md-4">
-            <div class="card-profile">
-              <div class="profile-box"><i class="bi bi-person"></i><span>{{staff}}</span></div>
-              <button type="button" id="editButton" class="btn btn-link small editButton">Edit</button>
+
+                  
+          <div class="modal fade" id="verticalycentered" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title"  id="modalTitle">Edit Staff</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <p id="modalContent">Content will be updated here...</p>
+                </div>
+                <div class="modal-footer" id="modal-footer">
+              
+                </div>
+              </div>
             </div>
           </div>
-          {% endfor %}
 
         </div>
       </div>

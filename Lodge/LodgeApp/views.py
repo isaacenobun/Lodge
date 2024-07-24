@@ -226,8 +226,8 @@ def edit_rooms(request):
         room_ids = request.POST.getlist('rooms')
         room_tags = request.POST.getlist('room_tags')
         
-        # print (room_ids)
-        # print (room_tags)
+        print (room_ids)
+        print (room_tags)
         
         if len(room_ids) != len(room_tags):
             messages.error(request, "There was an error. Try again.")
@@ -378,12 +378,69 @@ def settings(request):
         return redirect('onboarding')
     
     if request.method == 'POST':
-        # print (request.POST)
-        # print (request.POST.get('input_1'))
-        # print (request.POST.getlist('input_2'))
-        # print (request.POST.getlist('input_3'))
-        # print (request.POST.getlist('input_4'))
-        pass
+        
+        suites = Suite.objects.filter(company=request.user.company)
+        rooms = Room.objects.filter(company=request.user.company)
+        
+        new_company_name = request.POST.get('input_0')
+        company = request.user.company
+        company.name=new_company_name
+        company.save()
+        
+        suite_ids = request.POST.getlist('input_id')
+        edit_suite_names = request.POST.getlist('input_1')
+        edit_suite_prices = request.POST.getlist('input_3')
+        edit_no_of_rooms = request.POST.getlist('input_2')
+        
+        new_suites = request.POST.getlist('input_new')
+        
+        for suite_id, new_name, new_price, new_no_of_rooms in zip(suite_ids, edit_suite_names, edit_suite_prices, edit_no_of_rooms):
+            try:
+                suite = suites.get(id=suite_id)
+                
+                suite.type = new_name.strip()
+                suite.price = float(new_price)
+                suite.save()
+                
+                current_rooms = rooms.filter(suite=suite).count()
+                
+                new_no_of_rooms = int(new_no_of_rooms)
+                if new_no_of_rooms > current_rooms:
+                    for i in range(current_rooms, new_no_of_rooms):
+                        Room.objects.create(suite=suite, company=suite.company, room_tag=f'New room {i + 1}')
+                elif new_no_of_rooms < current_rooms:
+                    rooms_to_remove = Room.objects.filter(suite=suite)[new_no_of_rooms:]
+                    
+            except:
+                messages.error(request, f"There was a problem")
+        
+        if new_suites:
+            itr = iter(new_suites)
+            
+            for row in range(0,int(len(new_suites)/3)):
+                
+                try:
+                    new_suite = Suite.objects.create(
+                    company=request.user.company,
+                    type=next(itr).strip(),
+                    price=float(0),
+                )
+                    
+                    for room_tag in range(1,int(next(itr))+1):
+                        new_room = Room.objects.create(
+                            suite=new_suite,
+                            company=request.user.company,
+                            room_tag="Room "+str(room_tag)
+                        )
+                        
+                    new_suite.price= float(next(itr))
+                    new_suite.save()
+                    
+                except:
+                    messages.success(request, f"There was a problem")
+                    
+        messages.success(request, f"Edit successful")
+        return redirect('settings')
     
     company = request.user.company
     
@@ -393,6 +450,7 @@ def settings(request):
     for suite in suites:
         suite_room_types[suite] = [Room.objects.filter(suite=suite).count(),suite.price]
     
+    user = request.user
     owners = Staff.objects.filter(company = request.user.company, owner=True)
     staffs = Staff.objects.filter(company = request.user.company, is_active=True, owner=True)
     
@@ -401,6 +459,7 @@ def settings(request):
     context = {
         'suite_room_types':suite_room_types,
         'company':company,
+        'user':user,
         'owners':owners,
         'staffs':staffs,
         'page_name':'Settings',
