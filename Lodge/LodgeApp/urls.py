@@ -17,8 +17,11 @@ urlpatterns = [
     path('log-out/', views.sign_out, name='logout'),
     path('landing', views.landing, name='landing'),
     path('settings/', views.settings, name='settings'),
+    path('staff-add/', views.staff_add, name='staff-add'),
+    path('staff-edit/', views.staff_edit, name='staff-edit'),
     path('download-history-csv/', views.download_history_csv, name='download_history_csv'),
     path('download-analytics-csv/', views.download_analytics_csv, name='download_analytics_csv'),
+    path('download-logs-csv/', views.download_logs_csv, name='download_logs_csv'),
     path('extend/', views.extend, name='extend'),
     path('edit-rooms/', views.edit_rooms, name='edit-rooms'),
 ]

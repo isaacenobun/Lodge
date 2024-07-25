@@ -198,26 +198,32 @@ function resetPage() {
 
 document.querySelectorAll('.editStaffButton, .addstaffButton').forEach(button => {
   button.addEventListener('click', function () {
-    const staffName = this.getAttribute('data-staff');
+    const staffName = this.getAttribute('data-staff-name');
+    const staffEmail = this.getAttribute('data-staff-email');
+    const staffId = this.getAttribute('data-staff-id');
     if (this.classList.contains('editStaffButton')) {
       document.getElementById('modalTitle').innerText = `Editing details for ${staffName}`;
       document.getElementById('modal-footer').innerHTML = `<button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Close</button>
-                  <button type="button" class="btn btn-dark">Save changes</button>`;
+                  <button type="submit" onclick="submitEditStaffForm()" class="btn btn-dark">Save changes</button>`;
       document.getElementById('modalContent').innerHTML = `<form 
+                      id='editStaff'
                       class="row g-3 needs-validation"
                       novalidate
-                      method="post"
-                      action="{% url 'sign-up' %}">
+                      method="POST"
+                      action=${editStaffUrl}>
+
+                      <input type="hidden" name="csrfmiddlewaretoken" value="${csrftoken}">
+                      <input type="hidden" name="staff_id" value="${staffId}">
 
                       <div class="col-12">
-                        <label for="yourEmail" class="form-label">Username</label>
-                        <input type="text" name="username" class="form-control" id="yourUsername" required />
+                        <label for="yourUsername" class="form-label">Username</label>
+                        <input placeholder="${staffName}" type="text" value="${staffName}" name="username" class="form-control" id="yourUsername" required />
                         <div class="invalid-feedback">Please enter a username!</div>
                       </div>
                       
                       <div class="col-12">
                         <label for="yourEmail" class="form-label">Email</label>
-                        <input type="email" name="email" class="form-control" id="yourEmail" required />
+                        <input placeholder="${staffEmail}" type="email" value="${staffEmail}" name="email" class="form-control" id="yourEmail" required />
                         <div class="invalid-feedback">Please enter a valid Email address!</div>
                       </div>
 
@@ -229,7 +235,7 @@ document.querySelectorAll('.editStaffButton, .addstaffButton').forEach(button =>
 
                       <div class="col-12">
                         <div class="form-check">
-                          <input class="form-check-input" name="terms" type="checkbox" value="" id="adminStatus" required>
+                          <input class="form-check-input" name="admin" type="checkbox" id="adminStatus" required>
                           <label class="form-check-label" for="adminStatus">Assign Admin Status</label>
                         </div>
                       </div>
@@ -237,18 +243,15 @@ document.querySelectorAll('.editStaffButton, .addstaffButton').forEach(button =>
     } else if (this.classList.contains('addstaffButton')) {
       document.getElementById('modalTitle').innerText = 'Add New Staff';
       document.getElementById('modal-footer').innerHTML = `<button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Close</button>
-                  <button type="button" class="btn btn-dark">Submit</button>`;
+                  <button type="submit" onclick="submitNewStaffForm()" class="btn btn-dark">Submit</button>`;
       document.getElementById('modalContent').innerHTML = `<form 
+                      id='newStaff'
                       class="row g-3 needs-validation"
                       novalidate
-                      method="post"
-                      action="{% url 'sign-up' %}">
+                      method="POST"
+                      action=${addStaffUrl}>
 
-                      <div class="col-12">
-                        <label for="newName" class="form-label">Name</label>
-                        <input type="text" name="userName" class="form-control" id="newName" required />
-                        <div class="invalid-feedback">Please enter a username!</div>
-                      </div>
+                      <input type="hidden" name="csrfmiddlewaretoken" value="${csrftoken}">
 
                       <div class="col-12">
                         <label for="newUsername" class="form-label">Username</label>
@@ -270,7 +273,7 @@ document.querySelectorAll('.editStaffButton, .addstaffButton').forEach(button =>
 
                       <div class="col-12">
                         <div class="form-check">
-                          <input class="form-check-input" name="terms" type="checkbox" value="" id="newAdminStatus" required>
+                          <input class="form-check-input" name="admin" type="checkbox" id="newAdminStatus" required>
                           <label class="form-check-label" for="newAdminStatus">Assign Admin Status</label>
                         </div>
                       </div>
@@ -280,3 +283,12 @@ document.querySelectorAll('.editStaffButton, .addstaffButton').forEach(button =>
   });
 });
 
+function submitNewStaffForm() {
+  var form = document.getElementById('newStaff');
+  form.submit();
+}
+
+function submitEditStaffForm() {
+  var form = document.getElementById('editStaff');
+  form.submit();
+}

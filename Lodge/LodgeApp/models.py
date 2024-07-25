@@ -33,8 +33,8 @@ class Room(models.Model):
         return f'Room {self.room_tag} - {self.suite.type}'
 
 class Staff(AbstractUser):
-    email = models.EmailField(unique=True)
-    username = models.CharField(max_length=50)
+    email = models.EmailField(unique=True, blank=False)
+    username = models.CharField(max_length=50, blank=False)
     company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True, blank=True)
     owner = models.BooleanField(default=False)
 
@@ -77,7 +77,7 @@ class GuestHistory(models.Model):
     check_out = models.DateTimeField()
     revenue = models.ForeignKey(Revenue, on_delete=models.CASCADE)
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
-    duration = models.CharField(max_length=50)
+    duration = models.BigIntegerField()
     
     def __str__(self):
         return f'{self.guest}'

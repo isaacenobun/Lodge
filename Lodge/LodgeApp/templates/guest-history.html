@@ -22,14 +22,14 @@
     </div>
     <!-- End Page Title -->
 
-    <a href="{% url 'download_history_csv' %}"><p>Download</p></a>
+    <a href="{% url 'download_history_csv' %}"><p style="color: black;"><u>Download History</u></p></a>
 
     <section class="section">
       <div class="row">
         <div class="col-lg-12">
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title">Datatables</h5>
+              <h5 class="card-title">History</h5>
               <p>Table detailing info about our previous guests.</p>
 
               <!-- Table with stripped rows -->
@@ -42,6 +42,7 @@
                     <th><b>N</b>ame</th>
                     <th>Email</th>
                     <th>Phone Number</th>
+                    <th>Suite</th>
                     <th>Room</th>
                     <th data-type="date" data-format="YYYY/DD/MM">
                       Check-in Date
@@ -59,6 +60,7 @@
                     <td>{{guest.name}}</td>
                     <td>{{guest.email}}</td>
                     <td>{{guest.number}}</td>
+                    <td>{{guest.room.suite.type}}</td>
                     <td style="text-align: center">
                       {{guest.room.room_tag}}
                     </td>

@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load custom_filters %}
-
+{% load humanize %}
+{% load tz %}
 
 {% block content %}
   
@@ -60,6 +61,9 @@
           <div class="mb-3 mt-2">
             <div class="card-body settings">
               <p class="text-center card-subtitle mb-3 text-muted">
+                Next Subscription date: {{subscription.due_date|timezone:"Africa/Lagos"|date:"M d, Y"}}
+              </p>
+              <p class="text-center card-subtitle mb-3 text-muted">
                 Edit your company information here <span><button type="button" class="btn btn-link small editButton">Edit</button></span>
               </p>
               <div class="pt-2 pb-2">
@@ -100,7 +104,7 @@
 
                         <div class="col-md-4">
                           <div class="card-profile" data-id="3" data-label="Current Price">
-                            <div class="profile-box"><i class="custom-icon">₦</i><span class="current-text">{{details.1}}</span></div>
+                            <div class="profile-box"><i class="custom-icon">₦</i><span class="current-text">{{details.1|floatformat:1|intcomma}}</span></div>
                           </div>
                         </div>
                       </div>
@@ -134,10 +138,15 @@
 
 
         <div class="tab-pane fade" id="staff-justified" role="tabpanel" aria-labelledby="staff-tab">
-          
+          {% if user.owner == True %}
           <p class="text-center card-subtitle mb-3 mt-3 text-muted">
             Edit your staff profiles here
           </p>
+          {% else %}
+          <p class="text-center card-subtitle mb-3 mt-3 text-muted">
+            {{company}} staff
+          </p>
+          {% endif %}
           <div class="row">
             {% for staff in staffs %}
             <div class="col-md-4">
@@ -151,13 +160,14 @@
                 </span></div>
                 
                 {% if user.owner == True %}
-                <button type="button" id="editStaffButton" class="btn btn-link small editStaffButton" data-staff="John Doe">Edit</button>
+                <button type="button" id="editStaffButton" class="btn btn-link small editStaffButton" data-staff-name="{{staff.username}}" data-staff-email="{{staff.email}}" data-staff-id="{{staff.id}}">Edit</button>
                 {% endif %}
               </div>
             </div>
           {% endfor %}
+          {% if user.owner == True %}
           <button type="button" id="addStaffButton" class="btn btn-link small addstaffButton" data-staff="New Staff">Add New Staff</button>
-
+          {% endif %}
         </div>
           
 

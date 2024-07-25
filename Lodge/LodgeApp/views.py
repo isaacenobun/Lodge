@@ -1,5 +1,6 @@
 from .imports import *
 
+# Production Ready ✅
 def sign_up(request):
     if request.user.is_authenticated:
         if request.user.company is not None:
@@ -9,37 +10,45 @@ def sign_up(request):
 
     if request.method == 'POST':
         username = request.POST.get('username')
-        email = request.POST.get('email')
+        email = request.POST.get('email').lower()
         password = request.POST.get('password')
         
-        if Staff.objects.filter(email=email.lower()).exists():
+        if Staff.objects.filter(email=email).exists():
             messages.error(request, 'Email already exists. Please choose a different email or sign in.')
         else:
             try:
-                new_user = Staff.objects.create(
-                    username=username,
-                    email=email.lower(),
-                    password=password
-                )
-                
-                new_user.set_password(password)
-                new_user.is_superuser = True
-                new_user.is_staff = False
-                new_user.save()
-                
-                new_user = authenticate(
-                    request, 
-                    email=email.lower(), 
-                    password=password
-                )
-                login(request, new_user)
-                return redirect('onboarding')
+                with transaction.atomic():
+                    new_user = Staff.objects.create(
+                        username=username,
+                        email=email,
+                    )
+                    
+                    new_user.set_password(password)
+                    new_user.is_superuser = True
+                    new_user.is_staff = False
+                    new_user.save()
+                    
+                    new_user = authenticate(
+                        request, 
+                        email=email, 
+                        password=password
+                    )
+                    if new_user is not None:
+                        login(request, new_user)
+                        return redirect('onboarding')
+                    else:
+                        messages.error(request, 'Authentication failed. Please try logging in with your new credentials.')
             except IntegrityError:
                 messages.error(request, 'An error occurred while creating your account. Please try again.')
+                return redirect('sign-up')
+            except Exception:
+                messages.error(request, 'An unexpected error occurred. Please try again.')
+                return redirect('sign-up')
 
     context = {'page_name': 'Sign Up'}
     return render(request, 'pages-sign-up.html', context)
 
+# Production Ready ✅
 def onboarding(request):
     if not request.user.is_authenticated:
         return redirect('sign-in')
@@ -48,79 +57,98 @@ def onboarding(request):
         return redirect('dashboard')
     
     if request.method == 'POST':
-        company_name = request.POST.get('company_name')
+        company_name = request.POST.get('company_name').strip()
         
-        company = Company.objects.create(name=company_name)
+        if not company_name:
+            messages.error(request, 'Company name is required.')
+            return redirect('onboarding')
         
         suite_type_pattern = re.compile(r'suite_type_\d+')
-        suite_types = [value for key, value in request.POST.items() if suite_type_pattern.match(key)]
-        # print (suite_types)
+        suite_types = [value.strip() for key, value in request.POST.items() if suite_type_pattern.match(key)]
+        
+        if len(set(suite_types))!=len(suite_types):
+            messages.error(request, 'Please select unique suite types.')
+            return redirect('onboarding')
         
         suite_price_pattern = re.compile(r'suite_price_\d+')
-        suite_prices = [value for key, value in request.POST.items() if suite_price_pattern.match(key)]
-        # print (suite_prices)
+        suite_prices = [value.strip() for key, value in request.POST.items() if suite_price_pattern.match(key)]
         
         suite_rooms_pattern = re.compile(r'suite_rooms_\d+')
-        suite_rooms = [value for key, value in request.POST.items() if suite_rooms_pattern.match(key)]
-        # print (suite_rooms)
+        suite_rooms = [value.strip() for key, value in request.POST.items() if suite_rooms_pattern.match(key)]
         
-        for iter in range(len(suite_types)):
-            suite_type = suite_types[iter]
-            suite_price = suite_prices[iter]
-            suite_room = suite_rooms[iter]
-            
-            new_suite = Suite.objects.create(
-                company=company,
-                type=suite_type,
-                price=float(suite_price)
-            )
-            
-            for room_tag in range(1,int(suite_room)+1):
-                new_room = Room.objects.create(
-                    suite=new_suite,
+        if len(suite_types) != len(suite_prices) or len(suite_types) != len(suite_rooms):
+            messages.error(request, 'Mismatch in number of suite types, prices, and rooms.')
+            return redirect('onboarding')
+        
+        try:
+            with transaction.atomic():
+                company = Company.objects.create(name=company_name)
+
+                for i in range(len(suite_types)):
+                    suite_type = suite_types[i]
+                    suite_price = suite_prices[i]
+                    suite_room = suite_rooms[i]
+                    
+                    try:
+                        suite_price = float(suite_price)
+                        suite_room = int(suite_room)
+                    except ValueError:
+                        messages.error(request, 'Invalid price or room count.')
+                        return redirect('onboarding')
+                    
+                    new_suite = Suite.objects.create(
+                        company=company,
+                        type=suite_type,
+                        price=suite_price
+                    )
+                    
+                    for room_tag in range(suite_room):
+                        Room.objects.create(
+                            suite=new_suite,
+                            company=company,
+                            room_tag=f"Room {room_tag}"
+                        )
+                
+                owner = request.user
+                owner.company = company
+                owner.owner = True
+                owner.save()
+                
+                no_of_rooms = Room.objects.filter(company=company).count()
+                no_of_rooms = max(no_of_rooms, 20)
+                
+                subscription = Subscriptions.objects.create(
                     company=company,
-                    room_tag="Room "+str(room_tag)
+                    amount=no_of_rooms * 1000,
+                    due_date=timezone.now() + relativedelta(months=1)
                 )
-        owner = request.user
-        owner.company = company
-        owner.owner = True
-        owner.save()
+                
+                start_date = subscription.start_date.strftime('%a %d %b %Y, %I:%M%p')
+                due_date = subscription.due_date.strftime('%a %d %b %Y, %I:%M%p')
+                
+                mail = (f'Hello Isaac,\n\n{owner.username} from {owner.company} just subscribed to LodgeIt.\n'
+                        f'Kindly send an invoice to {owner.email} as soon as possible.\n\n'
+                        f'Invoice details\nClient: {owner.username}\nCompany: {owner.company}\n'
+                        f'Subscription: ₦{subscription.amount}\nStart Date: {start_date}\nDue Date: {due_date}')
+                
+                send_mail(
+                    'New LodgeIt Subscription',
+                    mail,
+                    'lodgeitng@gmail.com',
+                    ['Isaacenobun@gmail.com', 'etinosa.enobun@gmail.com', 'martyminaj@gmail.com']
+                )
+                
+                messages.success(request, f"An invoice for a Subscription fee of ₦{subscription.amount} has been sent to {owner.email}. Kindly pay within two days.")
+                
+                return redirect('dashboard')
         
-        no_of_rooms = 0
-        for room in Room.objects.filter(company=company):
-            no_of_rooms+=1
-            
-        if no_of_rooms <= 20:
-            no_of_rooms=20
-        
-        subscription = Subscriptions.objects.create(
-                company=request.user.company,
-                amount= (no_of_rooms)*1000,
-                due_date=timezone.now() + relativedelta(months=1)
-            )
-        
-        # start_date = subscription.start_date.strftime('%a %d %b %Y, %I:%M%p')
-        # due_date = subscription.due_date.strftime('%a %d %b %Y, %I:%M%p')
-        
-        # Send a subscription email to LodgeIt admin
-        # mail = f'Hello Isaac,\n\n{owner.username} from {owner.company} just subscribed to LodgeIt.\nKindly send an invoice to {owner.email} as soon as possible.\n\nInvoice details\nClient: {owner.username}\nCompany: {owner.company}\nSubscription: N{subscription.amount}\nStart Date: {(start_date)}\nDue Date: {due_date}'
-        
-        # send_mail(
-        #     'New LodgeIt Subscription',
-            
-        #     mail,
-            
-        #     'lodgeitng@gmail.com',
-            
-        #     ['Isaacenobun@gmail.com','etinosa.enobun@gmail.com','martyminaj@gmail.com']
-        # )
-        
-        messages.warning(request, f"An invoice for a Subscription fee of {subscription.amount} has been sent to {owner.email}. Kindly pay within two days")
-            
-        return redirect('dashboard')
+        except:
+            messages.error(request, 'An unexpected error occurred. Please try again.')
+            return redirect('onboarding')
     
     return render(request, 'onboarding.html')
 
+# Production Ready ✅
 def sign_in(request):
     if request.user.is_authenticated:
         if request.user.company is not None:
@@ -129,8 +157,12 @@ def sign_in(request):
             return redirect('onboarding')
     
     if request.method == 'POST':
-        email = request.POST.get('email')
-        password = request.POST.get('password')
+        email = request.POST.get('email', '').strip()
+        password = request.POST.get('password', '').strip()
+        
+        if not email or not password:
+            messages.warning(request, 'Both email and password are required.')
+            return redirect('sign-in')
 
         try:
             staff = Staff.objects.get(email=email.lower())
@@ -142,36 +174,43 @@ def sign_in(request):
 
         if staff is not None:
             login(request, staff)
-            # messages.success(request, f"Welcome {request.POST.get('email')}")
             return redirect('dashboard')
         else:
             messages.warning(request, "Invalid password")
             return redirect('sign-in')
-    else:
-        context = {'page_name':'Sign in'}
-        return render(request, 'pages-sign-in.html', context)
+    
+    context = {'page_name':'Sign in'}
+    return render(request, 'pages-sign-in.html', context)
 
+# Production Ready ✅
 def sign_out(request):
     logout(request)
     return redirect('sign-in')
 
+# Production Ready ✅
 def dashboard(request):
     if not request.user.is_authenticated:
         return redirect('sign-in')
     
-    elif request.user.is_authenticated and request.user.company is None:
+    if request.user.is_authenticated and request.user.company is None:
         return redirect('onboarding')
     
-    logs = Log.objects.filter(
-        company=request.user.company
-        ).order_by('-id')[:5]
-    active_guests = Guest.objects.filter(check_out__gte=timezone.now(),
-                                         company=request.user.company)
-    total_guests = Guest.objects.filter(company=request.user.company).count()
-    available_rooms = Room.objects.filter(room_status=False,
-                                          company=request.user.company)
+    company = request.user.company
     
-    returning_guests = Guest.objects.filter(company=request.user.company, check_out__lte=timezone.now())
+    try:
+        logs = Log.objects.filter(
+            company=request.user.company
+            ).order_by('-id')[:5]
+        active_guests = Guest.objects.filter(check_out__gte=timezone.now(),
+                                            company=company)
+        total_guests = Guest.objects.filter(company=company).count()
+        available_rooms = Room.objects.filter(room_status=False,
+                                            company=company)
+        
+        returning_guests = Guest.objects.filter(company=company, check_out__lte=timezone.now())
+    except:
+        messages.error(request, 'An unexpected error occurred while fetching data. Please try again later.')
+        return redirect('logout')
 
     context = {
         'now':timezone.now(),
@@ -185,65 +224,77 @@ def dashboard(request):
     }
     return render(request, 'index.html', context)
 
+# Production Ready ✅
 def rooms(request):
     if not request.user.is_authenticated:
         return redirect('sign-in')
     
-    if request.user.is_authenticated and request.user.company is None:
+    if request.user.company is None:
         return redirect('onboarding')
     
-    suite_types = Suite.objects.filter(company=request.user.company).values_list('type', flat=True).distinct()
+    company = request.user.company
     
-    suite_types_dict = {}
-    for suite_type in suite_types:
-        suite_rooms = Room.objects.filter(suite__type=suite_type, company=request.user.company)
-        suite_types_dict[suite_type] = suite_rooms
-    
-    suite_types_dict['All'] = Room.objects.filter(company=request.user.company)
-    
-    guests = Guest.objects.filter(check_out__gt=timezone.now(),
-                                  company=request.user.company
-                                  )
-    room_guest_mapping = {guest.room.id: guest for guest in guests}
-    
-    available_rooms = Room.objects.filter(room_status=False,
-                                          company=request.user.company)
-    returning_guests = Guest.objects.filter(company=request.user.company, check_out__lte=timezone.now())
-    context = {
-        'available_rooms':available_rooms,
-        'suite_types': suite_types_dict,
-        'room_guest_mapping': room_guest_mapping,
-        'check_out_url': reverse('check-out'),
-        'check_in_url': reverse('check-in'),
-        'page_name':'Rooms',
-        'returning_guests':returning_guests
-    }
-    
-    return render(request, 'room-carousel.html', context)
+    try:
+        suite_types = Suite.objects.filter(company=request.user.company).values_list('type', flat=True).distinct()
+        
+        suite_types_dict = {}
+        for suite_type in suite_types:
+            suite_rooms = Room.objects.filter(suite__type=suite_type, company=company)
+            suite_types_dict[suite_type] = suite_rooms
+        
+        suite_types_dict['All'] = Room.objects.filter(company=company)
+        
+        guests = Guest.objects.filter(check_out__gt=timezone.now(),
+                                    company=company
+                                    )
+        room_guest_mapping = {guest.room.id: guest for guest in guests}
+        
+        available_rooms = Room.objects.filter(room_status=False,
+                                            company=company)
+        returning_guests = Guest.objects.filter(company=company, check_out__lte=timezone.now())
+        
+        context = {
+            'available_rooms':available_rooms,
+            'suite_types': suite_types_dict,
+            'room_guest_mapping': room_guest_mapping,
+            'check_out_url': reverse('check-out'),
+            'check_in_url': reverse('check-in'),
+            'page_name':'Rooms',
+            'returning_guests':returning_guests
+        }
+        
+        return render(request, 'room-carousel.html', context)
+    except:
+        messages.error(request, 'An unexpected error occurred while retrieving data. Please try again later.')
+        return redirect('logout')
 
+# Not Production Ready ❌
 def edit_rooms(request):
     if request.method == 'POST':
         room_ids = request.POST.getlist('rooms')
         room_tags = request.POST.getlist('room_tags')
         
-        print (room_ids)
-        print (room_tags)
-        
         if len(room_ids) != len(room_tags):
             messages.error(request, "There was an error. Try again.")
             return redirect('rooms')
-
-        rooms = Room.objects.filter(id__in=room_ids)
-        
-        for room, room_tag in zip(rooms, room_tags):
-            if not room_tag:
-                messages.warning(request, f"A room tag cannot be empty.")
+        try:
+            rooms = Room.objects.filter(id__in=room_ids)
+            if len(rooms) != len(room_ids):
+                messages.error(request, "There was an error. Try again.")
                 return redirect('rooms')
-            else:
-                room.room_tag = room_tag
-                room.save()
-        messages.success(request, f"Room tag changed successfully")
-        return redirect('rooms')
+            
+            for room, room_tag in zip(rooms, room_tags):
+                if not room_tag:
+                    messages.warning(request, f"A room tag cannot be empty.")
+                    return redirect('rooms')
+                else:
+                    room.room_tag = room_tag
+                    room.save()
+            messages.success(request, f"Room tags edited successfully")
+            return redirect('rooms')
+        except:
+            messages.error(request, "There was an error. Try again.")
+            return redirect('rooms')
     
     return redirect('rooms')
 
@@ -370,6 +421,89 @@ def logs(request):
     
     return render(request, 'logs.html', context)
 
+def download_logs_csv(request):
+    
+    logs = Log.objects.filter(company=request.user.company).order_by('-id')
+    
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="Logs.csv"'
+
+    writer = csv.writer(response)
+    
+    writer.writerow(['#', 'Log', 'Time', 'Staff on duty'])  # CSV Header
+    
+    count=1
+    for log in logs:
+        writer.writerow([count, log.action, log.timestamp.strftime('%a %d %b %Y, %I:%M%p'), log.staff])
+        count+=1
+
+    return response
+
+def staff_add(request):
+    username = request.POST.get('username')
+    email = request.POST.get('email')
+    password = request.POST.get('password')
+    admin_status = request.POST.get('admin')
+    
+    if Staff.objects.filter(email=email.lower()).exists():
+        messages.error(request, 'Email already exists. Please choose a different email.')
+        return redirect('settings')
+    else:
+        try:
+            new_user = Staff.objects.create(
+                username=username,
+                email=email.lower(),
+                password=password,
+                company=request.user.company
+            )
+            
+            if admin_status:
+                new_user.owner = True
+            
+            new_user.set_password(password)
+            new_user.is_superuser = True
+            new_user.is_staff = False
+            new_user.save()
+            
+            messages.success(request, f"Staff added successfully")
+            
+            return redirect('settings')
+        except:
+            messages.error(request, 'An error occurred while creating a new staff account. Please try again.')
+            return redirect('settings')
+            
+
+def staff_edit(request):
+    if request.method == 'POST':
+        staff_id = request.POST.get('staff_id')
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        
+        if not password:
+            messages.warning(request, 'You did not put in a password')
+            return redirect('settings')
+        
+        admin_status = request.POST.get('admin')
+        
+        if admin_status:
+            admin_status = True
+        else:
+            admin_status = False
+        
+        try:
+            staff = Staff.objects.get(id=staff_id)
+            
+            staff.username = username
+            staff.email = email.lower()
+            staff.set_password(password)
+            staff.owner = admin_status
+            staff.save()
+        except:
+            messages.error(request, 'An error occurred while editing the staff account. Please try again.')
+            
+        return redirect('settings')
+        
 def settings(request):
     if not request.user.is_authenticated:
         return redirect('sign-in')
@@ -384,8 +518,9 @@ def settings(request):
         
         new_company_name = request.POST.get('input_0')
         company = request.user.company
-        company.name=new_company_name
-        company.save()
+        if new_company_name:
+            company.name=new_company_name.strip()
+            company.save()
         
         suite_ids = request.POST.getlist('input_id')
         edit_suite_names = request.POST.getlist('input_1')
@@ -399,20 +534,33 @@ def settings(request):
                 suite = suites.get(id=suite_id)
                 
                 suite.type = new_name.strip()
-                suite.price = float(new_price)
+                if suites.exclude(id=suite_id).filter(type=suite.type).exists():
+                    messages.error(request, f'Make sure the Suite names are unique.')
+                    return redirect('settings')
+                
+                try:
+                    suite.price = float(new_price.replace(',', ''))
+                except ValueError:
+                    messages.error(request, f'Please enter a valid Suite price for the {suite.type} Suite')
+                    return redirect('settings')
                 suite.save()
                 
                 current_rooms = rooms.filter(suite=suite).count()
-                
-                new_no_of_rooms = int(new_no_of_rooms)
+                try:
+                    new_no_of_rooms = int(new_no_of_rooms)
+                except ValueError:
+                    messages.error(request, f'Please enter a valid number of rooms for the {suite.type} Suite.')
+                    return redirect('settings')
                 if new_no_of_rooms > current_rooms:
                     for i in range(current_rooms, new_no_of_rooms):
                         Room.objects.create(suite=suite, company=suite.company, room_tag=f'New room {i + 1}')
                 elif new_no_of_rooms < current_rooms:
                     rooms_to_remove = Room.objects.filter(suite=suite)[new_no_of_rooms:]
+                    # Delete
                     
             except:
                 messages.error(request, f"There was a problem")
+                return redirect('settings')
         
         if new_suites:
             itr = iter(new_suites)
@@ -420,24 +568,37 @@ def settings(request):
             for row in range(0,int(len(new_suites)/3)):
                 
                 try:
+                    new_name = next(itr).strip()
+                    if suites.filter(type=new_name).exists():
+                        messages.error(request, f'Make sure the Suite names are unique.')
+                        return redirect('settings')
                     new_suite = Suite.objects.create(
                     company=request.user.company,
-                    type=next(itr).strip(),
+                    type=new_name,
                     price=float(0),
                 )
-                    
-                    for room_tag in range(1,int(next(itr))+1):
+                    try:
+                        rooms_no = int(next(itr))
+                    except ValueError:
+                        messages.error(request, f'Please enter a valid number of rooms.')
+                        return redirect('settings')
+                    for room_tag in range(1,rooms_no+1):
                         new_room = Room.objects.create(
                             suite=new_suite,
                             company=request.user.company,
                             room_tag="Room "+str(room_tag)
                         )
-                        
-                    new_suite.price= float(next(itr))
+                    
+                    try:   
+                        new_suite.price= float(next(itr))
+                    except ValueError:
+                        messages.error(request, f'Please enter valid Suite prices')
+                        return redirect('settings')
                     new_suite.save()
                     
                 except:
-                    messages.success(request, f"There was a problem")
+                    messages.error(request, f"There was a problem")
+                    return redirect('settings')
                     
         messages.success(request, f"Edit successful")
         return redirect('settings')
@@ -452,9 +613,11 @@ def settings(request):
     
     user = request.user
     owners = Staff.objects.filter(company = request.user.company, owner=True)
-    staffs = Staff.objects.filter(company = request.user.company, is_active=True, owner=True)
+    staffs = Staff.objects.filter(company = request.user.company, is_active=True)
     
     returning_guests = Guest.objects.filter(company=request.user.company, check_out__lte=timezone.now())
+    
+    subscription = Subscriptions.objects.filter(company=company).order_by('-due_date')[0]
     
     context = {
         'suite_room_types':suite_room_types,
@@ -464,6 +627,7 @@ def settings(request):
         'staffs':staffs,
         'page_name':'Settings',
         'returning_guests':returning_guests,
+        'subscription':subscription
     }
     return render(request, 'settings.html', context)
 
@@ -823,30 +987,37 @@ def analytics(request):
 def download_analytics_csv(request):
     
     guests = Guest.objects.filter(company=request.user.company)
+    guests_history = GuestHistory.objects.filter(company=request.user.company)
     
     checkins = CheckIns.objects.filter(company=request.user.company)
     
     rooms = Room.objects.filter(company=request.user.company)
     
     years_set = set()
-    for guest in guests:
-        years_set.add(guest.check_in.year)
+    for checkin in checkins:
+        years_set.add(checkin.time.year)
     
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="Report.csv"'
 
     writer = csv.writer(response)
     
-    def calculate_rev(year,month=None,guests=guests):
+    def calculate_rev(year,month=None,guests=guests,guests_history=guests_history):
         if month is not None:
             total = 0
             for guest in guests:
+                if guest.check_in.year == year and guest.check_in.month == month:
+                    total+=guest.revenue.revenue
+            for guest in guests_history:
                 if guest.check_in.year == year and guest.check_in.month == month:
                     total+=guest.revenue.revenue
             return round(total,1)
         
         total = 0
         for guest in guests:
+            if guest.check_in.year == year:
+                total+=guest.revenue.revenue
+        for guest in guests_history:
             if guest.check_in.year == year:
                 total+=guest.revenue.revenue
         return round(total,1)
@@ -866,11 +1037,11 @@ def download_analytics_csv(request):
                 total+=1
         return round(total,1)
     
-    def avg_daily_revenue(year,month=None,guests=guests):
+    def avg_daily_revenue(year,month=None,guests=guests,guests_history=guests_history):
         if month is not None:
-            return round(calculate_rev(year,month,guests=guests)/calendar.monthrange(year,month)[1],1)
+            return round(calculate_rev(year,month,guests=guests,guests_history=guests_history)/calendar.monthrange(year,month)[1],1)
         
-        return round(calculate_rev(year,month=None,guests=guests)/365,1)
+        return round(calculate_rev(year,month=None,guests=guests,guests_history=guests_history)/365,1)
     
     def occupancy_rate(year,month=None,checkins=checkins,rooms=rooms):
         if month is not None:
@@ -886,11 +1057,11 @@ def download_analytics_csv(request):
                 total+=1
         return round(total/rooms.count(),1)
     
-    def rev_per_room(year,month=None,guests=guests,rooms=rooms):
+    def rev_per_room(year,month=None,guests=guests,rooms=rooms,guests_history=guests_history):
         if month is not None:
-            return calculate_rev(year,month,guests=guests)/rooms.count()
+            return round(calculate_rev(year,month,guests=guests,guests_history=guests_history)/rooms.count(),1)
         
-        return calculate_rev(year,month=None,guests=guests)/rooms.count()
+        return round(calculate_rev(year,month=None,guests=guests,guests_history=guests_history)/rooms.count(),1)
     
     for year_ in years_set:
          writer.writerow([year_])  # CSV Header

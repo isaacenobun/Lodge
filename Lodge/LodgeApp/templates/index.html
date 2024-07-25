@@ -139,6 +139,7 @@
                                         <th scope="col" class="text-center">#</th>
                                         <th scope="col" class="text-center">Guest</th>
                                         <th scope="col" class="text-center d-none d-lg-table-cell">Email</th>
+                                        <th scope="col" class="text-center">Suite</th>
                                         <th scope="col" class="text-center">Room</th>
                                         <th scope="col" class="text-center">Mobile</th>
                                     </tr>
@@ -160,6 +161,7 @@
                                         <td class="text-center d-none d-lg-table-cell">
                                             <a href="mailto:{{guest.email}}">{{guest.email}}</a>
                                         </td>
+                                        <td class="text-center">{{guest.room.suite.type}}</td>
                                         <td class="text-center">{{guest.room.room_tag}}</td>
                                         <td class="text-center">{{guest.number}}</td>
                                     </tr>
