@@ -1,13 +1,28 @@
 // Store the initial state of the card profiles
 var initialCardProfilesHTML = document.getElementById('card-profiles-container').innerHTML;
 
+
+
 document.body.addEventListener('click', function (event) {
   if (event.target.classList.contains('editButton')) {
     var editButton = event.target;
     var isEditing = editButton.textContent === 'Edit';
+    // Select the button element
+    const submitButton = document.getElementById('submitButton');
+    const deleteButtons = document.querySelectorAll('.delete');
+
+
 
     if (isEditing) {
       editButton.textContent = 'Cancel';
+      // Change the button's style
+      submitButton.style.display = 'block'; // Make the button visible
+
+      // Show delete buttons
+      deleteButtons.forEach(function (button) {
+        button.style.display = 'block';
+      });
+
 
       // Loop through all card-profile elements
       document.querySelectorAll('.card-profile').forEach(function (cardProfile) {
@@ -42,6 +57,13 @@ document.body.addEventListener('click', function (event) {
       });
     } else {
       editButton.textContent = 'Edit';
+      // Change the button's style
+      submitButton.style.display = 'none'; // Make the button visible
+
+      // Hide delete buttons
+      deleteButtons.forEach(function (button) {
+        button.style.display = 'none';
+      });
 
       // Loop through all card-profile elements to reset them
       document.querySelectorAll('.card-profile').forEach(function (cardProfile) {
@@ -72,6 +94,7 @@ function addNewSuite() {
 
   var newSuiteRow = document.createElement('div');
   newSuiteRow.className = 'row suite-row'; // Add class suite-row for dynamically added rows
+  newSuiteRow.id = "row-set"
 
   var suiteTypes = [
     { label: 'Suite Type', icon: 'bi bi-door-open' },
@@ -111,6 +134,14 @@ function addNewSuite() {
     colDiv.appendChild(cardProfileDiv);
     newSuiteRow.appendChild(colDiv);
   });
+
+  // Add the delete button at the end of the row
+  var deleteButton = document.createElement('button');
+  deleteButton.type = 'button';
+  deleteButton.className = 'btn btn-danger btn-right delete';
+  deleteButton.style.display = 'none'; // Initially hidden
+  deleteButton.innerHTML = '<i class="bx bx-trash"></i>';
+  newSuiteRow.appendChild(deleteButton);
 
   // Check if the heading already exists
   var heading = document.querySelector('.new-suites-heading');
@@ -158,6 +189,9 @@ function addNewSuite() {
 
       span.replaceWith(formFloatingDiv);
     });
+
+    // Show the delete button if in edit mode
+    deleteButton.style.display = 'block';
   }
 }
 

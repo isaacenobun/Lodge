@@ -69,7 +69,7 @@
                 <!-- HTML Structure -->
                   <div id="card-profiles-container">
                     
-                    <div class="row">
+                    <div class="row" id='comp-row'>
                       <div class="col-md-12">
                         <div class="card-profile" data-id="0" data-label="Company Name">
                           <div class="profile-box"><i class="bi bi-bank"></i><span class="current-text form-floating">{{company.name}}</span></div>
@@ -84,7 +84,8 @@
                     
                     {% for suite,details in suite_room_types.items %}
                       
-                      <div class="row">
+                      
+                      <div class="row" id="row-set">
                         <div class="col-md-4">
                           <div class="card-profile" data-id="1" data-label="Suite Type">
                             <div class="profile-box"><i class="bi bi-door-open"></i><span class="current-text">{{suite.type}}</span></div>
@@ -103,7 +104,10 @@
                             <div class="profile-box"><i class="custom-icon">₦</i><span class="current-text">{{details.1}}</span></div>
                           </div>
                         </div>
+                        <button type="button" class="btn btn-danger btn-right delete" style="display: none;"><i class="bx bx-trash"></i></button>
                       </div>
+                      
+                      
 
                     {% endfor %}
                       
@@ -114,7 +118,7 @@
                     <div class="btn-group" role="group" aria-label="Basic example">
                       <button type="button" id="settings-add-suite" class="btn btn-dark">Add suite</button>
                       <button type="button" id="reset-button" class="btn btn-warning">Reset</button>
-                      <button type="submit" data-bs-toggle="modal" data-bs-target="#verticalycentered" id="submitButton" class="btn btn-dark">Submit</button>
+                      <button type="submit" data-bs-toggle="modal" data-bs-target="#verticalycentered" id="submitButton" class="btn btn-dark" style="display: none">Submit</button>
                     </div>
                   </div>
                   <div
