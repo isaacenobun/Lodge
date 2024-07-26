@@ -17,6 +17,7 @@ urlpatterns = [
     path('log-out/', views.sign_out, name='logout'),
     path('landing', views.landing, name='landing'),
     path('settings/', views.settings, name='settings'),
+    path('delete-suite/', views.delete_suite, name='delete-suite'),
     path('staff-add/', views.staff_add, name='staff-add'),
     path('staff-edit/', views.staff_edit, name='staff-edit'),
     path('download-history-csv/', views.download_history_csv, name='download_history_csv'),

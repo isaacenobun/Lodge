@@ -61,7 +61,7 @@
           <div class="mb-3 mt-2">
             <div class="card-body settings">
               <p class="text-center card-subtitle mb-3 text-muted">
-                Next Subscription date: {{subscription.due_date|timezone:"Africa/Lagos"|date:"M d, Y"}}
+                Next Subscription date: <b>{{subscription.due_date|timezone:"Africa/Lagos"|date:"M d, Y"}}</b>
               </p>
               <p class="text-center card-subtitle mb-3 text-muted">
                 Edit your company information here <span><button type="button" class="btn btn-link small editButton">Edit</button></span>
@@ -73,7 +73,7 @@
                 <!-- HTML Structure -->
                   <div id="card-profiles-container">
                     
-                    <div class="row">
+                    <div class="row" id='comp-row'>
                       <div class="col-md-12">
                         <div class="card-profile" data-id="0" data-label="Company Name">
                           <div class="profile-box"><i class="bi bi-bank"></i><span class="current-text form-floating">{{company.name}}</span></div>
@@ -85,10 +85,10 @@
                       Currently Available Suites
                     </p>
                     
-                    
                     {% for suite,details in suite_room_types.items %}
                       
-                      <div class="row">
+                      
+                      <div class="row" id="row-set">
                         <div class="col-md-4">
                           <div class="card-profile" data-id="1" data-label="Suite Type">
                             <div class="profile-box"><i class="bi bi-door-open"></i><span class="current-text">{{suite.type}}</span></div>
@@ -107,10 +107,10 @@
                             <div class="profile-box"><i class="custom-icon">₦</i><span class="current-text">{{details.1|floatformat:1|intcomma}}</span></div>
                           </div>
                         </div>
+                        <button type="button" onclick="deleteSuite('{{ suite.id }}',{% url 'delete-suite' %})" class="btn btn-danger btn-right delete" style="display: none;"><i class="bx bx-trash"></i></button>
                       </div>
-
-                    {% endfor %}
                       
+                    {% endfor %}
                     
                   </div>
 
@@ -118,7 +118,7 @@
                     <div class="btn-group" role="group" aria-label="Basic example">
                       <button type="button" id="settings-add-suite" class="btn btn-dark">Add suite</button>
                       <button type="button" id="reset-button" class="btn btn-warning">Reset</button>
-                      <button type="submit" data-bs-toggle="modal" data-bs-target="#verticalycentered" id="submitButton" class="btn btn-dark">Submit</button>
+                      <button type="submit" data-bs-toggle="modal" data-bs-target="#verticalycentered" id="submitButton" class="btn btn-dark" style="display: none">Submit</button>
                     </div>
                   </div>
                   <div
@@ -128,8 +128,6 @@
                   >
                     <!-- Initial suite input fields -->
                   </div>
-
-  
                 </form>
               </div>
             </div>
@@ -160,13 +158,13 @@
                 </span></div>
                 
                 {% if user.owner == True %}
-                <button type="button" id="editStaffButton" class="btn btn-link small editStaffButton" data-staff-name="{{staff.username}}" data-staff-email="{{staff.email}}" data-staff-id="{{staff.id}}">Edit</button>
+                <button type="button" id="editStaffButton" class="btn btn-link small editStaffButton" data-staff-name="{{staff.username}}" data-staff-email="{{staff.email}}" data-staff-id="{{staff.id}}" data-csrf="{{ csrf_token }}" data-edit-url="{% url 'staff-edit' %}" >Edit</button>
                 {% endif %}
               </div>
             </div>
           {% endfor %}
           {% if user.owner == True %}
-          <button type="button" id="addStaffButton" class="btn btn-link small addstaffButton" data-staff="New Staff">Add New Staff</button>
+          <button type="button" id="addStaffButton" class="btn btn-link small addstaffButton" data-staff="New Staff" data-csrf="{{ csrf_token }}" data-add-url="{% url 'staff-add' %}">Add New Staff</button>
           {% endif %}
         </div>
           

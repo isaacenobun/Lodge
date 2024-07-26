@@ -1,13 +1,28 @@
 // Store the initial state of the card profiles
 var initialCardProfilesHTML = document.getElementById('card-profiles-container').innerHTML;
 
+
+
 document.body.addEventListener('click', function (event) {
   if (event.target.classList.contains('editButton')) {
     var editButton = event.target;
     var isEditing = editButton.textContent === 'Edit';
+    // Select the button element
+    const submitButton = document.getElementById('submitButton');
+    const deleteButtons = document.querySelectorAll('.delete');
+
+
 
     if (isEditing) {
       editButton.textContent = 'Cancel';
+      // Change the button's style
+      submitButton.style.display = 'block'; // Make the button visible
+
+      // Show delete buttons
+      deleteButtons.forEach(function (button) {
+        button.style.display = 'block';
+      });
+
 
       // Loop through all card-profile elements
       document.querySelectorAll('.card-profile').forEach(function (cardProfile) {
@@ -42,6 +57,13 @@ document.body.addEventListener('click', function (event) {
       });
     } else {
       editButton.textContent = 'Edit';
+      // Change the button's style
+      submitButton.style.display = 'none'; // Make the button visible
+
+      // Hide delete buttons
+      deleteButtons.forEach(function (button) {
+        button.style.display = 'none';
+      });
 
       // Loop through all card-profile elements to reset them
       document.querySelectorAll('.card-profile').forEach(function (cardProfile) {
@@ -72,6 +94,7 @@ function addNewSuite() {
 
   var newSuiteRow = document.createElement('div');
   newSuiteRow.className = 'row suite-row'; // Add class suite-row for dynamically added rows
+  newSuiteRow.id = "row-set"
 
   var suiteTypes = [
     { label: 'Suite Type', icon: 'bi bi-door-open' },
@@ -158,6 +181,9 @@ function addNewSuite() {
 
       span.replaceWith(formFloatingDiv);
     });
+
+    // Show the delete button if in edit mode
+    deleteButton.style.display = 'block';
   }
 }
 
@@ -201,6 +227,9 @@ document.querySelectorAll('.editStaffButton, .addstaffButton').forEach(button =>
     const staffName = this.getAttribute('data-staff-name');
     const staffEmail = this.getAttribute('data-staff-email');
     const staffId = this.getAttribute('data-staff-id');
+    const editStaffUrl = this.getAttribute('data-edit-url');
+    const addStaffUrl = this.getAttribute('data-add-url');
+    const csrftoken = this.getAttribute('data-csrf');
     if (this.classList.contains('editStaffButton')) {
       document.getElementById('modalTitle').innerText = `Editing details for ${staffName}`;
       document.getElementById('modal-footer').innerHTML = `<button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Close</button>
@@ -291,4 +320,31 @@ function submitNewStaffForm() {
 function submitEditStaffForm() {
   var form = document.getElementById('editStaff');
   form.submit();
+}
+
+function deleteSuite(suiteId, deleteSuiteUrl) {
+
+  var form = document.createElement('form');
+  form.setAttribute('method', 'POST');
+  form.setAttribute('action', deleteSuiteUrl);
+
+  var csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+  var csrfInput = document.createElement('input');
+  csrfInput.setAttribute('type', 'hidden');
+  csrfInput.setAttribute('name', 'csrfmiddlewaretoken');
+  csrfInput.setAttribute('value', csrftoken);
+  form.appendChild(csrfInput);
+
+  var suiteIdInput = document.createElement('input');
+  suiteIdInput.setAttribute('type', 'hidden');
+  suiteIdInput.setAttribute('name', 'suite_id');
+  suiteIdInput.setAttribute('value', suiteId);
+  form.appendChild(suiteIdInput);
+
+  document.body.appendChild(form);
+
+  form.submit();
+
+  document.body.removeChild(form);
 }

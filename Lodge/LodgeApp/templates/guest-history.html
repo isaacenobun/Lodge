@@ -14,9 +14,8 @@
       <h1>Guest History</h1>
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-          <li class="breadcrumb-item">Guest-history</li>
-          <li class="breadcrumb-item active">Data</li>
+          <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+          <li class="breadcrumb-item active">Guest-history</li>
         </ol>
       </nav>
     </div>
@@ -30,7 +29,7 @@
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">History</h5>
-              <p>Table detailing info about our previous guests.</p>
+              <p>Information about our guests.</p>
 
               <!-- Table with stripped rows -->
               <table
@@ -60,19 +59,36 @@
                     <td>{{guest.name}}</td>
                     <td>{{guest.email}}</td>
                     <td>{{guest.number}}</td>
-                    <td>{{guest.room.suite.type}}</td>
-                    <td style="text-align: center">
-                      {{guest.room.room_tag}}
-                    </td>
+                    
+                    {% if guest.room.suite.type is null %}
+                        <td><small style="color: red;">Deleted</small></td>
+                        {% else %}
+                        <td>{{guest.room.suite.type}}</td>
+                    {% endif %}
+
+                    {% if guest.room.room_tag is null %}
+                      <td style="text-align: center;">
+                        <small style="color: red;">Deleted</small>
+                      </td>
+                      {% else %}
+                      <td style="text-align: center;">
+                        {{guest.room.room_tag}}
+                      </td>
+                    {% endif %}
+
                     <td>{{guest.check_in|timezone:"Africa/Lagos"}}</td>
                     <td>{{guest.check_out|timezone:"Africa/Lagos"}}</td>
-                    {% if guest.room.room_status %}
-                    <td>
-                      <span class="badge bg-warning">Room Occupied</span>
-                    </td>
-                    {% else %}
-                    <td><span class="badge bg-success">Room Vacant</span></td>
+                    
+                    {% if guest.room.room_tag is null %}
+                      <td>
+                        <span class="badge bg-danger">Room Deleted</span>
+                      </td>
+                      {% elif guest.room.room_status %}
+                      <td><span class="badge bg-warning">Room Occupied</span></td>
+                      {% else %}
+                      <td><span class="badge bg-success">Room Vacant</span></td>
                     {% endif %}
+
                   </tr>
                   {% endfor %}
                 </tbody>

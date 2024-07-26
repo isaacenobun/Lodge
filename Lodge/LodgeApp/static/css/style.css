@@ -1233,7 +1233,7 @@ h6 {
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 5px;
-  margin-bottom: 30px;
+  /* margin-bottom: 10px; */
   box-shadow: 0px 0 30px rgba(1, 41, 112, 0.1);
 }
 
@@ -1290,4 +1290,32 @@ h6 {
     padding-left: 7px;
     padding-right: 7px;
   }
+}
+
+#row-set {
+  position: relative;
+  border: 1px solid #d3d3d4;
+  /* Thin gray border */
+  padding: 15px 5px;
+  /* Optional: Add some padding for better appearance */
+  border-radius: 5px;
+  /* Optional: Add rounded corners */
+  margin-bottom: 30px;
+  box-shadow: 0px 0 30px rgba(1, 41, 112, 0.1);
+}
+
+#comp-row {
+  margin-bottom: 20px;
+}
+
+#row-set button {
+  position: absolute;
+  width: 40px;
+  right: -25px;
+}
+
+.suite-row button {
+  position: absolute;
+  width: 40px;
+  right: 0px;
 }
