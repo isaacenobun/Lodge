@@ -5,3 +5,6 @@ def error404(request, exception):
 
 def error505(request):
     return render(request, 'pages-error-505.html', status=500)
+
+def error403(request, exception):
+    return render(request, 'pages-error-403.html', status=403)

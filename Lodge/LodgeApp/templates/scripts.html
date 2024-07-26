@@ -15,8 +15,6 @@
 <script src="{% static 'vendor/imagesloaded/imagesloaded.pkgd.min.js' %}"></script>
 <script src="{% static 'vendor/isotope-layout/isotope.pkgd.min.js' %}"></script>
 
-
-
 <!-- Template Main JS File -->
 <script src="{% static 'js/main.js' %}"></script>
 <script src="{% static 'js/room-carousel.js' %}"></script>
@@ -25,6 +23,9 @@
 <script src="{% static 'js/landing.js' %}"></script>
 <script src="{% static 'js/check-in.js' %}"></script>
 <script src="{% static 'js/preloader.js' %}"></script>
+<script src="{% static 'js/settings.js' %}"></script>
+<script src="{% static 'js/charts.js' %}"></script>
+<script src="{% static 'js/onboarding.js' %}"></script>
 
 <script type="text/javascript">
     var csrftoken = '{{ csrf_token }}';
@@ -32,12 +33,8 @@
     var checkInUrl = "{% url 'check-in' %}";
     var dashboard = "{% url 'dashboard' %}";
     var extendUrl = "{% url 'extend' %}";
-</script>
-
-<script src="{% static 'js/charts.js' %}"></script>
-
-<script type="text/javascript">
+    var addStaffUrl = "{% url 'staff-add' %}"
+    var editStaffUrl = "{% url 'staff-edit' %}"
+    var deleteSuiteUrl = "{% url 'delete-suite' %}"
     var checkInData = {{ check_in_data|safe }};
 </script>
-
-<script src="{% static 'js/onboarding.js' %}"></script>

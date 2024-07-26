@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load custom_filters %}
+{% load tz %}
 
 
 {% block content %}
@@ -31,6 +32,13 @@
                 {{ message }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
               </div>
+            {% endif %}
+            {% if message.tags == "error" %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+              <i class="bi bi-exclamation-octagon me-1"></i>
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
             {% endif %}
           {% endfor %}
         </nav>
@@ -132,6 +140,7 @@
                                         <th scope="col" class="text-center">Guest</th>
                                         <th scope="col" class="text-center d-none d-lg-table-cell">Email</th>
                                         <th scope="col" class="text-center">Room</th>
+                                        <th scope="col" class="text-center">Suite</th>
                                         <th scope="col" class="text-center">Mobile</th>
                                     </tr>
                                 </thead>
@@ -152,7 +161,8 @@
                                         <td class="text-center d-none d-lg-table-cell">
                                             <a href="mailto:{{guest.email}}">{{guest.email}}</a>
                                         </td>
-                                        <td class="text-center">{{guest.room.room_number}}</td>
+                                        <td class="text-center">{{guest.room.room_tag}}</td>
+                                        <td class="text-center">{{guest.room.suite.type}}</td>
                                         <td class="text-center">{{guest.number}}</td>
                                     </tr>
                                     {% endfor %}
@@ -220,7 +230,7 @@
 
                 <div class="activity">
                   <div class="activity-item d-flex">
-                    <div class="activite-label">{{log.timestamp | add_one_hour | date:'P'}}</div>
+                    <div class="activite-label">{{log.timestamp |timezone:"Africa/Lagos" | date:'P'}}</div>
                     
                     {% if log.check_status %}
                         <i

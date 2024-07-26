@@ -3,7 +3,10 @@
 {% for room in rooms %}
     {% if room.room_status %}
         <div class="room occupied">
-            <div class="room-number d-flex align-items-center justify-content-center">Room {{ room.room_number }}</div>
+            <div class="room-tag d-flex align-items-center justify-content-center">{{ room.room_tag }}
+                <input type="hidden" name="rooms" value="{{room.id}}">
+                <input type="hidden" name="room_tags" value="{{room.room_tag}}">
+            </div>
             <div class="room-number d-flex align-items-center justify-content-center" >{{ room.suite.type }} Suite</div>
             <div class="rounded-circle d-flex align-items-center justify-content-center">
                 <i class="bi bi-person"></i>
@@ -12,11 +15,16 @@
                 <input type="hidden" name="guest_id" value="{{ room.id|get_guest_id:room_guest_mapping }}">
                 <input type="hidden" name="guest_name" value="{{ room.id|get_guest_name:room_guest_mapping }}">
                 <input type="hidden" name="guest_checkout" value="{{ room.id|get_guest_checkout:room_guest_mapping }}">
+                <input type="hidden" name="checkout_url" value="{% url 'check-out' %}">
+                <input type="hidden" name="extend_url" value="{% url 'extend' %}">
+                <input type="hidden" name="csrf-token" value="{{ csrf_token }}">
             </div>
         </div>
     {% else %}
         <div class="room">
-            <div class="room-number d-flex align-items-center justify-content-center" >Room {{ room.room_number }}
+            <div class="room-tag d-flex align-items-center justify-content-center" >{{ room.room_tag }}
+                <input type="hidden" name="rooms" value="{{room.id}}">
+                <input type="hidden" name="room_tags" value="{{room.room_tag}}">
                 <input type="hidden" name="room_queryset" value="{{ room }}">
             </div>
             <div class="room-number d-flex align-items-center justify-content-center" >{{ room.suite.type }} Suite</div>

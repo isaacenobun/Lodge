@@ -16,8 +16,8 @@ class SuiteAdmin(admin.ModelAdmin):
     search_fields = ('type', 'company__name')
 
 class RoomAdmin(admin.ModelAdmin):
-    list_display = ('room_number', 'suite', 'company', 'room_status')
-    search_fields = ('room_number', 'suite__type', 'company__name')
+    list_display = ('room_tag', 'suite', 'company', 'room_status')
+    search_fields = ('room_tag', 'suite__type', 'company__name')
 
 class RevenueAdmin(admin.ModelAdmin):
     list_display = ('revenue', 'company')

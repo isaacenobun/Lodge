@@ -17,14 +17,14 @@
       <h1>Analytics</h1>
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="#">Home</a></li>
+          <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
           <li class="breadcrumb-item active">Analytics</li>
         </ol>
       </nav>
     </div>
     <!-- End Page Title -->
 
-  <a href="{% url 'download_analytics_csv' %}"><p>Download</p></a>
+  <a href="{% url 'download_analytics_csv' %}"><p style="color: black;"><u>Download Report</u></p></a>
 
     <section class="section dashboard">
       <div class="row">
@@ -61,7 +61,7 @@
 
                 <div class="card-body">
                   <h5 class="card-title">
-                    Monthly Revenue <span></span>
+                    Revenue this month <span></span>
                   </h5>
 
                   <div class="d-flex align-items-center">
@@ -113,7 +113,7 @@
 
                 <div class="card-body">
                   <h5 class="card-title">
-                    Check-in Rate <span>per week</span>
+                    Check-in Rate <span>this month</span>
                   </h5>
 
                   <div class="d-flex align-items-center">
@@ -123,7 +123,7 @@
                       <i class="bi bi-person"></i>
                     </div>
                     <div class="ps-3">
-                      <h6>{{check_in_rate}} Guests</h6>
+                      <h6>{{check_in_rate|stringformat:".1f"}} Guests/day</h6>
                       <span class="text-success small pt-1 fw-bold"></span>
                       <span class="text-muted small pt-2 ps-1"></span>
                     </div>
@@ -222,15 +222,15 @@
                 </thead>
                 <tbody>
                   
-                  {% for guest in top_guests %}
+                  {% for guest in top_guests_data %}
                   <tr>
                       <th scope="row">
                         <a href="#">{{ forloop.counter }}</a>
                       </th>
                       <td><a href="#" class="text-primary fw-bold">{{guest.name}}</a></td>
                       <td><a href="mailto:{{guest.email}}">{{guest.email}}</a></td>
-                      <td class="fw-bold">{{guest.duration}}</td>
-                      <td>&#8358;{{ guest.revenue.revenue|floatformat:1|intcomma }}</td>
+                      <td class="fw-bold">{{guest.total_days}}</td>
+                      <td>&#8358;{{ guest.total_revenue|floatformat:1|intcomma }}</td>
                     </tr>
                   {% endfor %}
                       
