@@ -81,6 +81,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function checkTableEmpty() {
         if (suitesArray.length === 0) { // Check if the suitesArray is empty
             document.querySelector('.table thead').style.display = 'none';
+            submitButton.classList.add('disabled');
         } else {
             document.querySelector('.table thead').style.display = '';
             // If not empty, remove the 'disabled' class

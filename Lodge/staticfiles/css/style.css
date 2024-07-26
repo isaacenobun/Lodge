@@ -1225,3 +1225,97 @@ h6 {
   font-size: 13px;
   color: #333333;
 }
+
+.card-profile {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  /* margin-bottom: 10px; */
+  box-shadow: 0px 0 30px rgba(1, 41, 112, 0.1);
+}
+
+.profile-box {
+  display: flex;
+  align-items: center;
+  padding: 5px 10px;
+}
+
+.profile-box i {
+  margin-right: 10px;
+  font-size: 38px;
+  line-height: 0;
+  color: gray;
+}
+
+.profile-box span {
+  margin-left: 10px;
+  font-size: 15px;
+}
+
+.profile-box button {
+  font-size: 38px;
+  line-height: 0;
+  color: #4154f1;
+}
+
+
+
+.input-label {
+  margin-left: 10px;
+  font-size: 15px;
+  color: #333;
+}
+
+.invalid-feedback {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.card-body.settings {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.custom-icon {
+  padding: 19px 0px;
+}
+
+@media (max-width: 576px) {
+  .custom-icon {
+    padding: 19px 0px;
+    padding-left: 7px;
+    padding-right: 7px;
+  }
+}
+
+#row-set {
+  position: relative;
+  border: 1px solid #d3d3d4;
+  /* Thin gray border */
+  padding: 15px 5px;
+  /* Optional: Add some padding for better appearance */
+  border-radius: 5px;
+  /* Optional: Add rounded corners */
+  margin-bottom: 30px;
+  box-shadow: 0px 0 30px rgba(1, 41, 112, 0.1);
+}
+
+#comp-row {
+  margin-bottom: 20px;
+}
+
+#row-set button {
+  position: absolute;
+  width: 40px;
+  right: -25px;
+}
+
+.suite-row button {
+  position: absolute;
+  width: 40px;
+  right: 0px;
+}
