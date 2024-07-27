@@ -1,31 +1,201 @@
-// Store the initial state of the card profiles
-var initialCardProfilesHTML = document.getElementById('card-profiles-container').innerHTML;
+document.addEventListener('DOMContentLoaded', function () {
+  // Store the initial state of the card profiles
+  var initialCardProfilesHTML = document.getElementById('card-profiles-container').innerHTML;
+
+  document.body.addEventListener('click', function (event) {
+    if (event.target.classList.contains('editButton')) {
+      var editButton = event.target;
+      var isEditing = editButton.textContent === 'Edit';
+      // Select the button element
+      const submitButton = document.getElementById('submitButton');
+      const deleteButtons = document.querySelectorAll('.delete');
 
 
 
-document.body.addEventListener('click', function (event) {
-  if (event.target.classList.contains('editButton')) {
-    var editButton = event.target;
-    var isEditing = editButton.textContent === 'Edit';
-    // Select the button element
-    const submitButton = document.getElementById('submitButton');
-    const deleteButtons = document.querySelectorAll('.delete');
+      if (isEditing) {
+        editButton.textContent = 'Cancel';
+        // Change the button's style
+        submitButton.style.display = 'block'; // Make the button visible
+
+        // Show delete buttons
+        deleteButtons.forEach(function (button) {
+          button.style.display = 'block';
+        });
 
 
+        // Loop through all card-profile elements
+        document.querySelectorAll('.card-profile').forEach(function (cardProfile) {
+          var span = cardProfile.querySelector('.current-text');
+          var currentText = span.textContent;
+          var labelText = cardProfile.dataset.label;
+          var uniqueId = 'input_' + cardProfile.dataset.id;
 
-    if (isEditing) {
-      editButton.textContent = 'Cancel';
-      // Change the button's style
-      submitButton.style.display = 'block'; // Make the button visible
+          var inputBox = document.createElement('input');
+          inputBox.type = 'text';
+          inputBox.className = 'form-control';
+          inputBox.name = uniqueId;
+          inputBox.id = uniqueId; // Set the unique id for the input box
+          inputBox.value = currentText; // Set the value of the input box to the current text
+          inputBox.dataset.originalValue = currentText; // Store the original value
 
-      // Show delete buttons
-      deleteButtons.forEach(function (button) {
-        button.style.display = 'block';
-      });
+          var label = document.createElement('label');
+          label.className = 'form-label small';
+          label.htmlFor = uniqueId; // Associate the label with the input box
+          label.textContent = labelText;
+
+          var invalidFeedback = document.createElement('div');
+          invalidFeedback.className = 'invalid-feedback';
+          invalidFeedback.textContent = 'Please, enter a value!';
+
+          var formFloatingDiv = document.createElement('div');
+          formFloatingDiv.className = 'form-floating';
+          formFloatingDiv.appendChild(inputBox);
+          formFloatingDiv.appendChild(label);
+          formFloatingDiv.appendChild(invalidFeedback);
+
+          span.replaceWith(formFloatingDiv);
+
+          // Add input event listener for real-time checking
+          inputBox.addEventListener('input', function () {
+            var rowSet = cardProfile.closest('#row-set');
+            var warningDiv = rowSet.querySelector('.warning');
+
+            if (parseFloat(inputBox.value) < parseFloat(inputBox.dataset.originalValue)) {
+              if (!warningDiv) {
+                warningDiv = document.createElement('div');
+                warningDiv.className = 'warning';
+                warningDiv.innerHTML = ` 
+                <div class="select-container">
+                  <div class="select-btn">
+                      <span class="btn-text">Select Rooms to Delete</span>
+                      <span class="arrow-dwn">
+                          <i class="fa-solid fa-chevron-down"></i>
+                      </span>
+                  </div>
+                    <ul class="list-items">
+                        <li class="item">
+                            <span class="checkbox">
+                                <i class="fa-solid fa-check check-icon"></i>
+                            </span>
+                            <span class="item-text">Room 1</span>
+                        </li>
+                        <li class="item">
+                            <span class="checkbox">
+                                <i class="fa-solid fa-check check-icon"></i>
+                            </span>
+                            <span class="item-text">Room 2</span>
+                        </li>
+                    </ul>
+                </div>`;
+                rowSet.appendChild(warningDiv);
+                // Call the function to initialize the dropdown
+                initializeDropdown();
+              }
+            } else {
+              if (warningDiv) {
+                warningDiv.remove();
+              }
+            }
+          });
+        });
+
+      } else {
+        editButton.textContent = 'Edit';
+        // Change the button's style
+        submitButton.style.display = 'none'; // Make the button visible
+
+        // Hide delete buttons
+        deleteButtons.forEach(function (button) {
+          button.style.display = 'none';
+        });
+
+        // Loop through all card-profile elements to reset them
+        document.querySelectorAll('.card-profile').forEach(function (cardProfile) {
+          var formFloatingDiv = cardProfile.querySelector('.form-floating');
+          var inputBox = formFloatingDiv.querySelector('input');
+          var currentText = inputBox.value;
+
+          var span = document.createElement('span');
+          span.className = 'current-text';
+          span.textContent = currentText;
+
+          formFloatingDiv.replaceWith(span);
+        });
+      }
+    }
+
+    if (event.target.id === 'settings-add-suite') {
+      addNewSuite();
+    }
+
+    if (event.target.id === 'reset-button') {
+      resetPage();
+    }
+  });
+
+  function addNewSuite() {
+    var newId = 'new';
+
+    var newSuiteRow = document.createElement('div');
+    newSuiteRow.className = 'row suite-row'; // Add class suite-row for dynamically added rows
+    newSuiteRow.id = "row-set"
+
+    var suiteTypes = [
+      { label: 'Suite Type', icon: 'bi bi-door-open' },
+      { label: 'Rooms', icon: 'bi bi-grid-3x3-gap' },
+      { label: 'Current Price', icon: 'custom-icon', text: '₦' }
+    ];
+
+    suiteTypes.forEach(function (suiteType, index) {
+      var colDiv = document.createElement('div');
+      colDiv.className = 'col-md-4';
+
+      var cardProfileDiv = document.createElement('div');
+      cardProfileDiv.className = 'card-profile';
+      cardProfileDiv.dataset.id = newId;
+      cardProfileDiv.dataset.label = suiteType.label;
+
+      var profileBoxDiv = document.createElement('div');
+      profileBoxDiv.className = 'profile-box';
+
+      var icon = document.createElement('i');
+      icon.className = suiteType.icon;
+      profileBoxDiv.appendChild(icon);
+
+      if (suiteType.text) {
+        var customIcon = document.createElement('i');
+        customIcon.className = 'custom-icon';
+        customIcon.textContent = suiteType.text;
+        profileBoxDiv.appendChild(customIcon);
+      }
+
+      var span = document.createElement('span');
+      span.className = 'current-text';
+      span.textContent = suiteType.label;
+      profileBoxDiv.appendChild(span);
+
+      cardProfileDiv.appendChild(profileBoxDiv);
+      colDiv.appendChild(cardProfileDiv);
+      newSuiteRow.appendChild(colDiv);
+    });
+
+    // Check if the heading already exists
+    var heading = document.querySelector('.new-suites-heading');
+    if (!heading) {
+      heading = document.createElement('p');
+      heading.className = 'text-center card-subtitle mb-3 text-muted small new-suites-heading';
+      heading.textContent = 'Newly added suites';
+      document.querySelector('#button-group-row').before(heading);
+    }
 
 
-      // Loop through all card-profile elements
-      document.querySelectorAll('.card-profile').forEach(function (cardProfile) {
+    document.querySelector('#button-group-row').before(newSuiteRow);
+
+    // Check if currently in edit mode
+    var editButton = document.querySelector('.editButton');
+    if (editButton && editButton.textContent === 'Cancel') {
+      // Convert new suite row to edit mode
+      newSuiteRow.querySelectorAll('.card-profile').forEach(function (cardProfile) {
         var span = cardProfile.querySelector('.current-text');
         var currentText = span.textContent;
         var labelText = cardProfile.dataset.label;
@@ -55,19 +225,28 @@ document.body.addEventListener('click', function (event) {
 
         span.replaceWith(formFloatingDiv);
       });
-    } else {
-      editButton.textContent = 'Edit';
-      // Change the button's style
-      submitButton.style.display = 'none'; // Make the button visible
 
-      // Hide delete buttons
-      deleteButtons.forEach(function (button) {
-        button.style.display = 'none';
-      });
+      // Show the delete button if in edit mode
+      deleteButton.style.display = 'block';
+    }
+  }
 
-      // Loop through all card-profile elements to reset them
-      document.querySelectorAll('.card-profile').forEach(function (cardProfile) {
-        var formFloatingDiv = cardProfile.querySelector('.form-floating');
+  function resetPage() {
+    // Remove all dynamically added rows
+    const addedRows = document.querySelectorAll('.suite-row');
+    addedRows.forEach(row => row.remove());
+
+    // Remove the heading if it exists
+    const heading = document.querySelector('.new-suites-heading');
+    if (heading) {
+      heading.remove();
+    }
+
+
+    // Reset the existing card profiles to their original state
+    document.querySelectorAll('.card-profile').forEach(function (cardProfile) {
+      var formFloatingDiv = cardProfile.querySelector('.form-floating');
+      if (formFloatingDiv) {
         var inputBox = formFloatingDiv.querySelector('input');
         var currentText = inputBox.value;
 
@@ -76,165 +255,30 @@ document.body.addEventListener('click', function (event) {
         span.textContent = currentText;
 
         formFloatingDiv.replaceWith(span);
-      });
-    }
-  }
-
-  if (event.target.id === 'settings-add-suite') {
-    addNewSuite();
-  }
-
-  if (event.target.id === 'reset-button') {
-    resetPage();
-  }
-});
-
-function addNewSuite() {
-  var newId = 'new';
-
-  var newSuiteRow = document.createElement('div');
-  newSuiteRow.className = 'row suite-row'; // Add class suite-row for dynamically added rows
-  newSuiteRow.id = "row-set"
-
-  var suiteTypes = [
-    { label: 'Suite Type', icon: 'bi bi-door-open' },
-    { label: 'Rooms', icon: 'bi bi-grid-3x3-gap' },
-    { label: 'Current Price', icon: 'custom-icon', text: '₦' }
-  ];
-
-  suiteTypes.forEach(function (suiteType, index) {
-    var colDiv = document.createElement('div');
-    colDiv.className = 'col-md-4';
-
-    var cardProfileDiv = document.createElement('div');
-    cardProfileDiv.className = 'card-profile';
-    cardProfileDiv.dataset.id = newId;
-    cardProfileDiv.dataset.label = suiteType.label;
-
-    var profileBoxDiv = document.createElement('div');
-    profileBoxDiv.className = 'profile-box';
-
-    var icon = document.createElement('i');
-    icon.className = suiteType.icon;
-    profileBoxDiv.appendChild(icon);
-
-    if (suiteType.text) {
-      var customIcon = document.createElement('i');
-      customIcon.className = 'custom-icon';
-      customIcon.textContent = suiteType.text;
-      profileBoxDiv.appendChild(customIcon);
-    }
-
-    var span = document.createElement('span');
-    span.className = 'current-text';
-    span.textContent = suiteType.label;
-    profileBoxDiv.appendChild(span);
-
-    cardProfileDiv.appendChild(profileBoxDiv);
-    colDiv.appendChild(cardProfileDiv);
-    newSuiteRow.appendChild(colDiv);
-  });
-
-  // Check if the heading already exists
-  var heading = document.querySelector('.new-suites-heading');
-  if (!heading) {
-    heading = document.createElement('p');
-    heading.className = 'text-center card-subtitle mb-3 text-muted small new-suites-heading';
-    heading.textContent = 'Newly added suites';
-    document.querySelector('#button-group-row').before(heading);
-  }
-
-
-  document.querySelector('#button-group-row').before(newSuiteRow);
-
-  // Check if currently in edit mode
-  var editButton = document.querySelector('.editButton');
-  if (editButton && editButton.textContent === 'Cancel') {
-    // Convert new suite row to edit mode
-    newSuiteRow.querySelectorAll('.card-profile').forEach(function (cardProfile) {
-      var span = cardProfile.querySelector('.current-text');
-      var currentText = span.textContent;
-      var labelText = cardProfile.dataset.label;
-      var uniqueId = 'input_' + cardProfile.dataset.id;
-
-      var inputBox = document.createElement('input');
-      inputBox.type = 'text';
-      inputBox.className = 'form-control';
-      inputBox.name = uniqueId;
-      inputBox.id = uniqueId; // Set the unique id for the input box
-      inputBox.value = currentText; // Set the value of the input box to the current text
-
-      var label = document.createElement('label');
-      label.className = 'form-label small';
-      label.htmlFor = uniqueId; // Associate the label with the input box
-      label.textContent = labelText;
-
-      var invalidFeedback = document.createElement('div');
-      invalidFeedback.className = 'invalid-feedback';
-      invalidFeedback.textContent = 'Please, enter a value!';
-
-      var formFloatingDiv = document.createElement('div');
-      formFloatingDiv.className = 'form-floating';
-      formFloatingDiv.appendChild(inputBox);
-      formFloatingDiv.appendChild(label);
-      formFloatingDiv.appendChild(invalidFeedback);
-
-      span.replaceWith(formFloatingDiv);
+      }
     });
 
-    // Show the delete button if in edit mode
-    deleteButton.style.display = 'block';
-  }
-}
-
-function resetPage() {
-  // Remove all dynamically added rows
-  const addedRows = document.querySelectorAll('.suite-row');
-  addedRows.forEach(row => row.remove());
-
-  // Remove the heading if it exists
-  const heading = document.querySelector('.new-suites-heading');
-  if (heading) {
-    heading.remove();
-  }
-
-
-  // Reset the existing card profiles to their original state
-  document.querySelectorAll('.card-profile').forEach(function (cardProfile) {
-    var formFloatingDiv = cardProfile.querySelector('.form-floating');
-    if (formFloatingDiv) {
-      var inputBox = formFloatingDiv.querySelector('input');
-      var currentText = inputBox.value;
-
-      var span = document.createElement('span');
-      span.className = 'current-text';
-      span.textContent = currentText;
-
-      formFloatingDiv.replaceWith(span);
+    // Reset the edit button text
+    var editButton = document.querySelector('.editButton');
+    if (editButton) {
+      editButton.textContent = 'Edit';
     }
-  });
-
-  // Reset the edit button text
-  var editButton = document.querySelector('.editButton');
-  if (editButton) {
-    editButton.textContent = 'Edit';
+    window.location.reload();
   }
-  window.location.reload();
-}
 
-document.querySelectorAll('.editStaffButton, .addstaffButton').forEach(button => {
-  button.addEventListener('click', function () {
-    const staffName = this.getAttribute('data-staff-name');
-    const staffEmail = this.getAttribute('data-staff-email');
-    const staffId = this.getAttribute('data-staff-id');
-    const editStaffUrl = this.getAttribute('data-edit-url');
-    const addStaffUrl = this.getAttribute('data-add-url');
-    const csrftoken = this.getAttribute('data-csrf');
-    if (this.classList.contains('editStaffButton')) {
-      document.getElementById('modalTitle').innerText = `Editing details for ${staffName}`;
-      document.getElementById('modal-footer').innerHTML = `<button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Close</button>
+  document.querySelectorAll('.editStaffButton, .addstaffButton').forEach(button => {
+    button.addEventListener('click', function () {
+      const staffName = this.getAttribute('data-staff-name');
+      const staffEmail = this.getAttribute('data-staff-email');
+      const staffId = this.getAttribute('data-staff-id');
+      const editStaffUrl = this.getAttribute('data-edit-url');
+      const addStaffUrl = this.getAttribute('data-add-url');
+      const csrftoken = this.getAttribute('data-csrf');
+      if (this.classList.contains('editStaffButton')) {
+        document.getElementById('modalTitle').innerText = `Editing details for ${staffName}`;
+        document.getElementById('modal-footer').innerHTML = `<button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Close</button>
                   <button type="submit" onclick="submitEditStaffForm()" class="btn btn-dark">Save changes</button>`;
-      document.getElementById('modalContent').innerHTML = `<form 
+        document.getElementById('modalContent').innerHTML = `<form 
                       id='editStaff'
                       class="row g-3 needs-validation"
                       novalidate
@@ -269,11 +313,11 @@ document.querySelectorAll('.editStaffButton, .addstaffButton').forEach(button =>
                         </div>
                       </div>
                     </form>`;
-    } else if (this.classList.contains('addstaffButton')) {
-      document.getElementById('modalTitle').innerText = 'Add New Staff';
-      document.getElementById('modal-footer').innerHTML = `<button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Close</button>
+      } else if (this.classList.contains('addstaffButton')) {
+        document.getElementById('modalTitle').innerText = 'Add New Staff';
+        document.getElementById('modal-footer').innerHTML = `<button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Close</button>
                   <button type="submit" onclick="submitNewStaffForm()" class="btn btn-dark">Submit</button>`;
-      document.getElementById('modalContent').innerHTML = `<form 
+        document.getElementById('modalContent').innerHTML = `<form 
                       id='newStaff'
                       class="row g-3 needs-validation"
                       novalidate
@@ -307,44 +351,69 @@ document.querySelectorAll('.editStaffButton, .addstaffButton').forEach(button =>
                         </div>
                       </div>
                     </form>`;
-    }
-    $('#verticalycentered').modal('show');
+      }
+      $('#verticalycentered').modal('show');
+    });
   });
+
+  function submitNewStaffForm() {
+    var form = document.getElementById('newStaff');
+    form.submit();
+  }
+
+  function submitEditStaffForm() {
+    var form = document.getElementById('editStaff');
+    form.submit();
+  }
+
+  function deleteSuite(suiteId, deleteSuiteUrl) {
+
+    var form = document.createElement('form');
+    form.setAttribute('method', 'POST');
+    form.setAttribute('action', deleteSuiteUrl);
+
+    var csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    var csrfInput = document.createElement('input');
+    csrfInput.setAttribute('type', 'hidden');
+    csrfInput.setAttribute('name', 'csrfmiddlewaretoken');
+    csrfInput.setAttribute('value', csrftoken);
+    form.appendChild(csrfInput);
+
+    var suiteIdInput = document.createElement('input');
+    suiteIdInput.setAttribute('type', 'hidden');
+    suiteIdInput.setAttribute('name', 'suite_id');
+    suiteIdInput.setAttribute('value', suiteId);
+    form.appendChild(suiteIdInput);
+
+    document.body.appendChild(form);
+
+    form.submit();
+
+    document.body.removeChild(form);
+  }
 });
 
-function submitNewStaffForm() {
-  var form = document.getElementById('newStaff');
-  form.submit();
-}
 
-function submitEditStaffForm() {
-  var form = document.getElementById('editStaff');
-  form.submit();
-}
+function initializeDropdown() {
+  const selectBtn = document.querySelector(".select-btn");
+  const items = document.querySelectorAll(".item");
 
-function deleteSuite(suiteId, deleteSuiteUrl) {
+  selectBtn.addEventListener("click", () => {
+    selectBtn.classList.toggle("open");
+  });
 
-  var form = document.createElement('form');
-  form.setAttribute('method', 'POST');
-  form.setAttribute('action', deleteSuiteUrl);
+  items.forEach(item => {
+    item.addEventListener("click", () => {
+      item.classList.toggle("checked");
+      const checked = document.querySelectorAll(".checked");
+      const btnText = document.querySelector(".btn-text");
 
-  var csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-
-  var csrfInput = document.createElement('input');
-  csrfInput.setAttribute('type', 'hidden');
-  csrfInput.setAttribute('name', 'csrfmiddlewaretoken');
-  csrfInput.setAttribute('value', csrftoken);
-  form.appendChild(csrfInput);
-
-  var suiteIdInput = document.createElement('input');
-  suiteIdInput.setAttribute('type', 'hidden');
-  suiteIdInput.setAttribute('name', 'suite_id');
-  suiteIdInput.setAttribute('value', suiteId);
-  form.appendChild(suiteIdInput);
-
-  document.body.appendChild(form);
-
-  form.submit();
-
-  document.body.removeChild(form);
+      if (checked && checked.length > 0) {
+        btnText.innerText = `${checked.length} Selected`;
+      } else {
+        btnText.innerText = "Select Language";
+      }
+    });
+  });
 }
