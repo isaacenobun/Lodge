@@ -102,7 +102,7 @@ def onboarding(request):
                         price=suite_price
                     )
                     
-                    for room_tag in range(suite_room):
+                    for room_tag in range(1,suite_room+1):
                         Room.objects.create(
                             suite=new_suite,
                             company=company,
@@ -131,12 +131,12 @@ def onboarding(request):
                         f'Invoice details\nClient: {owner.username}\nCompany: {owner.company}\n'
                         f'Subscription: ₦{subscription.amount}\nStart Date: {start_date}\nDue Date: {due_date}')
                 
-                send_mail(
-                    'New LodgeIt Subscription',
-                    mail,
-                    'lodgeitng@gmail.com',
-                    ['Isaacenobun@gmail.com', 'etinosa.enobun@gmail.com', 'martyminaj@gmail.com']
-                )
+                # send_mail(
+                #     'New LodgeIt Subscription',
+                #     mail,
+                #     'lodgeitng@gmail.com',
+                #     ['Isaacenobun@gmail.com', 'etinosa.enobun@gmail.com', 'martyminaj@gmail.com']
+                # )
                 
                 messages.success(request, f"An invoice for a Subscription fee of ₦{subscription.amount} has been sent to {owner.email}. Please pay within two days.")
                 
@@ -503,6 +503,17 @@ def staff_add(request):
                 new_user.is_staff = False
                 new_user.save()
                 
+                # Send mail to added staff
+                mail = (f'Hello {new_user.username},\n\nHere are your LodgeIt login details for {request.user.company}\n'
+                        f'\nEmail: {new_user.email}\nPassword: {password.lower()}\n\nLog in here: www.lodgeitng.com/sign-in')
+                
+                # send_mail(
+                #     'Your LodgeIt Login Details',
+                #     mail,
+                #     'lodgeitng@gmail.com',
+                #     [new_user.email]
+                # )
+                
                 messages.success(request, f"Staff added successfully")
                 
                 return redirect('settings')
@@ -647,7 +658,7 @@ def settings(request):
                             Room.objects.create(suite=suite, company=suite.company, room_tag=f'New room {i + 1}')
                     elif new_no_of_rooms < current_rooms:
                         rooms_to_remove = Room.objects.filter(suite=suite)[new_no_of_rooms:]
-                        # Delete
+                        rooms_to_remove.delete()
                         
                 except:
                     messages.error(request, f"There was a problem")
@@ -692,7 +703,7 @@ def settings(request):
                         messages.error(request, f"There was a problem")
                         return redirect('settings')
                         
-            messages.success(request, f"Edit successful")
+            messages.success(request, f"Changes have been made successfully")
             return redirect('settings')
     
     company = request.user.company
@@ -1179,7 +1190,7 @@ def download_analytics_csv(request):
 
     return response
 
-# Not Production Ready ❌
+# Production Ready ✅
 # For Demos
 def sign_in_test(request):
     if request.user.is_authenticated:
@@ -1189,24 +1200,16 @@ def sign_in_test(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
 
-        try:
-            staff = Staff.objects.get(email=email)
-        except Staff.DoesNotExist:
-            # messages.warning(request, f"Staff with {email} does not exist")
-            return redirect('sign-in')
+        staff = Staff.objects.get(email=email)
 
         staff = authenticate(request, email=email, password=password)
-
-        if staff is not None:
-            login(request, staff)
-            # messages.success(request, f"Welcome {request.POST.get('email')}")
-            return redirect('dashboard')
-        else:
-            # messages.warning(request, "Invalid password")
-            return redirect('sign-in')
+        login(request, staff)
+        return redirect('dashboard')
+    
     else:
         context = {'page_name':'Sign in'}
         return render(request, 'pages-sign-in-test.html', context)
-   
+
+# Production Ready ✅
 def landing(request):
     return render(request, 'landing.html')
