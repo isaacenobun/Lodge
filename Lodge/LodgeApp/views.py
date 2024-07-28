@@ -710,9 +710,10 @@ def settings(request):
     
     suites = Suite.objects.filter(company=company)
     
-    suite_room_types={}
+    suite_room_types_vacants={}
     for suite in suites:
-        suite_room_types[suite] = [Room.objects.filter(suite=suite).count(),suite.price]
+        suite_room_types_vacants[suite] = [Room.objects.filter(suite=suite).count(),suite.price,[Room.objects.filter(suite=suite,room_status=False)]]
+    print (suite_room_types_vacants)
     
     user = request.user
     owners = Staff.objects.filter(company = company, owner=True)
@@ -721,7 +722,7 @@ def settings(request):
     subscription = Subscriptions.objects.filter(company=company).order_by('-due_date')[0]
     
     context = {
-        'suite_room_types':suite_room_types,
+        'suite_room_types_vacants':suite_room_types_vacants,
         'company':company,
         'user':user,
         'owners':owners,
@@ -932,7 +933,8 @@ def check_in(request):
                     messages.success(request, f"{guest.name} checked in successfully")
 
                     return redirect('dashboard')
-            except:
+            except Exception as e:
+                print (e)
                 messages.error(request, 'Error checking in guest')
     
     return redirect('dashboard')
@@ -1024,18 +1026,6 @@ def analytics(request):
     revenue_last_month += guest_history.filter(guest__in=guests, check_in__month=last_month.month).aggregate(Sum('revenue__revenue'))['revenue__revenue__sum'] or 0
     revenue_growth = ((monthly_revenue - revenue_last_month) / revenue_last_month) * 100 if revenue_last_month else 0
     
-    current_week_check_ins = guests.annotate(week=TruncWeek('check_in')).values('week').annotate(count=Count('id')).order_by('week')
-    history_week_check_ins = guest_history.filter(guest__in=guests).annotate(week=TruncWeek('check_in')).values('week').annotate(count=Count('id')).order_by('week')
-
-    # check_in_rate_per_week = {item['week']: item['count'] for item in current_week_check_ins}
-    # for item in history_week_check_ins:
-    #     if item['week'] in check_in_rate_per_week:
-    #         check_in_rate_per_week[item['week']] += item['count']
-    #     else:
-    #         check_in_rate_per_week[item['week']] = item['count']
-    
-    # print (check_in_rate_per_week)
-    
     check_ins = CheckIns.objects.filter(time__year=timezone.now().year, company=request.user.company)
     year_dict = {i:0 for i in range(1,13)}
     for check_in in check_ins:
@@ -1048,6 +1038,13 @@ def analytics(request):
     
     total_guests_last_month = guests.filter(check_in__month=last_month.month).count()
     guest_growth = ((guests.count()) / total_guests_last_month) * 100 if total_guests_last_month else 0
+    
+    check_ins_this_month = CheckIns.objects.filter(time__month=timezone.now().month, company=request.user.company).count()
+    check_ins_last_month = CheckIns.objects.filter(time__month=last_month.month, company=request.user.company).count()
+    if check_ins_last_month > 0:
+        guest_growth = ((check_ins_this_month - check_ins_last_month) / check_ins_last_month) * 100
+    else:
+        guest_growth = 0
     
     guests_data = []
     

@@ -85,7 +85,7 @@
                       Currently Available Suites
                     </p>
                     
-                    {% for suite,details in suite_room_types.items %}
+                    {% for suite,details in suite_room_types_vacants.items %}
                       
                       
                       <div class="row" id="row-set">
@@ -107,6 +107,14 @@
                             <div class="profile-box"><i class="custom-icon">₦</i><span class="current-text">{{details.1|floatformat:1|intcomma}}</span></div>
                           </div>
                         </div>
+                        
+                        {% for rooms in details.2 %}
+                            
+                            {% for room in rooms %}
+                            <input type="hidden" name="vac" value="{{room.room_tag}}" data-id={{room.id}}>
+                            {% endfor %}
+                              
+                        {% endfor %}
                         <button type="button" onclick="deleteSuite('{{ suite.id }}',{% url 'delete-suite' %})" class="btn btn-danger btn-right delete" style="display: none;"><i class="bx bx-trash"></i></button>
                       </div>
                       
