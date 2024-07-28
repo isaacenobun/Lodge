@@ -132,7 +132,7 @@ function showModalWithOccupancyStatus(roomNumber, isOccupied, guestId, guestName
   modalBody.innerHTML = modalBodyContent;
 
   const modalFooterContent = isOccupied
-    ? `<button type="button" onclick=checkOutUser(${guestId},${checkOutUrl})" class="btn btn-outline-danger" data-bs-dismiss="modal">Checkout</button>
+    ? `<button type="button" onclick="checkOutUser(${guestId},${checkOutUrl})" class="btn btn-outline-danger" data-bs-dismiss="modal">Checkout</button>
       <button class="btn btn-dark" id="extendStayBtn" onclick="handleExtendStay('${guestId}', '${extendUrl}', '${csrfToken}')">Extend Stay</button>`
     : `<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#basicModal">
          <i class="bi bi-check-circle me-1"></i> Check-in a Guest
