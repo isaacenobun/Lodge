@@ -713,7 +713,6 @@ def settings(request):
     suite_room_types_vacants={}
     for suite in suites:
         suite_room_types_vacants[suite] = [Room.objects.filter(suite=suite).count(),suite.price,[Room.objects.filter(suite=suite,room_status=False)]]
-    print (suite_room_types_vacants)
     
     user = request.user
     owners = Staff.objects.filter(company = company, owner=True)
@@ -933,8 +932,7 @@ def check_in(request):
                     messages.success(request, f"{guest.name} checked in successfully")
 
                     return redirect('dashboard')
-            except Exception as e:
-                print (e)
+            except:
                 messages.error(request, 'Error checking in guest')
     
     return redirect('dashboard')
@@ -979,99 +977,101 @@ def analytics(request):
     if request.user.is_authenticated and request.user.company is None:
         return redirect('onboarding')
     
-    guests = Guest.objects.filter(company=request.user.company)
-    guest_history = GuestHistory.objects.filter(company=request.user.company)
-    analytics_data = []
-    
-    for guest in guests:
-        guest_data = {
-            'current': {
+    try:
+        guests = Guest.objects.filter(company=request.user.company)
+        guest_history = GuestHistory.objects.filter(company=request.user.company)
+        analytics_data = []
+        
+        for guest in guests:
+            guest_data = {
+                'current': {
+                    'name': guest.name,
+                    'email': guest.email,
+                    'number': guest.number,
+                    'room': guest.room,
+                    'check_in': guest.check_in,
+                    'staff': guest.staff,
+                    'check_out': guest.check_out,
+                    'revenue': guest.revenue,
+                    'company': guest.company,
+                    'duration': guest.duration,
+                },
+                'history': []
+            }
+            
+            history = GuestHistory.objects.filter(guest=guest)
+            for hist in history:
+                guest_data['history'].append({
+                    'name': hist.name,
+                    'email': hist.email,
+                    'number': hist.number,
+                    'room': hist.room,
+                    'check_in': hist.check_in,
+                    'staff': hist.staff,
+                    'check_out': hist.check_out,
+                    'revenue': hist.revenue,
+                    'company': hist.company,
+                    'duration': hist.duration,
+                })
+                
+            analytics_data.append(guest_data)
+        
+        current_month = timezone.now().month
+        monthly_revenue = guests.filter(check_in__month=current_month).aggregate(Sum('revenue__revenue'))['revenue__revenue__sum'] or 0
+        monthly_revenue += guest_history.filter(guest__in=guests, check_in__month=current_month).aggregate(Sum('revenue__revenue'))['revenue__revenue__sum'] or 0
+        
+        last_month = timezone.now() - timedelta(days=30)
+        revenue_last_month = guests.filter(check_in__month=last_month.month).aggregate(Sum('revenue__revenue'))['revenue__revenue__sum'] or 0
+        revenue_last_month += guest_history.filter(guest__in=guests, check_in__month=last_month.month).aggregate(Sum('revenue__revenue'))['revenue__revenue__sum'] or 0
+        revenue_growth = ((monthly_revenue - revenue_last_month) / revenue_last_month) * 100 if revenue_last_month else 0
+        
+        check_ins = CheckIns.objects.filter(time__year=timezone.now().year, company=request.user.company)
+        year_dict = {i:0 for i in range(1,13)}
+        for check_in in check_ins:
+            month = check_in.time.month
+            year_dict[month] += 1
+        check_in_data = list(year_dict.values())
+        check_in_rate = float(check_in_data[timezone.now().month-1])/30
+        
+        top_guests = Guest.objects.filter(company=request.user.company).order_by('-revenue__revenue')[:5]
+        
+        total_guests_last_month = guests.filter(check_in__month=last_month.month).count()
+        guest_growth = ((guests.count()) / total_guests_last_month) * 100 if total_guests_last_month else 0
+        
+        check_ins_this_month = CheckIns.objects.filter(time__month=timezone.now().month, company=request.user.company).count()
+        check_ins_last_month = CheckIns.objects.filter(time__month=last_month.month, company=request.user.company).count()
+        if check_ins_last_month > 0:
+            guest_growth = ((check_ins_this_month - check_ins_last_month) / check_ins_last_month) * 100
+        else:
+            guest_growth = 0
+        
+        guests_data = []
+        
+        for guest in guests:
+            current_revenue = guest.revenue.revenue
+            history = guest_history.filter(guest=guest)
+            historical_revenue = sum(hist.revenue.revenue for hist in history)
+            total_revenue = current_revenue + historical_revenue
+            
+            guests_data.append({
                 'name': guest.name,
                 'email': guest.email,
                 'number': guest.number,
-                'room': guest.room,
-                'check_in': guest.check_in,
-                'staff': guest.staff,
-                'check_out': guest.check_out,
-                'revenue': guest.revenue,
-                'company': guest.company,
-                'duration': guest.duration,
-            },
-            'history': []
-        }
-        
-        history = GuestHistory.objects.filter(guest=guest)
-        for hist in history:
-            guest_data['history'].append({
-                'name': hist.name,
-                'email': hist.email,
-                'number': hist.number,
-                'room': hist.room,
-                'check_in': hist.check_in,
-                'staff': hist.staff,
-                'check_out': hist.check_out,
-                'revenue': hist.revenue,
-                'company': hist.company,
-                'duration': hist.duration,
+                'total_revenue': total_revenue,
+                'total_days': int(guest.duration) + sum(int(hist.duration) for hist in history),  
             })
-            
-        analytics_data.append(guest_data)
-    
-    current_month = timezone.now().month
-    monthly_revenue = guests.filter(check_in__month=current_month).aggregate(Sum('revenue__revenue'))['revenue__revenue__sum'] or 0
-    monthly_revenue += guest_history.filter(guest__in=guests, check_in__month=current_month).aggregate(Sum('revenue__revenue'))['revenue__revenue__sum'] or 0
-    
-    last_month = timezone.now() - timedelta(days=30)
-    revenue_last_month = guests.filter(check_in__month=last_month.month).aggregate(Sum('revenue__revenue'))['revenue__revenue__sum'] or 0
-    revenue_last_month += guest_history.filter(guest__in=guests, check_in__month=last_month.month).aggregate(Sum('revenue__revenue'))['revenue__revenue__sum'] or 0
-    revenue_growth = ((monthly_revenue - revenue_last_month) / revenue_last_month) * 100 if revenue_last_month else 0
-    
-    check_ins = CheckIns.objects.filter(time__year=timezone.now().year, company=request.user.company)
-    year_dict = {i:0 for i in range(1,13)}
-    for check_in in check_ins:
-        month = check_in.time.month
-        year_dict[month] += 1
-    check_in_data = list(year_dict.values())
-    check_in_rate = float(check_in_data[timezone.now().month-1])/30
-    
-    top_guests = Guest.objects.filter(company=request.user.company).order_by('-revenue__revenue')[:5]
-    
-    total_guests_last_month = guests.filter(check_in__month=last_month.month).count()
-    guest_growth = ((guests.count()) / total_guests_last_month) * 100 if total_guests_last_month else 0
-    
-    check_ins_this_month = CheckIns.objects.filter(time__month=timezone.now().month, company=request.user.company).count()
-    check_ins_last_month = CheckIns.objects.filter(time__month=last_month.month, company=request.user.company).count()
-    if check_ins_last_month > 0:
-        guest_growth = ((check_ins_this_month - check_ins_last_month) / check_ins_last_month) * 100
-    else:
-        guest_growth = 0
-    
-    guests_data = []
-    
-    for guest in guests:
-        current_revenue = guest.revenue.revenue
-        history = guest_history.filter(guest=guest)
-        historical_revenue = sum(hist.revenue.revenue for hist in history)
-        total_revenue = current_revenue + historical_revenue
         
-        guests_data.append({
-            'name': guest.name,
-            'email': guest.email,
-            'number': guest.number,
-            'total_revenue': total_revenue,
-            'total_days': int(guest.duration) + sum(int(hist.duration) for hist in history),  
-        })
-    
-    top_guests_data = sorted(guests_data, key=lambda x: x['total_revenue'], reverse=True)[:5]
-    
-    total_revenue = Revenue.objects.filter(company=request.user.company).aggregate(total=Sum('revenue'))['total']
-    if total_revenue is None:
-        total_revenue = 0
+        top_guests_data = sorted(guests_data, key=lambda x: x['total_revenue'], reverse=True)[:5]
         
-    # print (top_guests_data)
-    
-    available_rooms = Room.objects.filter(room_status=False,
-                                          company=request.user.company)
+        total_revenue = Revenue.objects.filter(company=request.user.company).aggregate(total=Sum('revenue'))['total']
+        if total_revenue is None:
+            total_revenue = 0
+        
+        available_rooms = Room.objects.filter(room_status=False,
+                                            company=request.user.company)
+    except Exception as e:
+        print (e)
+        return redirect('dashboard')
     
     context = {
         'available_rooms':available_rooms,

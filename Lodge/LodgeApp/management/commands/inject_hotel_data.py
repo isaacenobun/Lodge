@@ -33,7 +33,7 @@ class Command(BaseCommand):
                 rooms.append(room)
 
         # Generate data for one year
-        start_date = timezone.make_aware(timezone.datetime(2024, 1, 1))
+        start_date = timezone.make_aware(timezone.datetime(2024, 7, 20))
         end_date = timezone.now()
         dates_list = []
         
