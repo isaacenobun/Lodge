@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function () {
                   
                     <ul class="list-items">
                         ${Array.from(rowSet.querySelectorAll('input[name="vac"]')).map(input => `
-                            <li class="item">
+                            <li class="item" data-id="${input.dataset.id}">
                                 <span class="checkbox">
                                     <i class="fa-solid fa-check check-icon"></i>
                                 </span>
@@ -408,8 +408,16 @@ function initializeDropdown() {
 
       if (checked && checked.length > 0) {
         btnText.innerText = `${checked.length} Selected`;
+        const hiddenInput = document.createElement("input");
+        hiddenInput.type = "hidden";
+        hiddenInput.name = "del";
+        hiddenInput.value = item.dataset.id;
+        hiddenInput.classList.add("hidden-input");
+        item.appendChild(hiddenInput);
       } else {
         btnText.innerText = "Select Rooms To Delete";
+        const hiddenInput = item.querySelector(".hidden-input");
+        item.removeChild(hiddenInput);
       }
     });
   });

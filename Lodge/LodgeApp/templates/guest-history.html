@@ -17,6 +17,13 @@
           <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
           <li class="breadcrumb-item active">Guest-history</li>
         </ol>
+        {% if not guests %}
+          <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle me-1"></i>
+            There are no guests yet.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+          {% endif %}
       </nav>
     </div>
     <!-- End Page Title -->
