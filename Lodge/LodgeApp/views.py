@@ -132,12 +132,12 @@ def onboarding(request):
                             f'Invoice details\nClient: {owner.username}\nCompany: {owner.company}\n'
                             f'Subscription: ₦{subscription.amount}\nStart Date: {start_date}\nDue Date: {due_date}')
                     
-                    # send_mail(
-                    #     'New LodgeIt Subscription',
-                    #     mail,
-                    #     'lodgeitng@gmail.com',
-                    #     ['Isaacenobun@gmail.com', 'etinosa.enobun@gmail.com', 'martyminaj@gmail.com']
-                    # )
+                    send_mail(
+                        'New LodgeIt Subscription',
+                        mail,
+                        'lodgeitng@gmail.com',
+                        ['Isaacenobun@gmail.com', 'etinosa.enobun@gmail.com']
+                    )
                     
                     mail_ = (f'Hello {owner.username}\n\n'
                             f'Thank you for adding your business, {owner.company}, to LodgeIt!\n'
@@ -149,12 +149,12 @@ def onboarding(request):
                             f'LodgeIt'
                     )
                     
-                    # send_mail(
-                    #     f'Welcome to LodgeIt, {owner.username}',
-                    #     mail_,
-                    #     'lodgeitng@gmail.com',
-                    #     [str(owner.email)]
-                    # )
+                    send_mail(
+                        f'Welcome to LodgeIt, {owner.username}',
+                        mail_,
+                        'lodgeitng@gmail.com',
+                        [str(owner.email)]
+                    )
                     
                 else:
                     
@@ -163,12 +163,12 @@ def onboarding(request):
                             f'Invoice details\nClient: {owner.username}\nCompany: {owner.company}\n'
                             f'Subscription: ₦{subscription.amount}\nStart Date: {start_date}\nDue Date: {due_date}')
                     
-                    # send_mail(
-                    #     'New LodgeIt Subscription',
-                    #     mail,
-                    #     'lodgeitng@gmail.com',
-                    #     ['Isaacenobun@gmail.com', 'etinosa.enobun@gmail.com', 'martyminaj@gmail.com']
-                    # )
+                    send_mail(
+                        'New LodgeIt Subscription',
+                        mail,
+                        'lodgeitng@gmail.com',
+                        ['Isaacenobun@gmail.com', 'etinosa.enobun@gmail.com', 'martyminaj@gmail.com']
+                    )
                     
                     # Manually create custom payment plan for the business
                     
@@ -561,12 +561,12 @@ def staff_add(request):
                 mail = (f'Hello {new_user.username},\n\nHere are your LodgeIt login details for {request.user.company}\n'
                         f'\nEmail: {new_user.email}\nPassword: {password.lower()}\n\nLog in here: www.lodgeitng.com/sign-in')
                 
-                # send_mail(
-                #     'Your LodgeIt Login Details',
-                #     mail,
-                #     'lodgeitng@gmail.com',
-                #     [new_user.email]
-                # )
+                send_mail(
+                    'Your LodgeIt Login Details',
+                    mail,
+                    'lodgeitng@gmail.com',
+                    [new_user.email]
+                )
                 
                 messages.success(request, f"Staff added successfully")
                 
@@ -852,7 +852,7 @@ def check_in(request):
                     
                     Log.objects.create(
                         staff=request.user,
-                        action=f'{guest.name} paid N{revenue.revenue}',
+                        action=f'{guest.name} paid N{guest.revenue.revenue}',
                         check_status=True, 
                         timestamp=guest.check_in,
                         company=guest.company
@@ -1241,26 +1241,6 @@ def download_analytics_csv(request):
          writer.writerow([''])
 
     return response
-
-# Production Ready ✅
-# For Demos
-def sign_in_test(request):
-    if request.user.is_authenticated:
-        return redirect('dashboard')
-    
-    if request.method == 'POST':
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-
-        staff = Staff.objects.get(email=email)
-
-        staff = authenticate(request, email=email, password=password)
-        login(request, staff)
-        return redirect('dashboard')
-    
-    else:
-        context = {'page_name':'Sign in'}
-        return render(request, 'pages-sign-in-test.html', context)
 
 # Production Ready ✅
 def landing(request):
