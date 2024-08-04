@@ -126,17 +126,68 @@ def onboarding(request):
                 start_date = subscription.start_date.strftime('%a %d %b %Y, %I:%M%p')
                 due_date = subscription.due_date.strftime('%a %d %b %Y, %I:%M%p')
                 
-                mail = (f'Hello Isaac,\n\n{owner.username} from {owner.company} just subscribed to LodgeIt.\n'
-                        f'Please send an invoice to {owner.email} as soon as possible.\n\n'
-                        f'Invoice details\nClient: {owner.username}\nCompany: {owner.company}\n'
-                        f'Subscription: ₦{subscription.amount}\nStart Date: {start_date}\nDue Date: {due_date}')
-                
-                send_mail(
-                    'New LodgeIt Subscription',
-                    mail,
-                    'lodgeitng@gmail.com',
-                    ['Isaacenobun@gmail.com', 'etinosa.enobun@gmail.com', 'martyminaj@gmail.com']
-                )
+                if no_of_rooms <= 20:
+                    
+                    mail = (f'Hello Isaac,\n\n{owner.username} from {owner.company} just subscribed to LodgeIt.\n\n'
+                            f'Invoice details\nClient: {owner.username}\nCompany: {owner.company}\n'
+                            f'Subscription: ₦{subscription.amount}\nStart Date: {start_date}\nDue Date: {due_date}')
+                    
+                    send_mail(
+                        'New LodgeIt Subscription',
+                        mail,
+                        'lodgeitng@gmail.com',
+                        ['Isaacenobun@gmail.com', 'etinosa.enobun@gmail.com']
+                    )
+                    
+                    mail_ = (f'Hello {owner.username}\n\n'
+                            f'Thank you for adding your business, {owner.company}, to LodgeIt!\n'
+                            f'You are currently on a 2 days free trial of LodgeIt.\n\n'
+                            f'Invoice details\nClient: {owner.username}\nCompany: {owner.company}\n'
+                            f'Subscription: ₦{subscription.amount}\nStart Date: {start_date}\nDue Date: {due_date}\n\n'
+                            f'Kindly make Payment here: https://paystack.com/pay/LodgeItLite\n\n'
+                            f'Best Regards,\n'
+                            f'LodgeIt'
+                    )
+                    
+                    send_mail(
+                        f'Welcome to LodgeIt, {owner.username}',
+                        mail_,
+                        'lodgeitng@gmail.com',
+                        [str(owner.email)]
+                    )
+                    
+                else:
+                    
+                    mail = (f'Hello Isaac,\n\n{owner.username} from {owner.company} just subscribed to LodgeIt.\n'
+                            f'Please send an invoice to {owner.email} as soon as possible.\n\n'
+                            f'Invoice details\nClient: {owner.username}\nCompany: {owner.company}\n'
+                            f'Subscription: ₦{subscription.amount}\nStart Date: {start_date}\nDue Date: {due_date}')
+                    
+                    send_mail(
+                        'New LodgeIt Subscription',
+                        mail,
+                        'lodgeitng@gmail.com',
+                        ['Isaacenobun@gmail.com', 'etinosa.enobun@gmail.com', 'martyminaj@gmail.com']
+                    )
+                    
+                    # Manually create custom payment plan for the business
+                    
+                    # mail_ = (f'Hello {owner.username}\n\n'
+                    #         f'Thank you for adding your business, {owner.company}, to LodgeIt!\n'
+                    #         f'You are currently on a 2 days free trial of LodgeIt.\n\n'
+                    #         f'Invoice details\nClient: {owner.username}\nCompany: {owner.company}\n'
+                    #         f'Subscription: ₦{subscription.amount}\nStart Date: {start_date}\nDue Date: {due_date}\n\n'
+                    #         f'Kindly make Payment here: https://paystack.com/pay/LodgeItLite\n\n'
+                    #         f'Best Regards,\n'
+                    #         f'LodgeIt'
+                    # )
+                    
+                    # send_mail(
+                    #     f'Welcome to LodgeIt, {owner.username}',
+                    #     mail_,
+                    #     'lodgeitng@gmail.com',
+                    #     [str(owner.email)]
+                    # )
                 
                 messages.success(request, f"An invoice for a Subscription fee of ₦{subscription.amount} has been sent to {owner.email}. Please pay within two days.")
                 
@@ -260,7 +311,8 @@ def rooms(request):
             'check_out_url': reverse('check-out'),
             'check_in_url': reverse('check-in'),
             'page_name':'Rooms',
-            'returning_guests':returning_guests
+            'returning_guests':returning_guests,
+            'staff':request.user
         }
         
         return render(request, 'room-carousel.html', context)
@@ -350,7 +402,8 @@ def history(request):
         'available_rooms':available_rooms,
         'guests': guests,
         'returning_guests':returning_guests, 
-        'page_name':'History'
+        'page_name':'History',
+        'staff':request.user
     }
     return render(request, 'guest-history.html', context)
 
@@ -429,6 +482,7 @@ def logs(request):
         'guests':guests,
         'returning_guests':returning_guests,
         'logs_structure':logs_structure,
+        'staff':request.user
     }
     
     return render(request, 'logs.html', context)
@@ -619,6 +673,8 @@ def settings(request):
         suites = Suite.objects.filter(company=request.user.company)
         rooms = Room.objects.filter(company=request.user.company)
         
+        del_rooms = request.POST.getlist('del')
+        
         with transaction.atomic():
             new_company_name = request.POST.get('input_0')
             company = request.user.company
@@ -657,8 +713,9 @@ def settings(request):
                         for i in range(current_rooms, new_no_of_rooms):
                             Room.objects.create(suite=suite, company=suite.company, room_tag=f'New room {i + 1}')
                     elif new_no_of_rooms < current_rooms:
-                        rooms_to_remove = Room.objects.filter(suite=suite)[new_no_of_rooms:]
-                        rooms_to_remove.delete()
+                        for room_id in del_rooms:
+                            room = rooms.get(id=room_id)
+                            room.delete()
                         
                 except:
                     messages.error(request, f"There was a problem")
@@ -728,7 +785,8 @@ def settings(request):
         'staffs':staffs,
         'page_name':'Settings',
         'returning_guests':returning_guests,
-        'subscription':subscription
+        'subscription':subscription,
+        'staff':request.user
     }
     return render(request, 'settings.html', context)
 
@@ -794,7 +852,7 @@ def check_in(request):
                     
                     Log.objects.create(
                         staff=request.user,
-                        action=f'{guest.name} paid N{revenue.revenue}',
+                        action=f'{guest.name} paid N{guest.revenue.revenue}',
                         check_status=True, 
                         timestamp=guest.check_in,
                         company=guest.company
@@ -1061,17 +1119,22 @@ def analytics(request):
                 'total_days': int(guest.duration) + sum(int(hist.duration) for hist in history),  
             })
         
-        top_guests_data = sorted(guests_data, key=lambda x: x['total_revenue'], reverse=True)[:5]
-        
-        total_revenue = Revenue.objects.filter(company=request.user.company).aggregate(total=Sum('revenue'))['total']
-        if total_revenue is None:
-            total_revenue = 0
-        
-        available_rooms = Room.objects.filter(room_status=False,
-                                            company=request.user.company)
-    except Exception as e:
-        print (e)
-        return redirect('dashboard')
+        guests_data.append({
+            'name': guest.name,
+            'email': guest.email,
+            'number': guest.number,
+            'total_revenue': total_revenue,
+            'total_days': int(guest.duration) + sum(int(hist.duration) for hist in history),  
+        })
+    
+    top_guests_data = sorted(guests_data, key=lambda x: x['total_revenue'], reverse=True)[:5]
+    
+    total_revenue = Revenue.objects.filter(company=request.user.company).aggregate(total=Sum('revenue'))['total']
+    if total_revenue is None:
+        total_revenue = 0
+    
+    available_rooms = Room.objects.filter(room_status=False,
+                                          company=request.user.company)
     
     context = {
         'available_rooms':available_rooms,
@@ -1085,7 +1148,8 @@ def analytics(request):
         'total_revenue':float(total_revenue), 
         'monthly_revenue':monthly_revenue, 
         'revenue_growth':revenue_growth, 
-        'page_name':'Analytics'
+        'page_name':'Analytics',
+        'staff':request.user
     }
     return render(request, 'analytics.html', context)
 
@@ -1186,26 +1250,6 @@ def download_analytics_csv(request):
          writer.writerow([''])
 
     return response
-
-# Production Ready ✅
-# For Demos
-def sign_in_test(request):
-    if request.user.is_authenticated:
-        return redirect('dashboard')
-    
-    if request.method == 'POST':
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-
-        staff = Staff.objects.get(email=email)
-
-        staff = authenticate(request, email=email, password=password)
-        login(request, staff)
-        return redirect('dashboard')
-    
-    else:
-        context = {'page_name':'Sign in'}
-        return render(request, 'pages-sign-in-test.html', context)
 
 # Production Ready ✅
 def landing(request):
