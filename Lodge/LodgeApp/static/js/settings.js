@@ -309,6 +309,10 @@ document.addEventListener('DOMContentLoaded', function () {
                           <input class="form-check-input" name="admin" type="checkbox" id="adminStatus" required>
                           <label class="form-check-label" for="adminStatus">Assign Admin Status</label>
                         </div>
+                        <div class="form-check">
+                          <input class="form-check-input" name="notification" type="checkbox" id="notificationStatus" required>
+                          <label class="form-check-label" for="notificationStatus">Enable notifications</label>
+                        </div>
                       </div>
                     </form>`;
       } else if (this.classList.contains('addstaffButton')) {
@@ -346,6 +350,10 @@ document.addEventListener('DOMContentLoaded', function () {
                         <div class="form-check">
                           <input class="form-check-input" name="admin" type="checkbox" id="newAdminStatus" required>
                           <label class="form-check-label" for="newAdminStatus">Assign Admin Status</label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" name="notification" type="checkbox" id="notificationStatus" required>
+                          <label class="form-check-label" for="notificationStatus">Enable notifications</label>
                         </div>
                       </div>
                     </form>`;

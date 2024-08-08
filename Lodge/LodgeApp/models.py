@@ -37,6 +37,7 @@ class Staff(AbstractUser):
     username = models.CharField(max_length=50, blank=False)
     company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True, blank=True)
     owner = models.BooleanField(default=False)
+    notification = models.BooleanField(default=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']

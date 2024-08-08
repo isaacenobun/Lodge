@@ -523,6 +523,7 @@ def staff_add(request):
     email = request.POST.get('email').strip()
     password = request.POST.get('password')
     admin_status = request.POST.get('admin')
+    notification_status = request.POST.get('notification')
     
     if not username:
             messages.error(request, 'Username is required.')
@@ -552,21 +553,25 @@ def staff_add(request):
                 if admin_status:
                     new_user.owner = True
                 
+                if not notification_status:
+                    new_user.notification = False
+                
                 new_user.set_password(password)
                 new_user.is_superuser = True
                 new_user.is_staff = False
                 new_user.save()
                 
                 # Send mail to added staff
-                mail = (f'Hello {new_user.username},\n\nHere are your LodgeIt login details for {request.user.company}\n'
-                        f'\nEmail: {new_user.email}\nPassword: {password.lower()}\n\nLog in here: www.lodgeitng.com/sign-in')
-                
-                send_mail(
-                    'Your LodgeIt Login Details',
-                    mail,
-                    'lodgeitng@gmail.com',
-                    [new_user.email]
-                )
+                if new_user.notification:
+                    mail = (f'Hello {new_user.username},\n\nHere are your LodgeIt login details for {request.user.company}\n'
+                            f'\nEmail: {new_user.email}\nPassword: {password.lower()}\n\nLog in here: www.lodgeitng.com/sign-in')
+                    
+                    send_mail(
+                        'Your LodgeIt Login Details',
+                        mail,
+                        'lodgeitng@gmail.com',
+                        [new_user.email]
+                    )
                 
                 messages.success(request, f"Staff added successfully")
                 
@@ -602,11 +607,17 @@ def staff_edit(request):
             return redirect('settings')
         
         admin_status = request.POST.get('admin')
+        notification_status = request.POST.get('notification')
         
         if admin_status:
             admin_status = True
         else:
             admin_status = False
+            
+        if notification_status:
+            notification_status = True
+        else:
+            notification_status = False
         
         try:
             with transaction.atomic():
@@ -620,6 +631,7 @@ def staff_edit(request):
                 staff.email = email.lower()
                 staff.set_password(password)
                 staff.owner = admin_status
+                staff.notification = notification_status
                 staff.save()
                 messages.success(request, 'Staff edited successfully')
                 return redirect('settings')
@@ -785,8 +797,7 @@ def settings(request):
         'staffs':staffs,
         'page_name':'Settings',
         'returning_guests':returning_guests,
-        'subscription':subscription,
-        'staff':request.user
+        'subscription':subscription
     }
     return render(request, 'settings.html', context)
 
@@ -862,6 +873,27 @@ def check_in(request):
                         company=guest.staff.company
                     )
                     
+                    check_in_date = guest.check_in.strftime('%a %d %b %Y, %I:%M%p')
+                    check_out_date = guest.check_out.strftime('%a %d %b %Y, %I:%M%p')
+                    
+                    mail = (f'Hello Admin,\n\n'
+                            f'{guest.name} was just checked in by {request.user.username}.\n\n'
+                            f'Check-in Details\n'
+                            f'Guest Name: {guest.name}\n'
+                            f'Room: {guest.room.room_tag} in the {guest.room.suite.type} Suite\n'
+                            f'Duration: {guest.duration} days\n'
+                            f'Amount Paid: ₦{guest.revenue}\n'
+                            f'Check-in time: {check_in_date}\n'
+                            f'Check-out time: {check_out_date}\n\n'
+                            f'Check your company\'s dashboard for more info at https://lodgeitng.com.')
+                    
+                    send_mail(
+                        'A Returning Customer was checked-in',
+                        mail,
+                        'lodgeitng@gmail.com',
+                        [staff.email for staff in Staff.objects.filter(company=request.user.company, owner=True, notification=True)]
+                    )
+                    
                     messages.success(request, f"{guest.name} checked in successfully")
 
                     return redirect('dashboard')
@@ -912,11 +944,30 @@ def check_in(request):
                         company=guest.company
                     )
                     
-                    checkIn = CheckIns.objects.create(
+                    CheckIns.objects.create(
                         company=guest.staff.company
                     )
                     
-                    checkIn.time = checkIn.time
+                    check_in_date = guest.check_in.strftime('%a %d %b %Y, %I:%M%p')
+                    check_out_date = guest.check_out.strftime('%a %d %b %Y, %I:%M%p')
+                    
+                    mail = (f'Hello Admin,\n\n'
+                            f'{guest.name} was just checked in by {request.user.username}.\n\n'
+                            f'Check-in Details\n'
+                            f'Guest Name: {guest.name}\n'
+                            f'Room: {guest.room.room_tag} in the {guest.room.suite.type} Suite\n'
+                            f'Duration: {guest.duration} days\n'
+                            f'Amount Paid: ₦{guest.revenue}\n'
+                            f'Check-in time: {check_in_date}\n'
+                            f'Check-out time: {check_out_date}\n\n'
+                            f'Check your company\'s dashboard for more info at https://lodgeitng.com.')
+                    
+                    send_mail(
+                        'A New Customer was checked-in',
+                        mail,
+                        'lodgeitng@gmail.com',
+                        [staff.email for staff in Staff.objects.filter(company=request.user.company, owner=True, notification=True)]
+                    )
                     
                     messages.success(request, f"{guest.name} checked in successfully")
 
@@ -985,6 +1036,27 @@ def check_in(request):
                     
                     CheckIns.objects.create(
                         company=guest.staff.company
+                    )
+                    
+                    check_in_date = guest.check_in.strftime('%a %d %b %Y, %I:%M%p')
+                    check_out_date = guest.check_out.strftime('%a %d %b %Y, %I:%M%p')
+                    
+                    mail = (f'Hello Admin,\n\n'
+                            f'{guest.name} was just checked in by {request.user.username}.\n\n'
+                            f'Check-in Details\n'
+                            f'Guest Name: {guest.name}\n'
+                            f'Room: {guest.room.room_tag} in the {guest.room.suite.type} Suite\n'
+                            f'Duration: {guest.duration} days\n'
+                            f'Amount Paid: ₦{guest.revenue}\n'
+                            f'Check-in time: {check_in_date}\n'
+                            f'Check-out time: {check_out_date}\n\n'
+                            f'Check your company\'s dashboard for more info at https://lodgeitng.com.')
+                    
+                    send_mail(
+                        'A Returning Customer was checked-in',
+                        mail,
+                        'lodgeitng@gmail.com',
+                        [staff.email for staff in Staff.objects.filter(company=request.user.company, owner=True, notification=True)]
                     )
                     
                     messages.success(request, f"{guest.name} checked in successfully")
