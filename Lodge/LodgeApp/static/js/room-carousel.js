@@ -213,7 +213,7 @@ function confirmExtendStay(guestId, extendUrl, csrfToken) {
   const modalBody = modal.querySelector('.modal-body');
   const modalFooter = modal.querySelector('.modal-footer');
 
-  const updatedContent = `${window.initialModalBodyContent} <div class="breadcrumb">New checkout date:  <span id="newCheckoutDate" style="color: #00796b; font-weight: bold">${newStayDuration} days from now</span></div>`;
+  const updatedContent = `${window.initialModalBodyContent} <div class="breadcrumb">New checkout date:  <span id="newCheckoutDate" style="color: #00796b; font-weight: bold">${newStayDuration} days from current checkout date</span></div>`;
   modalBody.innerHTML = updatedContent;
 
   modalFooter.innerHTML = `
