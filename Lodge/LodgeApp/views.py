@@ -1245,3 +1245,6 @@ def download_analytics_csv(request):
 # Production Ready ✅
 def landing(request):
     return render(request, 'landing.html')
+
+def expenses(request):
+    return render(request, 'expenses.html')

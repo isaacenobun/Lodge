@@ -24,4 +24,5 @@ urlpatterns = [
     path('download-logs-csv/', views.download_logs_csv, name='download_logs_csv'),
     path('extend/', views.extend, name='extend'),
     path('edit-rooms/', views.edit_rooms, name='edit-rooms'),
+    path('expenses/', views.expenses, name='expenses'),
 ]
